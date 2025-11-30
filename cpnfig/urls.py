@@ -16,8 +16,10 @@ Including another URLconf
 """
 
 from django.urls import path,include
+from django.contrib import admin
 
 urlpatterns = [
+    path('admin/', admin.site.urls),  # admin site
     path('accounts/', include('django.contrib.auth.urls')),  # login/logout
     path('', include('myapp.urls')),  # তোমার custom app routes
 ]

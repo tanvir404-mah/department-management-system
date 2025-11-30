@@ -1,88 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>  
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subjects</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background: #f0f2f5;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            min-height: 100vh;
         }
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background-color: #2c3e50;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding-top: 20px;
-        }
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .sidebar a {
-            display: block;
-            color: white;
-            padding: 15px 20px;
-            text-decoration: none;
-        }
-        .sidebar a:hover {
-            background-color: #34495e;
-        }
-        .content {
-            margin-left: 220px;
-            padding: 20px;
-        }
+
         h1 {
-            text-align: center;
             color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
-        .subject-list {
-            list-style-type: none;
+
+        select {
+            padding: 12px 16px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        ul {
+            list-style: none;
             padding: 0;
+            width: 100%;
+            max-width: 500px;
         }
-        .subject-list li {
-            background-color: white;
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        li {
+            background: #fff;
+            margin-bottom: 12px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.12);
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #2980b9;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Dashboard</h2>
-        <a href="{% url 'subjects' %}"><i class="fas fa-book"></i>Subjects</a>
-        <a href="{% url 'student' %}"><i class="fas fa-user-graduate"></i>Students</a>
-        <a href="{% url 'attendance_show' %}"><i class="fas fa-calendar-check"></i>Attendance</a>
-        <a href="{% url 'assignments' %}"><i class="fas fa-tasks"></i>Assignments</a>
-        <a href="{% url 'contact' %}"><i class="fas fa-envelope"></i>Contact</a>
-        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
-    </div>
-    <div class="content">
-        <h1>Subjects</h1>
-        <p>List of subjects 6th semester:</p>
-        <ul class="subject-list">
-            <li>Mathematics-1</li>
-            <li>Mathematics-2</li>
-            <li>English</li>
-            <li>Programming Fundamentals</li>
-            <li>Web Development</li>`
-            <li>Database Management</li>
-            <li>Data Structures</li>
-            <li>Algorithms</li>
-            <li>Operating Systems</li>
-            <li>Networking</li>
-            <li>Software Engineering</li>
-            <li>Computer Architecture</li>
-        </ul>
-    </div>
+
+    <h1>Faridpur Polytechnic Institute,Faridpur</h1>
+    <h3>Department Of Computer Science & Technology</h3>
+    <h4>Subjects List With Code</h4>
+    
+
+    
+
+    <select id="semester">
+        <option value="1">1st Semester</option>
+        <option value="2">2nd Semester</option>
+        <option value="3">3rd Semester</option>
+        <option value="4">4th Semester</option>
+        <option value="5">5th Semester</option>
+        <option value="6" selected>6th Semester</option>
+        <option value="7">7th Semester</option>
+    </select>
+
+    <ul id="subject-list"></ul>
+
+    <button onclick="history.back()">← Back</button>
+
+    <script>
+        const subjectsBySemester = {
+    1: ["Mathematics-1", "English", "Introduction to Computing", "Physics-1"],
+    2: ["Mathematics-2", "Physics-2", "Programming Fundamentals"],
+    3: ["Data Structures", "Computer Architecture", "Digital Electronics-1"],
+    4: ["Algorithms", "Operating Systems", "Digital Electronics-2"],
+    5: ["Microprocessors", "Java Programming", "Data Communication"],
+    6: ["Microcontroller-28564", "Web Development-28566", "Database Management-28561", "Sensor & IoT System-28563", "Computer Networking-28562", "Industrial Management-25852", "Principal of Marketing-25851"],
+    7: ["AI & ML", "Cloud Computing", "Cybersecurity", "Project Management"]
+        };
+
+        const semesterSelect = document.getElementById("semester");
+        const subjectList = document.getElementById("subject-list");
+
+        function updateSubjects() {
+            const sem = semesterSelect.value;
+            subjectList.innerHTML = "";
+            subjectsBySemester[sem].forEach(sub => {
+                const li = document.createElement("li");
+                li.textContent = sub;
+                subjectList.appendChild(li);
+            });
+        }
+
+        updateSubjects();
+        semesterSelect.addEventListener("change", updateSubjects);
+    </script>
+
 </body>
 </html>

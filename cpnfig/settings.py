@@ -21,22 +21,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-import os
+from pathlib import Path
 
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-qwlu6!7i2(ssoiq5l)6lq7n(5+*=p5@)c=mzn#tqud+!tne@$w'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = []
 
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'django.contrib.admin',
 ]
 
 LOGIN_URL = "/accounts/login/"
@@ -87,16 +101,7 @@ WSGI_APPLICATION = 'cpnfig.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cst_management',                     # Render database name
-        'USER': 'cst_management_user',                # Render username
-        'PASSWORD': 'eoG4kfMTyszf86Csf49xAk7UV4gIeI9k', # Render password
-        'HOST': 'dpg-d3hpl1nfte5s73d513s0-a.mysql.render.com',  # Render host
-        'PORT': '5432',                               # PostgreSQL port
-    }
-}
+DATABASES = {}
 
 
 
@@ -135,7 +140,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

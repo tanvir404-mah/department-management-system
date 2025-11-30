@@ -10,6 +10,7 @@ urlpatterns = [
     path('teacher/', views.teacher_view, name='teacher'),
     path('student/', views.student_view, name='student'),
     path('student/search/', views.search_student, name='search_student'),
+    path('notice/', views.notice, name='notice'),
     path('contact/', views.contact, name='contact'),
     path('lab/', views.lab_view, name='lab'),
     path('club/', views.club, name='club'),
@@ -20,9 +21,10 @@ urlpatterns = [
     path('success/', views.success, name='success'),
     path('internships/', views.internships, name='internships'),
     path('assignments/', views.assignments, name='assignments'),
+    path('create-assignment/', views.create_assignment, name='create_assignment'),
     path('subjects/', views.subjects, name='subjects'),
-    path('attendance/', views.attendance, name='attendance'),
-    path('attendance/mark/', views.attendance_show, name='attendance_show'),
+    
+    path('attendance/mark/', views.attendance, name='attendance'),
     path('attendance/summary/', views.attendance_summary, name='attendance_summary'),
     
     # Authentication (Login/Logout)
@@ -34,7 +36,7 @@ urlpatterns = [
 
 
     # Registration
-    path('student/register/', views.student_register, name='student_register'),
+    path('Student/register/', views.student_register, name='student_register'),
     path('teacher/register/', views.teacher_register, name='teacher_register'),
 
     # Dashboards

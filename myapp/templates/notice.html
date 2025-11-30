@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notice Board | Faridpur Polytechnic Institute</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .notice-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .notice-container h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .notice-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            background-color: #fefefe;
+        }
+
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #e9ecef;
+            cursor: pointer; /* To indicate it's clickable */
+        }
+        
+        .notice-title {
+            flex-grow: 1;
+            font-size: 18px;
+            color: #343a40;
+            font-weight: 600;
+        }
+
+        .notice-date {
+            font-size: 14px;
+            color: #6c757d;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .notice-action-btn {
+            text-decoration: none;
+            color: #ffffff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            margin-left: 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Styles for the two types of buttons */
+        .btn-show-more {
+            background-color: #007bff; /* Blue for show more */
+        }
+        .btn-show-more:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-download-pdf {
+            background-color: #dc3545; /* Red for PDF Download */
+        }
+        .btn-download-pdf:hover {
+            background-color: #c82333;
+        }
+
+        /* Hidden details section */
+        .notice-details {
+            display: none; /* Initially hidden */
+            padding: 20px;
+            border-top: 1px solid #dee2e6;
+            background-color: #ffffff;
+        }
+        
+        .notice-details p {
+            line-height: 1.6;
+            color: #555;
+            margin: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+            margin-bottom: 10px;
+        }
+        
+        .notice-details .info-box {
+            background-color: #f1f8ff;
+            border-left: 5px solid #007bff;
+            padding: 10px 15px;
+            margin-top: 15px;
+            font-size: 15px;
+            color: #007bff;
+        }
+
+        .arrow-icon {
+            transition: transform 0.3s ease;
+            margin-left: 10px;
+        }
+        .open .arrow-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+
+<div class="notice-container">
+    <h2>📅 ডিপার্টমেন্ট নোটিশ বোর্ড</h2>
+
+    <div class="notice-card" id="notice-1">
+        <div class="notice-header">
+            <span class="notice-title">১. নতুন ক্লাস রুটিন (২০২৫-২৬ শিক্ষাবর্ষ) প্রকাশিত হয়েছে।</span>
+            <span class="notice-date">অক্টোবর ৩০, ২০২৫</span>
+            <button class="notice-action-btn btn-show-more" data-target="details-1">
+                <i class="fas fa-arrow-down arrow-icon"></i> <span class="button-text">বিস্তারিত দেখুন</span>
+            </button>
+        </div>
+        <div class="notice-details" id="details-1">
+            <p><strong>নোটিশের বিষয়:</strong> নতুন শিক্ষাবর্ষের ক্লাস শুরু ও রুটিন বিতরণ।</p>
+            <p>সকল শিক্ষার্থীকে জানানো যাচ্ছে যে, আগামী ৫ নভেম্বর, ২০২৫ তারিখ থেকে নতুন শিক্ষাবর্ষের সকল ক্লাস শুরু হবে। ডিপার্টমেন্ট অফিস থেকে দ্রুত রুটিন সংগ্রহ করার জন্য নির্দেশ দেওয়া হচ্ছে।</p>
+            <div class="info-box"><i class="fas fa-exclamation-triangle"></i> বিস্তারিত রুটিন শুধুমাত্র অফিশিয়াল নোটিশ বোর্ডেই পাওয়া যাবে।</div>
+        </div>
+    </div>
+    
+    <div class="notice-card">
+        <div class="notice-header">
+            <span class="notice-title">২. ৬ষ্ঠ সেমিস্টার ফাইনাল পরীক্ষার রেজাল্ট শিট ডাউনলোড করুন।</span>
+            <span class="notice-date">অক্টোবর ২৫, ২০২৫</span>
+            <a href="{% static 'pdfs/result_6th_sem.pdf' %}" class="notice-action-btn btn-download-pdf" download>
+                <i class="fas fa-file-pdf"></i> PDF ডাউনলোড করুন
+            </a>
+        </div>
+        </div>
+
+    <div class="notice-card" id="notice-3">
+        <div class="notice-header">
+            <span class="notice-title">৩. শিক্ষার্থীদের আইডি কার্ড বিতরন। </span>
+            <span class="notice-date">অক্টোবর ২০, ২০২৫</span>
+            <button class="notice-action-btn btn-show-more" data-target="details-3">
+                <i class="fas fa-arrow-down arrow-icon"></i> <span class="button-text">বিস্তারিত দেখুন</span>
+            </button>
+        </div>
+        <div class="notice-details" id="details-3">
+            <p>ডিপার্টমেন্টের সকল শিক্ষক ও শিক্ষার্থীদের জন্য আগামী ১ নভেম্বর, ২০২৫ থেকে বায়োমেট্রিক পদ্ধতি ব্যবহার করে ক্লাসে উপস্থিতি নিশ্চিত করা বাধ্যতামূলক।</p>
+            <p>যাদের বায়োমেট্রিক তথ্য এখনো নিবন্ধিত হয়নি, তাদেরকে দ্রুত অফিসে যোগাযোগ করার জন্য বলা হলো।</p>
+        </div>
+    </div>
+    
+    <div class="notice-card">
+        <div class="notice-header">
+            <span class="notice-title">৪. ইন্টার্নশিপের জন্য প্রয়োজনীয় আবেদন ফর্ম ডাউনলোড করুন।</span>
+            <span class="notice-date">সেপ্টেম্বর ১০, ২০২৫</span>
+            <a href="{% static 'pdfs/internship_form.pdf' %}" class="notice-action-btn btn-download-pdf" download>
+                <i class="fas fa-file-pdf"></i> ফর্ম ডাউনলোড
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+$(document).ready(function() {
+    // Show More বাটনে ক্লিক ইভেন্ট
+    $('.btn-show-more').click(function() {
+        var targetId = $(this).data('target');
+        var $details = $('#' + targetId);
+        
+        // Find the parent button for text change
+        var $button = $(this); 
+
+        // Toggle the visibility of the details section
+        $details.slideToggle(400, function() {
+            // Update button text and icon after slide toggle completes
+            if ($details.is(':visible')) {
+                $button.find('.button-text').text('লুকান');
+                $button.find('.arrow-icon').removeClass('fa-arrow-down').addClass('fa-arrow-up');
+                $button.addClass('open');
+            } else {
+                $button.find('.button-text').text('বিস্তারিত দেখুন');
+                $button.find('.arrow-icon').removeClass('fa-arrow-up').addClass('fa-arrow-down');
+                $button.removeClass('open');
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

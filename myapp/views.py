@@ -5,9 +5,24 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+
+from django.conf import settings
+from .models import CustomUser, Student  
+
 from .models import Attendance, Student, Teacher, Notice, Result
 
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.models import User
+from .models import Student
+
+
 User = get_user_model()
+
+
+
+
 
 # ================= General Pages =================
 def home(request):
@@ -38,6 +53,8 @@ def search_student(request):
         students = students.filter(shift=shift)
     return render(request, 'student.html', {'students': students})
 
+def notice(request):
+    return render(request, 'notice.html')
 def contact(request):
     return render(request, 'contact.html')
 
@@ -101,15 +118,18 @@ def subjects(request):
 def student_login(request):
     if request.method == "POST":
         username = request.POST.get("username")
-        password = request.POST.get("password")
+        password = request.POST.get("password")  # Login form এ password field এর নাম 'password'
+
         user = authenticate(request, username=username, password=password)
         if user and hasattr(user, 'student'):
             login(request, user)
             messages.success(request, "Student login successful")
             return redirect('student_dashboard')
         else:
-            messages.error(request, "Invalid student credentials")
+            messages.error(request, "Invalid username or password")
+
     return render(request, 'registration/student_login.html')
+
 
 def teacher_login(request):
     if request.method == "POST":
@@ -147,25 +167,61 @@ def logout_view(request):
 
 # ================= Registration =================
 
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Student
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 def student_register(request):
     if request.method == "POST":
         name = request.POST.get("name")
-        roll = request.POST.get("roll")
+        roll = request.POST.get("roll_number")  # template অনুযায়ী
         semester = request.POST.get("semester")
         shift = request.POST.get("shift")
         username = request.POST.get("username")
-        password = request.POST.get("password")
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        if password1 != password2:
+            messages.error(request, "Passwords do not match")
+            return redirect('student_register')
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken")
             return redirect('student_register')
 
-        user = User.objects.create_user(username=username, password=password, first_name=name, role='student')
+        if Student.objects.filter(roll_number=roll).exists():
+            messages.error(request, "Roll number already exists")
+            return redirect('student_register')
+
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            password=password1,
+            first_name=name,
+            role='student'  # যদি CustomUser এ role থাকে
+        )
+
+        # Create student profile
         Student.objects.create(user=user, roll_number=roll, semester=semester, shift=shift)
-        messages.success(request, "Student registered successfully! Please login.")
+
+        messages.success(request, "✅ Student registered successfully! Please login.")
         return redirect('student_login')
 
     return render(request, 'registration/student_register.html')
+
+
+#================= Teacher Registration =================
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from .models import Teacher
+
+User = get_user_model()  # custom user
 
 def teacher_register(request):
     if request.method == "POST":
@@ -196,11 +252,14 @@ def teacher_register(request):
             password=password1,
             email=email,
             first_name=name,
-            role='teacher'
+            role='teacher'  # যদি custom field থাকে
         )
         Teacher.objects.create(user=user)
         messages.success(request, "Teacher registered successfully! Please login.")
         return redirect('teacher_login')
+
+    return render(request, 'registration/teacher_register.html')
+
 
 
 # ================= Dashboards =================
@@ -366,6 +425,32 @@ def get_teacher_notices_ajax(request):
     notices = Notice.objects.filter(created_by__role='teacher')
     data = [{"text": n.content, "by": n.created_by.first_name} for n in notices]
     return JsonResponse(data, safe=False)
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Assignment
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def create_assignment(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        due_date = request.POST.get("due_date")
+
+        Assignment.objects.create(
+            teacher=request.user,
+            title=title,
+            description=description,
+            due_date=due_date
+        )
+        messages.success(request, "Assignment created successfully!")
+        return redirect('teacher_dashboard')  # Teacher dashboard page
+
+    return render(request, 'create_assignment.html')
+
+
 
 
 from django.shortcuts import render, redirect

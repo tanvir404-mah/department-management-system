@@ -326,19 +326,20 @@
   <div class="sidebar" id="sidebar">
     <h2>FPI CST</h2>
     <nav>
+      <div class="profile">
+      <img src="https://media.licdn.com/dms/image/v2/D5603AQF3VQLD0VOCdQ/profile-displayphoto-scale_400_400/B56Zm.rsnmI8Ag-/0/1759840754393?e=1763596800&v=beta&t=KPC8bOTfhe2xuvtXWFvS8eSIIURiAsUzZFxIaLNe8vI" alt="Student Avatar" />
+      
+    </div>
       <a href='{% url "student_dashboard" %}' class="active"><i class="fas fa-Dashboard"></i>Dashboard</a>
       <a href="{% url 'profile' %}"><i class="fas fa-user-circle"></i>My Profile</a>
        <a href="{% url 'subjects' %}"><i class="fas fa-book"></i>My Subjects</a>
       <a href="{% url 'attendance_show' %}"><i class="fas fa-calendar-check"></i>Attendance</a>
       <a href="{% url 'assignments' %}"><i class="fas fa-tasks"></i>Assignments</a>
-      <a href="{% url 'contact' %}"><i class="fas fa-envelope"></i>Contact</a>
-      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+      <a href="{% url 'notice' %}"><i class="fas fa-bullhorn"></i>Notices</a>
+      
+      
     </nav>
-    <div class="profile">
-      <img src="https://media.licdn.com/dms/image/v2/D5603AQFWb3EBF9ZYjg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1718993233601?e=1761782400&v=beta&t=Q8R0OyD8gG42Tm1YdtJue23uonMZ5ycw8hZU37tHIoo" alt="Student Avatar" />
-      <p>Tanvir Mahmud</p>
-      <span>Computer Science & Technology</span>
-    </div>
+
   </div>
 
   <div class="main">
@@ -369,7 +370,7 @@
     <h2 style="margin-bottom: 15px; color:#a5b4fc;">My Profile</h2>
     <div class="profile-section">
         <div class="avatar-box">
-            <img src="https://media.licdn.com/dms/image/v2/D5603AQFWb3EBF9ZYjg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1718993233601?e=1761782400&v=beta&t=Q8R0OyD8gG42Tm1YdtJue23uonMZ5ycw8hZU37tHIoo" alt="Student Avatar" />
+            <img src="https://media.licdn.com/dms/image/v2/D5603AQF3VQLD0VOCdQ/profile-displayphoto-scale_400_400/B56Zm.rsnmI8Ag-/0/1759840754393?e=1763596800&v=beta&t=KPC8bOTfhe2xuvtXWFvS8eSIIURiAsUzZFxIaLNe8vI" alt="Student Avatar" />
             <h3 style="margin-top: 15px; color: white;">Tanvir Mahmud</h3>
             <span style="color: #a5b4fc;">ID: FPI12345</span>
         </div>
