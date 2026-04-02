@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Staff Dashboard | Faridpur Polytechnic CST{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: {
+                        brand: { DEFAULT: '#4F46E5', light: '#EEF2FF', dark: '#3730A3' }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        :root { --sidebar-w: 280px; }
+        body { background: #F1F5F9; }
+        .sidebar { width: var(--sidebar-w); }
+        .main-wrap { margin-left: var(--sidebar-w); }
+        .nav-link {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1rem; border-radius: 0.75rem;
+            font-size: 13px; font-weight: 600; color: #64748b;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .nav-link:hover { background: #F8FAFC; color: #4F46E5; }
+        .nav-link.active {
+            background: #4F46E5; color: #fff;
+            box-shadow: 0 10px 15px -3px rgba(79,70,229,0.3);
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .card { background: white; border-radius: 1rem; border: 1px solid #F1F5F9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 0.5rem; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        @media(max-width:1024px){
+            .sidebar { transform: translateX(-100%); transition: transform .3s; position: fixed; }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrap { margin-left: 0; }
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar fixed top-0 left-0 h-screen bg-white border-r border-slate-100 z-[200] flex flex-col">
+
+        <!-- Brand -->
+        <div class="flex items-center gap-3 px-6 h-[72px] border-b border-slate-100 flex-shrink-0">
+            <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-500/40 flex-shrink-0">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <p class="text-sm font-extrabold text-slate-900 leading-none">CST <span class="text-indigo-600">Staff</span></p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Faridpur Polytechnic</p>
+            </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="flex-1 overflow-y-auto scroll-hide px-4 py-5 space-y-6">
+
+            <!-- Overview -->
+            <div>
+                <p class="text-[9px] font-extrabold text-slate-300 uppercase tracking-[0.2em] px-2 mb-2">Overview</p>
+                <a href="{% url 'staff_dashboard' %}" class="nav-link {% block nav_dashboard %}{% endblock %}">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i> Mission Control
+                </a>
+                <a href="{% url 'admin_security_logs' %}" class="nav-link {% block nav_security %}{% endblock %}">
+                    <i data-lucide="shield-alert" class="w-4 h-4 flex-shrink-0"></i> Security & Audit
+                </a>
+            </div>
+
+            <!-- User Management -->
+            <div>
+                <p class="text-[9px] font-extrabold text-slate-300 uppercase tracking-[0.2em] px-2 mb-2">User Control</p>
+                <a href="{% url 'admin_user_mgmt' %}" class="nav-link {% block nav_users %}{% endblock %}">
+                    <i data-lucide="users" class="w-4 h-4 flex-shrink-0"></i> User Governance
+                </a>
+                <a href="{% url 'admin_create_user' %}" class="nav-link {% block nav_create_user %}{% endblock %}">
+                    <i data-lucide="user-plus" class="w-4 h-4 flex-shrink-0"></i> Create User
+                </a>
+                <a href="{% url 'admin_bulk_import' %}" class="nav-link {% block nav_bulk %}{% endblock %}">
+                    <i data-lucide="file-up" class="w-4 h-4 flex-shrink-0"></i> Bulk Import (CSV)
+                </a>
+                <a href="{% url 'admin_reset_password' %}" class="nav-link">
+                    <i data-lucide="key-round" class="w-4 h-4 flex-shrink-0"></i> Password Reset
+                </a>
+            </div>
+
+            <!-- System Admin (Database CRUD) -->
+            <div>
+                <p class="text-[9px] font-extrabold text-slate-300 uppercase tracking-[0.2em] px-2 mb-2">System Administration</p>
+                <a href="{% url 'admin_system_mgmt' %}" class="nav-link {% block nav_system %}{% endblock %}">
+                    <i data-lucide="database" class="w-4 h-4 flex-shrink-0"></i> Database Control
+                </a>
+                <a href="{% url 'admin_notices' %}" class="nav-link {% block nav_notices %}{% endblock %}">
+                    <i data-lucide="bell" class="w-4 h-4 flex-shrink-0"></i> Notice Manager
+                </a>
+                <a href="{% url 'admin_semester_transition' %}" class="nav-link">
+                    <i data-lucide="arrow-right-circle" class="w-4 h-4 flex-shrink-0"></i> Semester Transition
+                </a>
+            </div>
+
+            <!-- Portal CMS -->
+            <div>
+                <p class="text-[9px] font-extrabold text-slate-300 uppercase tracking-[0.2em] px-2 mb-2">Portal CMS</p>
+                <a href="{% url 'admin_manage_banners' %}" class="nav-link">
+                    <i data-lucide="image" class="w-4 h-4 flex-shrink-0"></i> Hero Banners
+                </a>
+                <a href="{% url 'admin_manage_notices' %}" class="nav-link">
+                    <i data-lucide="bell-ring" class="w-4 h-4 flex-shrink-0"></i> Portal Notices
+                </a>
+            </div>
+
+            <!-- Quick Portals -->
+            <div>
+                <p class="text-[9px] font-extrabold text-slate-300 uppercase tracking-[0.2em] px-2 mb-2">Quick Portals</p>
+                <a href="{% url 'staff_dashboard' %}" class="nav-link {% block nav_staff %}{% endblock %}">
+                    <i data-lucide="layout-grid" class="w-4 h-4 flex-shrink-0"></i> Staff Dashboard
+                </a>
+                <a href="{% url 'hod_dashboard' %}" class="nav-link {% block nav_hod %}{% endblock %}">
+                    <i data-lucide="briefcase" class="w-4 h-4 flex-shrink-0"></i> HOD Portal
+                </a>
+                <a href="{% url 'lab_assistant_dashboard' %}" class="nav-link {% block nav_lab %}{% endblock %}">
+                    <i data-lucide="monitor" class="w-4 h-4 flex-shrink-0"></i> Lab Console
+                </a>
+                <a href="{% url 'home' %}" class="nav-link">
+                    <i data-lucide="globe" class="w-4 h-4 flex-shrink-0"></i> Public Portal
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="px-4 py-5 border-t border-slate-100 flex-shrink-0 space-y-2">
+            <div class="flex items-center gap-3 bg-emerald-50 rounded-xl px-4 py-3">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">System Online</span>
+            </div>
+            <a href="{% url 'profile' %}" class="nav-link">
+                <i data-lucide="user-cog" class="w-4 h-4 flex-shrink-0"></i>
+                {{ user.username|default:"Admin" }}
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link hover:!text-rose-600 hover:!bg-rose-50">
+                <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i> Sign Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="main-wrap min-h-screen flex flex-col">
+
+        <!-- Top Header -->
+        <header class="h-[72px] bg-white border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-[100]">
+            <div class="flex items-center gap-4">
+                <button onclick="document.querySelector('.sidebar').classList.toggle('open')" class="lg:hidden p-2 rounded-xl text-slate-400 hover:bg-slate-50">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div>
+                    <p class="text-[11px] font-bold text-indigo-600 uppercase tracking-[0.15em] leading-none">Faridpur Polytechnic Institute</p>
+                    <h1 class="text-base font-extrabold text-slate-900 leading-tight mt-0.5">{% block page_title %}Staff Dashboard{% endblock %}</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-xl">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-indigo-600"></i>
+                    <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-widest">Superuser</span>
+                </div>
+                <a href="{% url 'profile' %}" class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-500/30 hover:scale-105 transition-all">
+                    <span class="text-sm font-extrabold">{{ user.username|make_list|first|upper }}</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 p-8 max-w-[1400px] mx-auto w-full">
+
+            {% if messages %}
+            <div class="mb-6 space-y-3">
+                {% for message in messages %}
+                <div class="flex items-center gap-3 p-4 rounded-2xl text-sm font-bold
+                    {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100
+                    {% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
+                    <i data-lucide="{% if message.tags == 'success' %}check-circle{% else %}alert-circle{% endif %}" class="w-5 h-5 flex-shrink-0"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="px-8 py-5 border-t border-slate-100 bg-white">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
+                © 2025 Faridpur Polytechnic Institute · CST Department Staff Dashboard
+            </p>
+        </footer>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,122 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Department Labs</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #003366;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 20px;
-    }
-    .lab-card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .lab-card img {
-      width: 300px;
-      height: 200px;
-      object-fit: cover;
-    }
-    .lab-info {
-      flex: 1;
-      padding: 20px;
-    }
-    .lab-info h2 {
-      margin-top: 0;
-      color: #003366;
-    }
-    .lab-info ul {
-      margin: 10px 0;
-      padding-left: 20px;
-    }
-    footer {
-      text-align: center;
-      background: #343A40;
-      color: white;
-      padding: 15px;
-      margin-top: 40px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CST Lab Facilities | Professional Edition</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /*
+         * GLOBAL STYLES - ADAPTED FOR LIGHT MODE WITH DARK CARDS
+         */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            /* Very light gray/white background to match main site */
+            color: #1f2937;
+            /* Dark text (Gray-800) */
+        }
+
+        .accent-color {
+            color: #06b6d4;
+            /* Teal-500 for high contrast accent */
+        }
+
+        .section-title {
+            position: relative;
+            padding-bottom: 1rem;
+            color: #111827;
+            /* Dark title text */
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 80px;
+            height: 4px;
+            background-color: #06b6d4;
+            /* Teal-500 accent */
+            border-radius: 9999px;
+        }
+
+        /* CARDS - KEEPING THEM DARK FOR TECH/PROFESSIONAL CONTRAST */
+        .card {
+            background-color: #1e293b;
+            /* Slate-800 for dark cards */
+            color: #e2e8f0;
+            /* Light text inside dark cards */
+            transition: all 0.3s ease-in-out;
+            border: 1px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            /* Subtle blue glow on hover */
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4), 0 5px 20px rgba(0, 0, 0, 0.3);
+            border-color: #06b6d4;
+        }
+
+        .card-title {
+            color: #ffffff;
+            /* White title inside dark card */
+        }
+
+        .card-subtitle {
+            color: #94a3b8;
+            /* Slate-400 subtitle inside dark card */
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <h1>Department Laboratories</h1>
-    <p>Explore our modern and fully equipped labs</p>
-  </header>
 
-  <div class="container">
+<body class="min-h-screen antialiased">
 
-    <!-- Software Lab -->
-    <div class="lab-card">
-      <img src="https://engg.svpm.org.in/images/infra/ce/software-developement-lab.jpg" alt="Software Lab">
-      <div class="lab-info">
-        <h2>Software Lab</h2>
-        <p>Our software lab is equipped with modern PCs and high-speed internet for programming, web development, and project research.</p>
-        <h3>Facilities:</h3>
-        <ul>
-          <li>100+ High-performance PCs</li>
-          <li>Projector and Smart Board</li>
-          <li>WiFi & High-speed LAN</li>
-        </ul>
-        <p><b>Lab Incharge:</b> Mr. XYZ (Craft Instructor, CST Dept.)</p>
-      </div>
-    </div>
+    <!-- Header/Navigation Bar - Mimicking the blue bar from the screenshot -->
+    <header class="bg-cyan-600 shadow-xl sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold text-white tracking-wider">CST Lab Facilities</h1>
+            <!-- The nav links would ideally match your main site's structure -->
+            <nav class="hidden md:flex space-x-6">
+                <a href="#overview"
+                    class="text-white hover:text-cyan-200 font-medium transition duration-150">Overview</a>
+                <a href="#status" class="text-white hover:text-cyan-200 font-medium transition duration-150">Status</a>
+                <a href="#equipment"
+                    class="text-white hover:text-cyan-200 font-medium transition duration-150">Equipment</a>
+                <a href="#rules" class="text-white hover:text-cyan-200 font-medium transition duration-150">Rules</a>
+            </nav>
+            <button class="md:hidden text-white hover:text-cyan-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </header>
 
-    <!-- Networking Lab -->
-    <div class="lab-card">
-      <img src="https://images.foxtv.com/static.fox4news.com/www.fox4news.com/content/uploads/2021/05/1280/720/6P-190-TZ_FBI-NEW-COMPUTER-FORENSICS-LAB_00.00.00.08.png?ve=1&tl=1" alt="Networking Lab">
-      <div class="lab-info">
-        <h2>Networking Lab</h2>
-        <p>This lab is designed for hands-on practice in computer networks, routers, switches, and cybersecurity experiments.</p>
-        <h3>Facilities:</h3>
-        <ul>
-          <li>Cisco Routers & Switches</li>
-          <li>Firewall & Network Security Tools</li>
-          <li>Server Rack System</li>
-        </ul>
-        <p><b>Lab Incharge:</b> Mrs. ABC (Craft Instructor, CST Dept.)</p>
-      </div>
-    </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
-    <!-- Digital Lab -->
-    <div class="lab-card">
-      <img src="https://www.espalearn.com/wp-content/uploads/2022/03/ict_lab4.jpg" alt="Digital Lab">
-      <div class="lab-info">
-        <h2>Digital Lab</h2>
-        <p>The digital lab helps students learn practical applications of circuits, microcontrollers, and embedded systems.</p>
-        <h3>Facilities:</h3>
-        <ul>
-          <li>Oscilloscopes & Multimeters</li>
-          <li>Microcontroller Kits (Arduino, PIC)</li>
-          <li>Soldering & PCB Design Tools</li>
-        </ul>
-        <p><b>Lab Incharge:</b> Dr. PQR (Craft Instructor, CST Dept.)</p>
-      </div>
-    </div>
+        <!-- Hero Section -->
+        <section id="hero" class="text-center mb-20 p-8 sm:p-12 bg-white rounded-2xl shadow-2xl border border-gray-200">
+            <h2 class="text-5xl sm:text-6xl font-black text-gray-900 mb-4 tracking-tight">
+                Empower Your <span class="accent-color">Innovation</span>
+            </h2>
+            <p class="text-lg text-gray-600 max-w-4xl mx-auto">
+                The Computer Science Technology (CST) Lab is a cutting-edge environment engineered for practical
+                learning, complex system development, and collaborative research in critical technology domains.
+            </p>
+        </section>
 
-  </div>
+        <!-- Lab Status Section - IMPROVED REAL-TIME MONITOR -->
+        <section id="status" class="mb-20">
+            <h3 class="section-title text-3xl font-bold mb-10">Real-Time Resource Monitor</h3>
+            <div class="card p-6 sm:p-8 rounded-xl shadow-lg">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                        <!-- Status Indicator -->
+                        <div id="status-indicator" class="w-4 h-4 rounded-full bg-green-500 animate-pulse"></div>
+                        <div>
+                            <p class="text-xl font-semibold card-title">System Status: <span id="status-text"
+                                    class="text-green-400">Online</span></p>
+                            <p class="text-sm card-subtitle">Real-time update from the CST Management System.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-8 text-center">
+                        <div class="text-center">
+                            <p class="text-4xl font-bold accent-color" id="capacity-total">50</p>
+                            <p class="text-sm card-subtitle">Total Capacity</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-yellow-400" id="available-slots">12</p>
+                            <p class="text-sm card-subtitle">Available Workstations</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold accent-color">09:00 - 17:00</p>
+                            <p class="text-sm card-subtitle">Operational Hours</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Removed: Utilization Bar -->
+            </div>
+        </section>
 
-  <footer>
-    <p>© All copyright reserved Computer Science And Technology Department</p>
-  </footer>
+        <!-- Lab Overview Section -->
+        <section id="overview" class="mb-20">
+            <h3 class="section-title text-3xl font-bold mb-10">Specialized Lab Divisions</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+
+                <!-- Digital Lab -->
+                <div class="card p-6 rounded-xl shadow-xl xl:col-span-1">
+                    <div class="text-4xl accent-color mb-4">💡</div>
+                    <h4 class="text-xl font-semibold mb-2 card-title">Digital Logic Lab</h4>
+                    <p class="card-subtitle text-sm">Dedicated to foundational hardware principles. Students work with
+                        microcontrollers, FPGA boards, breadboards, and logic gates to build and test digital circuits
+                        and embedded systems.</p>
+                </div>
+
+                <!-- Network Lab -->
+                <div class="card p-6 rounded-xl shadow-xl xl:col-span-1">
+                    <div class="text-4xl accent-color mb-4">🌐</div>
+                    <h4 class="text-xl font-semibold mb-2 card-title">Advanced Networking Lab</h4>
+                    <p class="card-subtitle text-sm">Equipped with real-world Cisco and Juniper routers/switches.
+                        Focuses on network architecture, routing protocols, subnetting, VPN configuration, and
+                        cybersecurity practicals.</p>
+                </div>
+
+                <!-- Software-1 Lab (Foundations) -->
+                <div class="card p-6 rounded-xl shadow-xl xl:col-span-1">
+                    <div class="text-4xl accent-color mb-4">🧠</div>
+                    <h4 class="text-xl font-semibold mb-2 card-title">Software Lab I: Foundations</h4>
+                    <p class="card-subtitle text-sm">Core environment for mastering programming fundamentals. Focuses on
+                        procedural programming, basic algorithms, data structures, and debugging techniques using major
+                        IDEs.</p>
+                </div>
+
+                <!-- Software-2 Lab (Advanced Development) -->
+                <div class="card p-6 rounded-xl shadow-xl xl:col-span-1">
+                    <div class="text-4xl accent-color mb-4">⚙️</div>
+                    <h4 class="text-xl font-semibold mb-2 card-title">Software Lab II: Advanced Systems</h4>
+                    <p class="card-subtitle text-sm">Focuses on object-oriented programming (OOP), relational and
+                        non-relational databases (SQL, MongoDB), and introduction to enterprise application development
+                        frameworks (e.g., Spring/Django).</p>
+                </div>
+
+                <!-- Software-3 Lab (Capstone & Deployment) -->
+                <div class="card p-6 rounded-xl shadow-xl xl:col-span-1">
+                    <div class="text-4xl accent-color mb-4">🏗️</div>
+                    <h4 class="text-xl font-semibold mb-2 card-title">Software Lab III: System Integration</h4>
+                    <p class="card-subtitle text-sm">The capstone environment for full-stack integration, DevOps
+                        practices, cloud deployment (AWS/Azure simulators), and collaborative project management using
+                        version control.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Available Equipment Section -->
+        <section id="equipment" class="mb-20">
+            <h3 class="section-title text-3xl font-bold mb-10">Hardware & Networking Assets</h3>
+            <div class="card p-8 rounded-xl shadow-xl border border-gray-700/50">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <ul class="space-y-4 text-base">
+                        <li class="flex items-start">
+                            <span class="accent-color mr-3 mt-1 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-0.75-3M3 17h18M5 17h14M12 15V3"></path>
+                                </svg>
+                            </span>
+                            <div>
+                                <span class="font-medium card-title">High-Fidelity Compute Nodes:</span>
+                                <span class="ml-1 card-subtitle text-sm block md:inline">50x PCs (AMD Ryzen 7/Intel i7,
+                                    32GB DDR4 RAM, NVIDIA RTX 3060).</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="accent-color mr-3 mt-1 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </span>
+                            <div>
+                                <span class="font-medium card-title">Advanced Networking Racks:</span>
+                                <span class="ml-1 card-subtitle text-sm block md:inline">Cisco Catalyst switches and ASA
+                                    firewalls for dedicated cybersecurity and routing labs.</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="space-y-4 text-base">
+                        <li class="flex items-start">
+                            <span class="accent-color mr-3 mt-1 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </span>
+                            <div>
+                                <span class="font-medium card-title">Prototyping & IoT Workshop:</span>
+                                <span class="ml-1 card-subtitle text-sm block md:inline">Dedicated area with soldering
+                                    stations, oscilloscopes, and various ARM-based microcontrollers.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="accent-color mr-3 mt-1 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5.5 13.5v-10h13v10m-3.5 0v3.5h-6v-3.5m0-10l-2 2"></path>
+                                </svg>
+                            </span>
+                            <div>
+                                <span class="font-medium card-title">Virtual Reality Development Station:</span>
+                                <span class="ml-1 card-subtitle text-sm block md:inline">One dedicated high-end PC with
+                                    Oculus Quest 2/Valve Index for immersive simulation development.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lab Rules Section -->
+        <section id="rules" class="mb-20">
+            <h3 class="section-title text-3xl font-bold mb-10">Governance Policy</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Prohibited Activities -->
+                <div class="card p-6 rounded-xl shadow-xl">
+                    <h4 class="text-xl font-semibold mb-3 text-red-400 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Prohibited Activities
+                    </h4>
+                    <ul class="list-none space-y-3 card-subtitle text-sm pl-0">
+                        <li class="flex items-start"><span class="text-red-500 mr-2 shrink-0">&bull;</span> Consumption
+                            of edibles or beverages near workstations.</li>
+                        <li class="flex items-start"><span class="text-red-500 mr-2 shrink-0">&bull;</span> Modification
+                            of OS registries, security policies, or administrative passwords.</li>
+                        <li class="flex items-start"><span class="text-red-500 mr-2 shrink-0">&bull;</span> Running
+                            unauthorized cryptocurrency mining or resource-intensive tasks.</li>
+                        <li class="flex items-start"><span class="text-red-500 mr-2 shrink-0">&bull;</span> Any activity
+                            that violates academic integrity or institutional policies.</li>
+                    </ul>
+                </div>
+                <!-- Mandatory Procedures -->
+                <div class="card p-6 rounded-xl shadow-xl">
+                    <h4 class="text-xl font-semibold mb-3 text-green-400 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Mandatory Procedures
+                    </h4>
+                    <ul class="list-none space-y-3 card-subtitle text-sm pl-0">
+                        <li class="flex items-start"><span class="text-green-500 mr-2 shrink-0">&bull;</span> Save all
+                            work to network storage before logging out or rebooting.</li>
+                        <li class="flex items-start"><span class="text-green-500 mr-2 shrink-0">&bull;</span> Submit an
+                            incident report for any hardware failure or software anomaly.</li>
+                        <li class="flex items-start"><span class="text-green-500 mr-2 shrink-0">&bull;</span> Maintain a
+                            clean and organized workspace for the next user.</li>
+                        <li class="flex items-start"><span class="text-green-500 mr-2 shrink-0">&bull;</span> Adhere to
+                            assigned reservation times strictly.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery/Visual Section (Using placeholders) -->
+        <section id="gallery">
+            <h3 class="section-title text-3xl font-bold mb-10">Facility Visuals</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Placeholder Image 1 -->
+                <div class="card overflow-hidden rounded-xl shadow-2xl p-0">
+                    <img src="https://placehold.co/600x400/f3f4f6/1f2937?text=High+End+Workstations"
+                        alt="Workstation Setup"
+                        class="w-full h-48 object-cover transform hover:scale-105 transition duration-500"
+                        onerror="this.onerror=null;this.src='https://placehold.co/600x400/f3f4f6/1f2937?text=High+End+Workstations';">
+                </div>
+                <!-- Placeholder Image 2 -->
+                <div class="card overflow-hidden rounded-xl shadow-2xl p-0">
+                    <img src="https://placehold.co/600x400/f3f4f6/1f2937?text=Collaborative+Zone"
+                        alt="Group Project Area"
+                        class="w-full h-48 object-cover transform hover:scale-105 transition duration-500"
+                        onerror="this.onerror=null;this.src='https://placehold.co/600x400/f3f4f6/1f2937?text=Collaborative+Zone';">
+                </div>
+                <!-- Placeholder Image 3 -->
+                <div class="card overflow-hidden rounded-xl shadow-2xl p-0">
+                    <img src="https://placehold.co/600x400/f3f4f6/1f2937?text=Server+and+Networking+Equipment"
+                        alt="Networking Rack"
+                        class="w-full h-48 object-cover transform hover:scale-105 transition duration-500"
+                        onerror="this.onerror=null;this.src='https://placehold.co/600x400/f3f4f6/1f2937?text=Server+and+Networking+Equipment';">
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <a href="#"
+                    class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-cyan-600 hover:bg-cyan-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-cyan-500 focus:ring-offset-gray-100">
+                    Reserve Your Workstation Now
+                    <svg class="ml-3 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-20 border-t border-gray-700/50">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400">
+            <p class="text-sm">&copy; 2024 CST Management System. All rights reserved. | For technical assistance, email
+                <a href="mailto:labsupport@cst.edu"
+                    class="text-cyan-400 hover:text-cyan-300 font-medium">labsupport@cst.edu</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Real-Time Status Simulation -->
+    <script>
+        const TOTAL_CAPACITY = 50;
+
+        function updateStatus() {
+            // Simulate random availability between 5 and 45
+            const occupied = Math.floor(Math.random() * (41)) + 5;
+            const available = TOTAL_CAPACITY - occupied;
+            const utilization = Math.round((occupied / TOTAL_CAPACITY) * 100);
+
+            const availableSlotsEl = document.getElementById('available-slots');
+            const statusIndicatorEl = document.getElementById('status-indicator');
+            const statusTextEl = document.getElementById('status-text');
+
+            if (!availableSlotsEl || !statusIndicatorEl || !statusTextEl) {
+                // Exit if elements aren't found (safety check)
+                return;
+            }
+
+            // 1. Update Numbers
+            availableSlotsEl.textContent = available;
+
+            // 2. Update Colors based on utilization (traffic light system)
+            let slotsColorClass = 'text-cyan-400';
+            let indicatorClass = 'bg-cyan-500';
+
+            if (utilization >= 95) {
+                // Critical utilization: Red Warning
+                slotsColorClass = 'text-red-400';
+                indicatorClass = 'bg-red-500';
+            } else if (utilization >= 80) {
+                // High utilization: Yellow/Orange Warning
+                slotsColorClass = 'text-orange-400';
+                indicatorClass = 'bg-yellow-500';
+            } else {
+                // Normal operation: Blue/Cyan (Matching accent)
+                slotsColorClass = 'text-cyan-400';
+                indicatorClass = 'bg-cyan-500';
+            }
+
+            // Apply color classes
+            availableSlotsEl.className = `text-4xl font-bold ${slotsColorClass}`;
+
+            // Update Status Text and Indicator
+            statusIndicatorEl.className = `w-4 h-4 rounded-full ${indicatorClass} animate-pulse`;
+            if (utilization >= 95) {
+                statusTextEl.textContent = 'Critical Load';
+                statusTextEl.className = 'text-red-400';
+            } else {
+                statusTextEl.textContent = 'Online';
+                statusTextEl.className = 'text-green-400';
+            }
+        }
+
+        // Run the update immediately and then every 3 seconds
+        window.onload = function () {
+            updateStatus();
+            setInterval(updateStatus, 3000);
+        };
+    </script>
 </body>
+
 </html>

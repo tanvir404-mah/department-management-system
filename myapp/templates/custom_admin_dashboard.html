@@ -1,264 +1,567 @@
+<!-- templates/admin_dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Principal Dashboard</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind (runtime) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            background: #f7f9fc;
+        /* prevent most tailwind/bootstrap conflicts by scoping tailwind to .tw */
+        .tw {
+            all: revert;
         }
+
+        body {
+            background: #f1f5f9;
+        }
+
         /* Sidebar */
         .sidebar {
-            width: 250px;
-            background: #2c3e50;
-            color: white;
+            width: 260px;
             height: 100vh;
-            padding-top: 20px;
             position: fixed;
             left: 0;
             top: 0;
-            display: flex;
-            flex-direction: column;
+            background: linear-gradient(180deg, #0f172a, #1e293b);
+            color: #e2e8f0;
+            padding-top: 18px;
         }
-        .sidebar h2 {
+
+        .sidebar .brand {
+            font-weight: 700;
+            letter-spacing: .6px;
             text-align: center;
-            margin: 0 0 20px 0;
-            font-size: 22px;
+            margin-bottom: 14px;
         }
-        .sidebar a {
-            padding: 12px 20px;
+
+        .sidebar a.nav-link {
+            color: #cbd5e1;
+            padding: 12px 18px;
+            display: block;
             text-decoration: none;
-            color: white;
-            display: block;
-            transition: 0.3s;
-            cursor: pointer;
         }
-        .sidebar a:hover {
-            background: #3498db;
+
+        .sidebar a.nav-link:hover,
+        .sidebar a.nav-link.active {
+            background: #0b1220;
+            color: #fff;
         }
-        /* Content */
-        .main-content {
-            margin-left: 250px;
+
+        /* main content */
+        .main {
+            margin-left: 260px;
             padding: 20px;
-            flex: 1;
+            min-height: 100vh;
         }
-        header {
-            background: #3498db;
-            color: white;
-            padding: 15px;
-            text-align: center;
+
+        /* small helpers */
+        .card-stat {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        .table-wrap {
+            background: #fff;
+            padding: 12px;
             border-radius: 8px;
-        }
-        .section {
-            display: none; /* সব section default এ hidden */
-            margin-top: 20px;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            margin: 5px;
-            cursor: pointer;
-            border-radius: 6px;
-        }
-        .btn:hover {
-            background: #2980b9;
-        }
-        input, textarea {
-            display: block;
-            margin: 8px 0;
-            padding: 8px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
         }
     </style>
 </head>
+
 <body>
-    <!-- Sidebar -->
+
+    <!-- SIDEBAR -->
     <div class="sidebar">
-        <h2>📊 Principal</h2>
-        <a onclick="showSection('dashboard')">🏠 Dashboard</a>
-        <a onclick="showSection('students')">👨‍🎓 Students</a>
-        <a onclick="showSection('teachers')">👨‍🏫 Teachers</a>
-        <a onclick="showSection('notices')">📢 Notices</a>
-        <a onclick="showSection('attendance')">📅 Attendance</a>
-        <a onclick="showSection('results')">🏆 Results</a>
-        <a onclick="showSection('reports')">📑 Reports</a>
-        <a onclick="showSection('logout')">🚪 Logout</a>
+        <div class="brand text-white">🏫 <span style="color:#60a5fa">Institute</span> Admin</div>
+
+        <a class="nav-link active" href="#" data-target="section-dashboard">Dashboard Overview</a>
+        <a class="nav-link" href="#" data-target="section-users">User & Permissions</a>
+        <a class="nav-link" href="#" data-target="section-students">Students</a>
+        <a class="nav-link" href="#" data-target="section-teachers">Teachers</a>
+        <a class="nav-link" href="#" data-target="section-departments">Departments</a>
+        <a class="nav-link" href="#" data-target="section-resources">Resources</a>
+        <a class="nav-link" href="#" data-target="section-notices">Notices</a>
+        <a class="nav-link" href="#" data-target="section-calendar">Academic Calendar</a>
+        <a class="nav-link" href="#" data-target="section-communication">Communication</a>
+
+        <div style="position:absolute;bottom:20px;width:100%;text-align:center;">
+            <a href="{% url 'logout' %}" class="nav-link">🔒 Logout</a>
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <header>
-            <h1>Principal Dashboard</h1>
-        </header>
-
-        <!-- Default Dashboard Section -->
-        <div id="dashboard" class="section card" style="display:block;">
-            <h2>Welcome, Principal!</h2>
-            <p>Manage Students, Teachers, Notices, Attendance, Results & Reports all from one place.</p>
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <!-- Top bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 id="page-title">Dashboard Overview</h3>
+            <div>
+                <span class="me-3">Welcome, <strong>{{ request.user.first_name|default:"Admin" }}</strong></span>
+            </div>
         </div>
 
-        <!-- Students Section -->
-        <div id="students" class="section card">
-            <h2>Students</h2>
-            <button class="btn" onclick="showForm('studentForm')">➕ Add Student</button>
-            <button class="btn" onclick="loadStudents()">📄 View List</button>
+        <!-- SECTIONS (all present in single file; JS toggles visibility) -->
 
-            <div id="studentForm" style="display:none; margin-top:15px;">
-                <form id="addStudentForm">
-                    <input type="text" name="first_name" placeholder="First Name" required>
-                    <input type="text" name="last_name" placeholder="Last Name" required>
-                    <input type="text" name="roll_number" placeholder="Roll Number" required>
-                    <button type="submit" class="btn">Save</button>
+        <!-- DASHBOARD -->
+        <section id="section-dashboard" class="page-section">
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-3">
+                    <div class="card-stat">
+                        <small>Total Students</small>
+                        <div class="h3 fw-bold">{{ total_students|default:0 }}</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card-stat">
+                        <small>Total Teachers</small>
+                        <div class="h3 fw-bold">{{ total_teachers|default:0 }}</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card-stat">
+                        <small>Departments</small>
+                        <div class="h3 fw-bold">{{ department_count|default:0 }}</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card-stat">
+                        <small>Today's Attendance</small>
+                        <div class="h3 fw-bold">{{ attendance_today|default:0 }}%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="table-wrap p-3">
+                        <h5>Recent Notices</h5>
+                        <ul class="list-group list-group-flush">
+                            {% for n in recent_notices %}
+                            <li class="list-group-item">{{ n.title }} — <small class="text-muted">{{ n.created_at
+                                    }}</small></li>
+                            {% empty %}
+                            <li class="list-group-item text-muted">No notices yet</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="table-wrap p-3">
+                        <h5>Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddStudent">Add
+                                Student</button>
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#modalAddTeacher">Add Teacher</button>
+                            <a href="#" class="btn btn-success" data-target="section-notices">Publish Notice</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- USERS & PERMISSIONS -->
+        <section id="section-users" class="page-section d-none">
+            <div class="card p-3 mb-3">
+                <h5>User & Permissions</h5>
+                <p class="text-muted">Assign roles (student / teacher / principal / admin) and manage access.</p>
+            </div>
+
+            <div class="card p-3 table-wrap">
+                <h6>Users</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ u.username }}</td>
+                            <td>{{ u.role }}</td>
+                            <td>
+                                <form method="post" action="{% url 'change_role' u.id %}" class="d-inline">{% csrf_token
+                                    %}
+                                    <select name="role" class="form-select form-select-sm d-inline w-auto">
+                                        <option value="student" {% if u.role ==  'student' %}selected{% endif %}>Student
+                                        </option>
+                                        <option value="teacher" {% if u.role ==  'teacher' %}selected{% endif %}>Teacher
+                                        </option>
+                                        <option value="principal" {% if u.role ==  'principal' %}selected{% endif %}>
+                                            Principal</option>
+                                        <option value="admin" {% if u.role ==  'admin' %}selected{% endif %}>Admin</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-primary">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-muted">No users</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- STUDENTS -->
+        <section id="section-students" class="page-section d-none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Students</h5>
+                <div>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddStudent">+
+                        Add Student</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Roll</th>
+                            <th>Semester</th>
+                            <th>Shift</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in students %}
+                        <tr>
+                            <td>{{ s.id }}</td>
+                            <td>{{ s.user.first_name }}</td>
+                            <td>{{ s.roll_number }}</td>
+                            <td>{{ s.semester }}</td>
+                            <td>{{ s.shift }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                                    data-bs-target="#modalEditStudent"
+                                    data-student='{"id":"{{ s.id }}","name":"{{ s.user.first_name }}","roll":"{{ s.roll_number }}","semester":"{{ s.semester }}","shift":"{{ s.shift }}"}'>Edit</button>
+                                <a href="{% url 'student_delete' %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-muted">No students found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TEACHERS -->
+        <section id="section-teachers" class="page-section d-none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Teachers</h5>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddTeacher">+ Add
+                    Teacher</button>
+            </div>
+
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in teachers %}
+                        <tr>
+                            <td>{{ t.id }}</td>
+                            <td>{{ t.user.first_name }}</td>
+                            <td>{{ t.department }}</td>
+                            <td>
+                                <a href="{% url 'teacher_edit'  %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'teacher_delete' %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-muted">No teachers</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- DEPARTMENTS -->
+        <section id="section-departments" class="page-section d-none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Departments</h5>
+            </div>
+
+            <div class="row g-3">
+                {% for d in departments %}
+                <div class="col-md-4">
+                    <div class="tw p-3 bg-white rounded shadow">
+                        <h6>{{ d.name }}</h6>
+                        <p class="mb-1">HOD: {{ d.hod|default:"-" }}</p>
+                        <p class="mb-0"><small>Teachers: {{ d.teacher_count|default:0 }} | Students: {{
+                                d.student_count|default:0 }}</small></p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">No departments yet</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- RESOURCES -->
+        <section id="section-resources" class="page-section d-none">
+            <h5>Institute Resources</h5>
+            <div class="table-wrap mt-2">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Uploaded</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in resources %}
+                        <tr>
+                            <td>{{ r.title }}</td>
+                            <td>{{ r.uploaded_at }}</td>
+                            <td><a href="{{ r.file.url }}" class="btn btn-sm btn-outline-primary">Download</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-muted">No resources</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- NOTICES -->
+        <section id="section-notices" class="page-section d-none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Notices</h5>
+            </div>
+
+            <div class="card mb-3 p-3">
+                <form method="post" action="{% url 'add_notice_ajax' %}">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        <input name="title" class="form-control" placeholder="Title" required>
+                    </div>
+                    <div class="mb-2">
+                        <textarea name="content" class="form-control" rows="3" placeholder="Write notice..."
+                            required></textarea>
+                    </div>
+                    <button class="btn btn-success">Publish Notice</button>
                 </form>
             </div>
-            <ul id="studentList"></ul>
-        </div>
 
-        <!-- Teachers Section -->
-        <div id="teachers" class="section card">
-            <h2>Teachers</h2>
-            <button class="btn" onclick="showForm('teacherForm')">➕ Add Teacher</button>
-            <button class="btn" onclick="loadTeachers()">📄 View List</button>
+            <div class="list-group">
+                {% for n in notices %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ n.title }}</strong>
+                            <div class="text-muted small">{{ n.created_at }}</div>
+                            <div>{{ n.content|truncatewords:30 }}</div>
+                        </div>
+                        <div>
+                            <a href="{% url 'notice_delete' n.id %}" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-muted p-3">No notices</div>
+                {% endfor %}
+            </div>
+        </section>
 
-            <div id="teacherForm" style="display:none; margin-top:15px;">
-                <form id="addTeacherForm">
-                    <input type="text" name="first_name" placeholder="First Name" required>
-                    <input type="text" name="last_name" placeholder="Last Name" required>
-                    <input type="text" name="department" placeholder="Department" required>
-                    <button type="submit" class="btn">Save</button>
+        <!-- CALENDAR -->
+        <section id="section-calendar" class="page-section d-none">
+            <h5>Academic Calendar</h5>
+            <div class="card p-3 mt-2">
+                <ul class="list-unstyled">
+                    {% for e in events %}
+                    <li class="mb-2"><strong>{{ e.title }}</strong> — <small class="text-muted">{{ e.date }}</small>
+                    </li>
+                    {% empty %}
+                    <li class="text-muted">No events scheduled</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+
+        <!-- COMMUNICATION -->
+        <section id="section-communication" class="page-section d-none">
+            <h5>Communication</h5>
+            <div class="card p-3 mb-3">
+                <form method="post" action="{% url 'send_message' %}">
+                    {% csrf_token %}
+                    <div class="mb-2"><input name="to" class="form-control" placeholder="To (username or role)"
+                            required></div>
+                    <div class="mb-2"><input name="subject" class="form-control" placeholder="Subject" required></div>
+                    <div class="mb-2"><textarea name="body" class="form-control" rows="4" placeholder="Message body"
+                            required></textarea></div>
+                    <button class="btn btn-primary">Send</button>
                 </form>
             </div>
-            <ul id="teacherList"></ul>
-        </div>
 
-        <!-- Notices Section -->
-        <div id="notices" class="section card">
-            <h2>Notices</h2>
-            <button class="btn" onclick="showForm('noticeForm')">➕ Add Notice</button>
-            <button class="btn" onclick="loadNotices()">📄 View Notices</button>
-
-            <div id="noticeForm" style="display:none; margin-top:15px;">
-                <form id="addNoticeForm">
-                    <input type="text" name="title" placeholder="Notice Title" required>
-                    <textarea name="content" placeholder="Notice Content" required></textarea>
-                    <button type="submit" class="btn">Save</button>
-                </form>
+            <div class="card p-3 table-wrap">
+                <h6>Inbox</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>Subject</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in messages %}
+                        <tr>
+                            <td>{{ m.sender }}</td>
+                            <td>{{ m.subject }}</td>
+                            <td>{{ m.date }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-muted">No messages</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <ul id="noticeList"></ul>
-        </div>
+        </section>
 
-        <!-- Attendance Section -->
-        <div id="attendance" class="section card">
-            <h2>Attendance</h2>
-            <button class="btn" onclick="showForm('attendanceForm')">➕ Add Record</button>
-            <button class="btn" onclick="loadAttendance()">📄 View Records</button>
+    </div> <!-- end main -->
 
-            <div id="attendanceForm" style="display:none; margin-top:15px;">
-                <form id="addAttendanceForm">
-                    <input type="text" name="student" placeholder="Student Name" required>
-                    <input type="text" name="subject" placeholder="Subject" required>
-                    <input type="date" name="date" required>
-                    <select name="status" required>
-                        <option value="Present">Present</option>
-                        <option value="Absent">Absent</option>
-                    </select>
-                    <button type="submit" class="btn">Save</button>
-                </form>
-            </div>
-            <ul id="attendanceList"></ul>
-        </div>
-
-        <!-- Results Section -->
-        <div id="results" class="section card">
-            <h2>Results</h2>
-            <button class="btn" onclick="showForm('resultForm')">➕ Add Result</button>
-            <button class="btn" onclick="loadResults()" class="Icons" fa><i class="fas fa-file-results"></i> View Results</button>
-
-            <div id="resultForm" style="display:none; margin-top:15px;">
-                <form id="addResultForm">
-                    <input type="text" name="student" placeholder="Student Name" required>
-                    <input type="text" name="subject" placeholder="Subject" required>
-                    <input type="number" name="marks" placeholder="Marks" required>
-                    <input type="number" name="total_marks" placeholder="Total Marks" required>
-                    <button type="submit" class="btn">Save</button>
-                </form>
-            </div>
-            <ul id="resultList"></ul>
-        </div>
-
-        <!-- Reports Section -->
-        <div id="reports" class="section card">
-            <h2>Reports</h2>
-            <p>📑 View consolidated reports of Students, Attendance, and Results here.</p>
-            <button class="btn" onclick="loadReports()">📊 Generate Reports</button>
-            <div id="reportContent"></div>
-        </div>
-
-        <div id="logout" class="section card">
-            <h2>Logout</h2>
-            <form method="POST" action="{% url 'logout' %}">
+    <!-- MODALS: Add/Edit student & add/edit teacher -->
+    <div class="modal fade" id="modalAddStudent" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" method="post" action="{% url 'add_student_ajax' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn">Logout</button>
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Student</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input name="first_name" class="form-control mb-2" placeholder="First name" required>
+                    <input name="last_name" class="form-control mb-2" placeholder="Last name">
+                    <input name="roll_number" class="form-control mb-2" placeholder="Roll number" required>
+                    <input name="semester" class="form-control mb-2" placeholder="Semester">
+                    <input name="shift" class="form-control mb-2" placeholder="Shift">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary">Create</button>
+                </div>
             </form>
         </div>
+    </div>
+
+    <div class="modal fade" id="modalEditStudent" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" method="post" action="{% url 'edit_student' %}">
+                {% csrf_token %}
+                <input type="hidden" name="student_id" id="edit-student-id">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Student</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="edit-student-name" name="name" class="form-control mb-2" placeholder="Name" required>
+                    <input id="edit-student-roll" name="roll" class="form-control mb-2" placeholder="Roll">
+                    <input id="edit-student-semester" name="semester" class="form-control mb-2" placeholder="Semester">
+                    <input id="edit-student-shift" name="shift" class="form-control mb-2" placeholder="Shift">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAddTeacher" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" method="post" action="{% url 'add_teacher_ajax' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Teacher</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input name="first_name" class="form-control mb-2" placeholder="First name" required>
+                    <input name="last_name" class="form-control mb-2" placeholder="Last name">
+                    <input name="department" class="form-control mb-2" placeholder="Department" required>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        
-    function loadNotices(){
-        fetch("/get-notices/")
-        .then(res => res.json())
-        .then(data => {
-            let list = document.getElementById("noticeList");
-            list.innerHTML = "";
-            data.forEach(n => {
-                list.innerHTML += `<li><b>${n.title}</b> by ${n.by}<br>${n.content}</li>`;
+        // Sidebar navigation toggling
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                const target = link.getAttribute('data-target');
+                document.querySelectorAll('.page-section').forEach(s => {
+                    s.classList.add('d-none');
+                });
+                const el = document.getElementById(target);
+                if (el) { el.classList.remove('d-none'); }
+                // update page title
+                document.getElementById('page-title').innerText = link.innerText.trim();
             });
         });
-    }
 
-
-        // Sidebar section switch
-        function showSection(id){
-            document.querySelectorAll(".section").forEach(sec => sec.style.display = "none");
-            document.getElementById(id).style.display = "block";
-        }
-        function showForm(id){
-            document.getElementById(id).style.display = "block";
-        }
-
-        // ================= AJAX CALLS =================
-        // Example Students
-        document.getElementById("addStudentForm").addEventListener("submit", function(e){
-            e.preventDefault();
-            let formData = new FormData(this);
-            fetch("/add-student/", {method:"POST", headers:{"X-CSRFToken":"{{ csrf_token }}"}, body:formData})
-            .then(res=>res.json()).then(data=>{
-                alert(data.message);
-                this.reset();
-                loadStudents();
-            });
+        // fill edit student modal from button data attribute
+        var editStudentModal = document.getElementById('modalEditStudent');
+        editStudentModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            try {
+                var data = JSON.parse(button.getAttribute('data-student'));
+            } catch (e) {
+                return;
+            }
+            document.getElementById('edit-student-id').value = data.id || '';
+            document.getElementById('edit-student-name').value = data.name || '';
+            document.getElementById('edit-student-roll').value = data.roll || '';
+            document.getElementById('edit-student-semester').value = data.semester || '';
+            document.getElementById('edit-student-shift').value = data.shift || '';
         });
-        function loadStudents(){
-            fetch("/get-students/").then(res=>res.json()).then(data=>{
-                let list=document.getElementById("studentList"); list.innerHTML="";
-                data.forEach(st=>{ list.innerHTML += `<li>${st.first_name} ${st.last_name} - Roll: ${st.roll_number}</li>`; });
-            });
-        }
-
     </script>
+
 </body>
+
 </html>

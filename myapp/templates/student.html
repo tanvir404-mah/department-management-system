@@ -1,167 +1,283 @@
-<!-- myapp/templates/student.html -->
-
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Search Student</title>
+  <title>CST Student Search Directory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <style>
+    /* Theme Variables - White & #0f4c75 */
+    :root {
+      --primary-blue: #0f4c75;
+      /* Deep Blue */
+      --primary-blue-dark: #0a3d5e;
+      /* Darker Blue for hover */
+      --accent-light: #f0f8ff;
+      /* Very Light Blue for focus/hover */
+      --background-body: #f7f7f7;
+      /* Very light subtle gray background */
+      --background-white: #ffffff;
+      /* Form background */
+      --text-dark: #334155;
+      --border-gray: #e0e0e0;
+      --form-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+      /* Stronger shadow */
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #33add9ff;
-      padding: 40px;
-      color: #333;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background-body);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
     }
 
     .container {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      padding: 30px 40px;
+      width: 100%;
+      max-width: 700px;
+      background-color: var(--background-white);
       border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: var(--form-shadow);
+      padding: 0;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-gray);
     }
 
-    h2 {
+    /* Header Styling */
+    .page-header {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 35px 30px;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
       text-align: center;
-      color: #2c3e50;
-      margin-bottom: 30px;
+      box-shadow: 0 3px 8px rgba(0, 76, 117, 0.4);
+    }
+
+    .page-header h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* --- Search Form Area Styling --- */
+    .search-area {
+      padding: 40px;
+    }
+
+    .search-area h3 {
+      text-align: center;
+      color: var(--primary-blue);
+      margin-bottom: 35px;
+      font-weight: 700;
+      font-size: 1.3rem;
+      border-bottom: 3px solid var(--primary-blue);
+      padding-bottom: 15px;
+    }
+
+    .search-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px 30px;
+      justify-content: center;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
+    .search-form label {
       font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary-blue);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    select, input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: 0.3s;
+    .search-form label i {
+      color: var(--primary-blue);
+      font-size: 0.9rem;
     }
 
-    select:focus, input:focus {
+    .search-form input,
+    .search-form select {
+      padding: 14px 12px;
+      border: 1px solid var(--border-gray);
+      border-radius: 10px;
+      font-size: 1rem;
+      color: var(--text-dark);
+      background-color: var(--background-white);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-form input:focus,
+    .search-form select:focus {
+      border-color: var(--primary-blue);
       outline: none;
-      border-color: #2980b9;
-      box-shadow: 0 0 5px rgba(41, 128, 185, 0.4);
+      box-shadow: 0 0 0 4px rgba(15, 76, 117, 0.18);
+      background-color: var(--accent-light);
     }
 
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #2980b9;
-    }
-
-    .student-details {
+    /* --- Button Wrapper & Button Styles --- */
+    .search-button-wrapper {
+      grid-column: 1 / -1;
       margin-top: 40px;
-      text-align: center;
-      background: #fefefe;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+      /* Ideal Placement: Center-aligned flexible container */
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      /* Important for responsiveness */
     }
 
-    .student-details img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 15px;
-      border: 3px solid #3498db;
+    .search-button,
+    .go-back-button {
+      border: none;
+      padding: 15px 35px;
+      /* Consistent padding */
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 1rem;
+      text-decoration: none;
+      /* For the Go Back link */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
     }
 
-    .student-details h3 {
-      margin: 10px 0 5px;
-      color: #2c3e50;
+    /* Primary Action: Search Button (Deep Blue) */
+    .search-button {
+      background-color: var(--primary-blue);
+      color: white;
     }
 
-    .student-details p {
-      margin: 3px 0;
-      font-size: 15px;
-      color: #555;
+    .search-button:hover {
+      background-color: var(--primary-blue-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(15, 76, 117, 0.5);
     }
 
-    .no-result {
-      margin-top: 30px;
-      text-align: center;
-      color: red;
-      font-weight: bold;
+    /* Secondary Action: Go Back Button (The new addition: White/Blue Outline) */
+    .go-back-button {
+      background-color: var(--background-white);
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+    }
+
+    .go-back-button:hover {
+      background-color: var(--accent-light);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+      .search-form {
+        grid-template-columns: 1fr;
+      }
+
+      .search-area {
+        padding: 30px 20px;
+      }
+
+      .search-button-wrapper {
+        flex-direction: column;
+        /* Stack buttons vertically on small screens */
+        gap: 15px;
+      }
+
+      .search-button,
+      .go-back-button {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<div class="container">
-  <h2>🔍 Search Student</h2>
-
-  <!-- পুরাতন ফর্ম -->
-  <form method="GET" action="{% url 'search_student' %}">
-    <div class="form-group">
-      <label for="semester">Semester:</label>
-      <select name="semester" id="semester">
-        <option value="">-- Select Semester --</option>
-        <option value="1st" {% if request.GET.semester == "1st" %}selected{% endif %}>1st</option>
-        <option value="2nd" {% if request.GET.semester == "2nd" %}selected{% endif %}>2nd</option>
-        <option value="3rd" {% if request.GET.semester == "3rd" %}selected{% endif %}>3rd</option>
-        <option value="4th" {% if request.GET.semester == "4th" %}selected{% endif %}>4th</option>
-        <option value="5th" {% if request.GET.semester == "5th" %}selected{% endif %}>5th</option>
-        <option value="6th" {% if request.GET.semester == "6th" %}selected{% endif %}>6th</option>
-        <option value="7th" {% if request.GET.semester == "7th" %}selected{% endif %}>7th</option>
-        <option value="8th" {% if request.GET.semester == "8th" %}selected{% endif %}>8th</option>
-      </select>
+  <div class="container">
+    <div class="page-header">
+      <h2>STUDENT RECORD LOOKUP</h2>
     </div>
 
-    <div class="form-group">
-      <label for="shift">Shift:</label>
-      <select name="shift" id="shift">
-        <option value="">-- Select Shift --</option>
-        <option value="Morning" {% if request.GET.shift == "Morning" %}selected{% endif %}>Morning</option>
-        <option value="Day" {% if request.GET.shift == "Day" %}selected{% endif %}>Day</option>
-      </select>
+    <div class="search-area">
+      <h3>Enter Student Details to Search</h3>
+
+      <form action="{% url 'search_student' %}" method="GET" class="search-form">
+
+        <div class="form-group">
+          <label for="roll"><i class="fas fa-id-card"></i> Roll Number</label>
+          <input type="text" id="roll" name="roll" placeholder="E.g., 749001" required>
+        </div>
+
+        <div class="form-group">
+          <label for="session"><i class="fas fa-calendar-alt"></i> Session</label>
+          <input type="text" id="session" name="session" placeholder="E.g., 2020-2021" >
+        </div>
+
+        <div class="form-group">
+          <label for="semester"><i class="fas fa-book"></i> Semester</label>
+          <select id="semester" name="semester" required>
+            <option value="" disabled selected>Select Semester</option>
+            <option value="1">1st</option>
+            <option value="2">2nd</option>
+            <option value="3">3rd</option>
+            <option value="4">4th</option>
+            <option value="5">5th</option>
+            <option value="6">6th</option>
+            <option value="7">7th</option>
+            <option value="8">8th</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="shift"><i class="fas fa-clock"></i> Shift</label>
+          <select id="shift" name="shift" required>
+            <option value="" disabled selected>Select Shift</option>
+            <option value="Morning">1st Shift</option>
+            <option value="Day">2nd Shift</option>
+          </select>
+        </div>
+
+        <div class="search-button-wrapper">
+          <button type="submit" class="search-button">
+            <i class="fas fa-search"></i> SEARCH
+          </button>
+
+          <a href="javascript:history.back()" class="go-back-button">
+            <i class="fas fa-arrow-left"></i> GO BACK
+          </a>
+        </div>
+      </form>
     </div>
 
-    <div class="form-group">
-      <label for="roll">Roll Number:</label>
-      <input type="text" name="roll" id="roll" placeholder="Enter roll number" value="{{ request.GET.roll }}" />
-    </div>
-
-    <button type="submit">Search</button>
-  </form>
-
-  <!-- পুরাতন সার্চের রেজাল্ট (semester, shift, roll) -->
-  {% if searched %}
-    {% if student %}
-      <div class="student-details">
-        <h3>{{ student.name }}</h3>
-        <p><strong>Roll:</strong> {{ student.roll_number }}</p>
-        <p><strong>Semester:</strong> {{ student.semester }}</p>
-        <p><strong>Shift:</strong> {{ student.shift }}</p>
-        <p><strong>Subject:</strong> {{ student.subject }}</p>
-      </div>
-    {% else %}
-      <div class="no-result">No student found.</div>
-    {% endif %}
-  {% endif %}
-</div>
+  </div>
 
 </body>
+
 </html>

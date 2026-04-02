@@ -1,12 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identity Center | CST Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #05070a;
+            /* Ultra Dark background */
+            background-image: radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.1) 0, transparent 50%);
+            color: #e2e8f0;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 1px #0ea5e9;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px #0ea5e9;
+        }
+    </style>
 </head>
-<body>
-    <h1>Your Profile</h1>
-    <p>This is the profile page where you can view and edit your profile information.</p>
+
+<body class="min-h-screen py-10 px-4 md:px-0">
+
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-10 px-2">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Identity Center</h1>
+                <p class="text-sm text-slate-500 font-medium">Personal profile management</p>
+            </div>
+            <a href="{% if user.role == 'student' %}{% url 'student_dashboard' %}{% elif user.role == 'teacher' or user.role == 'lab_assistant' %}{% url 'teacher_dashboard' %}{% else %}{% url 'hod_dashboard' %}{% endif %}"
+                class="text-xs font-semibold bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-full border border-white/10 transition-all">
+                <i class="fas fa-arrow-left mr-2"></i> Dashboard
+            </a>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-8">
+            {% csrf_token %}
+
+            <div class="glass-panel rounded-[2rem] p-8 flex flex-col md:flex-row items-center gap-8">
+                <div class="relative group">
+                    <div class="w-32 h-32 rounded-3xl overflow-hidden border-2 border-white/10 relative shadow-2xl">
+                        {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-slate-800 text-slate-500">
+                            <i class="fas fa-user text-4xl"></i>
+                        </div>
+                        {% endif %}
+                        <label
+                            class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 backdrop-blur-sm">
+                            <i class="fas fa-camera text-white mb-1"></i>
+                            <span class="text-[10px] font-bold text-white uppercase tracking-tighter">Edit</span>
+                            <input type="file" name="profile_picture" class="hidden">
+                        </label>
+                    </div>
+                </div>
+                <div class="text-center md:text-left flex-1">
+                    <div class="flex flex-wrap justify-center md:justify-start gap-2 mb-2">
+                        <span
+                            class="text-[10px] font-bold px-3 py-1 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full uppercase tracking-widest">
+                            {{ user.get_role_display }}
+                        </span>
+                        <span
+                            class="text-[10px] font-bold px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full uppercase tracking-widest">
+                            Verified
+                        </span>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white mb-1">{{ user.get_full_name|default:user.username }}</h2>
+                    <p class="text-slate-400 text-sm font-medium">ID: #{{ student.student_id|default:user.username }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-panel rounded-[2rem] p-8 space-y-6">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-2">Contact Details</h3>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 ml-1">Email Address</label>
+                        <input type="email" name="email" value="{{ user.email }}"
+                            class="w-full px-5 py-3.5 rounded-2xl input-field text-sm">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 ml-1">Phone Number</label>
+                        <input name="phone" value="{{ user.phone }}"
+                            class="w-full px-5 py-3.5 rounded-2xl input-field text-sm">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 ml-1">Full Address</label>
+                        <input name="address" value="{{ user.address }}"
+                            class="w-full px-5 py-3.5 rounded-2xl input-field text-sm">
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-[2rem] p-8 space-y-6">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-2">
+                        {% if student %}Academic Info{% else %}Professional Info{% endif %}
+                    </h3>
+
+                    {% if student %}
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 ml-1">Department</label>
+                        <input value="{{ student.department.name }}" disabled
+                            class="w-full px-5 py-3.5 rounded-2xl input-field text-sm opacity-50">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-slate-400 ml-1">Roll</label>
+                            <input value="{{ student.roll_number }}" disabled
+                                class="w-full px-5 py-3.5 rounded-2xl input-field text-sm opacity-50">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-slate-400 ml-1">Semester</label>
+                            <input value="{{ student.semester }}th" disabled
+                                class="w-full px-5 py-3.5 rounded-2xl input-field text-sm opacity-50">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 ml-1">Guardian Name</label>
+                        <input name="guardian_name" value="{{ student.guardian_name }}"
+                            class="w-full px-5 py-3.5 rounded-2xl input-field text-sm">
+                    </div>
+                    {% else %}
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 ml-1">Designation</label>
+                        <input name="designation" value="{{ teacher.designation }}"
+                            class="w-full px-5 py-3.5 rounded-2xl input-field text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 ml-1">Bio / Specialty</label>
+                        <textarea name="bio"
+                            class="w-full px-5 py-3.5 rounded-2xl input-field text-sm min-h-[95px]">{{ teacher.bio }}</textarea>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 px-4">
+                <p class="text-[11px] text-slate-500 font-medium italic">Member since: {{ user.date_joined|date:"F Y" }}
+                </p>
+                <button type="submit"
+                    class="w-full md:w-auto px-12 py-4 rounded-2xl btn-primary text-white font-bold text-sm tracking-wide active:scale-95 transition-all">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+
+        <footer class="mt-20 text-center text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em]">
+            &copy; 2026 CST Identity Portal • Faridpur Polytechnic
+        </footer>
+    </div>
+
 </body>
+
 </html>

@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Board | FPI</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        secondary: '#f43f5e',
+                        accent: '#10b981',
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .notice-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .notice-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .details-panel {
+            display: none;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        .lang-active {
+            background: #4f46e5 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f8fafc] font-sans text-slate-800 antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-primary/10 p-2.5 rounded-xl border border-primary/20">
+                    <i class="fas fa-bullhorn text-primary text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Department Notice Board</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Faridpur Polytechnic Institute</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <button onclick="switchLang('en')" id="btn-en"
+                        class="px-3 py-1.5 text-[10px] font-black rounded-lg transition-all lang-active">EN</button>
+                    <button onclick="switchLang('bn')" id="btn-bn"
+                        class="px-3 py-1.5 text-[10px] font-black rounded-lg transition-all text-slate-400">বাংলা</button>
+                </div>
+                <div class="relative flex-1 md:w-64">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="noticeSearch" placeholder="Search notices..."
+                        class="w-full pl-11 pr-4 py-2 bg-slate-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 outline-none transition-all">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-6 py-12">
+
+        <div id="noticeList" class="space-y-6">
+            {% for n in notices %}
+            <div class="notice-card bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase
+                            {% if n.category == 'ACADEMIC' %}bg-indigo-100 text-primary
+                            {% elif n.category == 'EXAMINATION' %}bg-rose-100 text-secondary
+                            {% elif n.category == 'REGISTRATION' %}bg-emerald-100 text-accent
+                            {% elif n.category == 'MAINTENANCE' %}bg-amber-100 text-amber-600
+                            {% else %}bg-slate-100 text-slate-500{% endif %}">
+                            {{ n.get_category_display }}
+                        </span>
+                        <span class="text-xs font-bold text-slate-400"><i class="far fa-calendar-alt mr-1"></i> {{ n.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 leading-snug search-target">
+                        {{ n.title }}
+                    </h3>
+
+                    <div class="flex items-center gap-3">
+                        <button class="btn-toggle flex items-center gap-2 text-xs font-bold text-primary bg-primary/5 px-5 py-3 rounded-xl hover:bg-primary hover:text-white transition-all">
+                            <i class="fas fa-chevron-down arrow-icon transition-transform"></i>
+                            <span>View Details</span>
+                        </button>
+                        {% if n.file_attachment %}
+                        <a href="{{ n.file_attachment.url }}" download class="inline-flex items-center gap-2 text-xs font-bold text-white bg-slate-900 px-6 py-3 rounded-xl hover:bg-black transition-all shadow-lg shadow-slate-200">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Download PDF</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="details-panel bg-slate-50 border-t border-slate-100 p-8">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-inner">
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            {{ n.content|linebreaksbr }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200">
+                <p class="text-sm font-bold text-slate-300 uppercase tracking-widest">No active notices found</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer class="mt-20 text-center">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">&copy; 2025 FPI CST • Faridpur Polytechnic</p>
+        </footer>
+    </div>
+
+    <script>
+        function switchLang(lang) {
+            if (lang === 'bn') {
+                $('#btn-bn').addClass('lang-active').removeClass('text-slate-400');
+                $('#btn-en').removeClass('lang-active').addClass('text-slate-400');
+            } else {
+                $('#btn-en').addClass('lang-active').removeClass('text-slate-400');
+                $('#btn-bn').removeClass('lang-active').addClass('text-slate-400');
+            }
+        }
+
+        $(document).ready(function () {
+            $('.btn-toggle').click(function () {
+                const card = $(this).closest('.notice-card');
+                const panel = card.find('.details-panel');
+                const icon = $(this).find('.arrow-icon');
+                panel.slideToggle(400);
+                icon.toggleClass('rotate-180');
+            });
+
+            $('#noticeSearch').on('keyup', function () {
+                const value = $(this).val().toLowerCase();
+                $("#noticeList .notice-card").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

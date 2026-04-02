@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Control | Portal Admin</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        admin: {
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            dark: '#020617',
+                            slate: '#0f172a',
+                            border: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .bg-admin-gradient {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+        }
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-admin-gradient min-h-screen text-slate-200 font-sans flex antialiased">
+
+    <!-- Sidebar Control -->
+    <aside class="w-80 border-r border-admin-border flex flex-col h-screen sticky top-0 hidden lg:flex bg-admin-slate/50">
+        <div class="p-10">
+            <div class="flex items-center space-x-4 mb-2">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i class="fas fa-terminal text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-white">Staff <span class="text-blue-500">Center</span></h1>
+            </div>
+            <p class="text-[10px] uppercase font-bold tracking-widest text-slate-500">System Administrator</p>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <a href="#" class="nav-link active flex items-center space-x-4 px-6 py-4 rounded-2xl transition-all">
+                <i class="fas fa-chart-line text-sm"></i>
+                <span class="text-sm font-bold tracking-tight">Main Console</span>
+            </a>
+            <a href="{% url 'hod_dashboard' %}" class="flex items-center space-x-4 px-6 py-4 rounded-2xl transition-all text-slate-500 hover:text-white hover:bg-slate-800/50">
+                <i class="fas fa-sitemap text-sm"></i>
+                <span class="text-sm font-bold tracking-tight">Department View</span>
+            </a>
+            <a href="/admin/" target="_blank" class="flex items-center space-x-4 px-6 py-4 rounded-2xl transition-all text-slate-500 hover:text-white hover:bg-slate-800/50">
+                <i class="fas fa-database text-sm"></i>
+                <span class="text-sm font-bold tracking-tight">Backend DB Access</span>
+            </a>
+        </nav>
+
+        <div class="p-8 mt-auto">
+            <div class="p-6 rounded-3xl glass border-slate-800/50 space-y-4">
+                <div class="flex items-center space-x-3 text-emerald-400">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Portal Online</span>
+                </div>
+                <a href="{% url 'logout' %}" class="block w-full py-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-2xl text-center text-xs font-bold uppercase tracking-widest transition-all">Logout</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="flex-1 p-12 overflow-y-auto">
+        <header class="flex items-center justify-between mb-16">
+            <div>
+                <h2 class="text-3xl font-extrabold text-white tracking-tight mb-2">Portal Intelligence</h2>
+                <p class="text-sm font-medium text-slate-500">Welcome, Administrator. Total system health at 98%.</p>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <div class="text-right">
+                    <p class="text-[13px] font-bold text-white">{{ user.username }}</p>
+                    <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest">Root Access</p>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-600 p-[2px] shadow-xl shadow-blue-500/20">
+                    <div class="w-full h-full bg-admin-dark rounded-2xl flex items-center justify-center text-white overflow-hidden">
+                        {% if user.profile_picture %}<img src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
+                        {% else %}<i class="fas fa-user-shield text-xl"></i>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="mb-10 p-5 rounded-3xl glass border-blue-500/20 flex items-center text-blue-400 animate-bounce">
+                <i class="fas fa-check-circle mr-4 text-xl"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">{{ message }}</span>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            <div class="glass p-8 rounded-[2rem] hover:border-blue-500/50 transition-all group">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">Total Faculty</p>
+                <h4 class="text-4xl font-extrabold text-white tracking-tighter mb-2 group-hover:text-blue-500 transition-colors">12</h4>
+                <div class="flex items-center text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+                    <i class="fas fa-caret-up mr-2"></i> Stable State
+                </div>
+            </div>
+            <div class="glass p-8 rounded-[2rem] hover:border-purple-500/50 transition-all group">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">Enrolled Students</p>
+                <h4 class="text-4xl font-extrabold text-white tracking-tighter mb-2 group-hover:text-purple-500 transition-colors">450</h4>
+                <div class="flex items-center text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+                    <i class="fas fa-caret-up mr-2"></i> All Verified
+                </div>
+            </div>
+            <div class="glass p-8 rounded-[2rem] hover:border-cyan-500/50 transition-all group">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">Active Lab Items</p>
+                <h4 class="text-4xl font-extrabold text-white tracking-tighter mb-2 group-hover:text-cyan-500 transition-colors">124</h4>
+                <div class="flex items-center text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                    <i class="fas fa-wrench mr-2"></i> 4 In Repair
+                </div>
+            </div>
+            <div class="glass p-8 rounded-[2rem] hover:border-rose-500/50 transition-all group">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">System Load</p>
+                <h4 class="text-4xl font-extrabold text-white tracking-tighter mb-2 group-hover:text-rose-500 transition-colors">14%</h4>
+                <div class="flex items-center text-[10px] font-bold text-blue-400 uppercase tracking-widest">
+                    <i class="fas fa-server mr-2"></i> Optimal
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div class="lg:col-span-2 space-y-8">
+                <h3 class="text-xl font-bold tracking-tight text-white px-2">Operational Overview</h3>
+                <div class="glass rounded-[3rem] p-10 border border-slate-800/50 min-h-[400px] flex flex-col items-center justify-center text-center">
+                    <div class="w-20 h-20 bg-slate-800 rounded-[2rem] flex items-center justify-center text-slate-500 mb-8 border border-slate-700/50">
+                        <i class="fas fa-layer-group text-2xl"></i>
+                    </div>
+                    <h5 class="text-lg font-bold text-white mb-2">Portal Activity Monitor</h5>
+                    <p class="text-sm text-slate-500 leading-relaxed max-w-sm italic">Detailed system logs and activity tracking are being aggregated. No critical events detected in the last 24 hours.</p>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <h3 class="text-xl font-bold tracking-tight text-white px-2">Management Toolkit</h3>
+                <div class="space-y-4">
+                    <a href="{% url 'hod_student_mgmt' %}" class="flex items-center justify-between p-6 glass rounded-3xl hover:bg-blue-600/10 transition-all border border-slate-800 group">
+                        <span class="text-sm font-bold text-slate-400 group-hover:text-white transition-colors">User Access Audit</span>
+                        <i class="fas fa-chevron-right text-xs text-slate-700 group-hover:text-blue-500 transition-all"></i>
+                    </a>
+                    <a href="{% url 'hod_faculty_mgmt' %}" class="flex items-center justify-between p-6 glass rounded-3xl hover:bg-purple-600/10 transition-all border border-slate-800 group">
+                        <span class="text-sm font-bold text-slate-400 group-hover:text-white transition-colors">Faculty Credentials</span>
+                        <i class="fas fa-chevron-right text-xs text-slate-700 group-hover:text-purple-500 transition-all"></i>
+                    </a>
+                    <a href="/admin/" class="flex items-center justify-between p-6 bg-slate-800/50 rounded-3xl hover:bg-slate-700 transition-all border border-blue-500/20 group">
+                        <span class="text-sm font-bold text-blue-400">Legacy Core Admin</span>
+                        <i class="fas fa-external-link-alt text-xs text-blue-500 ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

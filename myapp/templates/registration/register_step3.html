@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 3: Secure Account | CST Department</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-md w-full">
+        <!-- Logo & Header -->
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-700 rounded-3xl shadow-2xl shadow-blue-300 mb-6 transform hover:-rotate-3 transition-transform duration-300">
+                <i class="fas fa-lock text-3xl text-white"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Final Step</h1>
+            <p class="text-slate-500 mt-2 font-medium">Create a strong password for your account</p>
+            
+            <!-- Step Progress Indicator -->
+            <div class="flex justify-center items-center mt-8 space-x-3">
+                <div class="flex flex-col items-center">
+                    <div class="w-10 h-2 bg-emerald-500 rounded-full"></div>
+                    <span class="text-[10px] uppercase font-bold text-emerald-600 mt-1">Identity</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-10 h-2 bg-emerald-500 rounded-full"></div>
+                    <span class="text-[10px] uppercase font-bold text-emerald-600 mt-1">Verify</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-10 h-2 bg-blue-600 rounded-full"></div>
+                    <span class="text-[10px] uppercase font-bold text-blue-600 mt-1">Secure</span>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-6 p-4 rounded-2xl {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-rose-50 text-rose-700 border-rose-100{% endif %} border shadow-sm flex items-center">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-3"></i>
+                    <span class="text-sm font-semibold">{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="glass-card rounded-[2.5rem] shadow-2xl shadow-blue-900/10 p-10 border border-white">
+            <form method="POST" action="{% url 'student_registration_step3' %}" class="space-y-8">
+                {% csrf_token %}
+                
+                <div class="space-y-6">
+                    <!-- Password Field -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">New Password</label>
+                        <div class="relative group">
+                            {{ form.password }}
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">Confirm Password</label>
+                        <div class="relative group">
+                            {{ form.confirm_password }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 flex items-start space-x-3">
+                    <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                    <p class="text-[11px] text-blue-800 leading-relaxed font-semibold">
+                        Your password should be at least 8 characters long and include numbers or symbols for extra security.
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-5 rounded-2xl shadow-xl shadow-blue-500/30 transform hover:-translate-y-1 active:scale-[0.98] transition-all duration-300">
+                    Finish & Create Account
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center mt-10 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold">
+            Account Management System v2.0
+        </p>
+    </div>
+</body>
+</html>

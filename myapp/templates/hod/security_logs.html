@@ -1,0 +1,75 @@
+{% extends 'base_hod.html' %}
+
+{% block title %}Security Matrix | CST Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-12 animate-fade-in pb-20">
+    <!-- Header -->
+    <div>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">System <span class="text-rose-600">Audit</span> Matrix</h2>
+        <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Security & Operational Trace Logs</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <!-- Audit Logs (Admin Actions) -->
+        <div class="space-y-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-widest">Operational Audit Trace</h3>
+            </div>
+
+            <div class="bg-white border border-slate-100 rounded-[3rem] shadow-xl overflow-hidden">
+                <div class="p-6 bg-slate-50/50 border-b border-slate-50 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Administrative Mutations</div>
+                <div class="divide-y divide-slate-50 max-h-[600px] overflow-y-auto scroll-hide">
+                    {% for log in audit_logs %}
+                    <div class="p-8 hover:bg-slate-50/50 transition-all group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-indigo-600">{{ log.user.username }}</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ log.timestamp|timesince }} ago</span>
+                        </div>
+                        <p class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">{{ log.action }}</p>
+                        <p class="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Source IP: {{ log.ip_address|default:"System" }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="py-20 text-center opacity-30 italic text-xs font-bold uppercase tracking-widest">No mutation logs found</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Access Logs (Failed Logins) -->
+        <div class="space-y-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-widest">Unauthorized Access Alerts</h3>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-[3rem] shadow-2xl overflow-hidden">
+                <div class="p-6 bg-white/5 border-b border-white/5 text-[10px] font-extrabold text-rose-400 uppercase tracking-widest">Security Incident Feed</div>
+                <div class="divide-y divide-white/5 max-h-[600px] overflow-y-auto scroll-hide">
+                    {% for log in access_failed %}
+                    <div class="p-8 hover:bg-white/5 transition-all group border-l-4 border-l-rose-600">
+                        <div class="flex items-center justify-between mb-3 text-white">
+                            <span class="text-xs font-bold text-rose-400">Failed Attempt</span>
+                            <span class="text-[9px] font-bold text-white/30 uppercase tracking-widest">{{ log.timestamp|timesince }} ago</span>
+                        </div>
+                        <p class="text-[11px] font-bold text-white/80"><span class="text-white/40 uppercase">User:</span> {{ log.username_attempted }}</p>
+                        <p class="text-[11px] font-bold text-white/80"><span class="text-white/40 uppercase">IP:</span> {{ log.ip_address }}</p>
+                        <div class="mt-4 pt-4 border-t border-white/5">
+                            <p class="text-[9px] font-bold text-white/20 italic truncate">{{ log.user_agent }}</p>
+                        </div>
+                        <button class="mt-6 w-full py-3 bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white text-[9px] font-extrabold uppercase tracking-widest rounded-xl transition-all border border-rose-600/30">Block Protocol IP</button>
+                    </div>
+                    {% empty %}
+                    <div class="py-20 text-center opacity-10 italic text-xs font-bold uppercase tracking-widest text-white">System Secure: No failed attempts</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

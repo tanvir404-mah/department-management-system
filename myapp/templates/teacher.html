@@ -1,257 +1,707 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teachers Info</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Panel | CST Dept. - Faridpur Polytechnic Institute</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
-  <!-- Font Awesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <style>
-    :root {
-      --primary: #0a5c91;
-      --secondary: #2e8bc0;
-      --light-bg: #f9f9f9;
-      --light-text: #333;
-    }
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background: var(--light-bg);
-      color: var(--light-text);
-    }
+    <style>
+        :root {
+            --primary: #0f4c75;
+            --secondary: #3282b8;
+            --accent: #e55934;
+            --light-bg: #f5f7fa;
+            --light-text: #2c3e50;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
 
-    header {
-      text-align: center;
-      padding: 60px 20px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      border-radius: 0 0 25px 25px;
-    }
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
 
-    header h1 {
-      font-size: 2.8rem;
-      margin-bottom: 10px;
-    }
+        .hover\:text-primary:hover {
+            color: var(--primary) !important;
+        }
 
-    header p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-    }
+        .text-primary {
+            color: var(--primary) !important;
+        }
 
-    .container {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 20px;
-    }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: var(--light-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-    /* Head Teacher */
-    .head-teacher {
-      text-align: center;
-      margin-bottom: 60px;
-    }
+        .group:hover .group-hover\:block {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
 
-    .head-teacher img {
-      width: 220px;
-      height: 265px;
-      border-radius: 20px;
-      object-fit: cover;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-      transition: transform 0.3s;
-    }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
 
-    .head-teacher img:hover {
-      transform: scale(1.05);
-    }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .head-teacher h2 {
-      margin: 20px 0 8px;
-      font-size: 1.9rem;
-      color: var(--primary);
-    }
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
 
-    .head-teacher p {
-      font-weight: 500;
-      color: #d32f2f;
-    }
+        .marquee-content {
+            display: inline-block;
+            animation: scroll-left 20s linear infinite;
+        }
 
-    /* Teacher Grid */
-    .teacher-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 30px;
-    }
+        .marquee-container:hover .marquee-content {
+            animation-play-state: paused;
+        }
 
-    .teacher-card {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
 
-    .teacher-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
 
-    .teacher-card img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+        .hero-header {
+            text-align: center;
+            padding: 50px 10px 30px;
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 0 0 25px 25px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 0;
+        }
 
-    .teacher-card h3 {
-      margin: 10px 0 6px;
-      font-size: 1.2rem;
-      color: var(--primary);
-    }
+        .hero-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
 
-    .teacher-card p {
-      font-size: 14px;
-      margin: 4px 0;
-    }
+        .hero-header p {
+            font-size: 1.5rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
 
-    .teacher-card .icons {
-      margin-top: 10px;
-    }
+        .container-teacher {
+            max-width: 1200px;
+            margin: 40px auto 60px;
+            padding: 0 20px;
+        }
 
-    .teacher-card .icons a {
-      margin: 0 8px;
-      color: var(--primary);
-      text-decoration: none;
-      font-size: 18px;
-      transition: color 0.3s;
-    }
+        .head-teacher {
+            text-align: center;
+            margin-bottom: 70px;
+            padding: 40px 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.4s ease;
+        }
 
-    .teacher-card .icons a:hover {
-      color: #d32f2f;
-    }
+        .head-teacher:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Back Button */
-    button.back-btn {
-      display: block;
-      margin: 50px auto 0;
-      padding: 12px 26px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+        .head-teacher .image-wrapper {
+            display: inline-block;
+            padding: 10px;
+            border: 2px solid var(--secondary);
+            border-radius: 20px;
+            box-shadow: 0 0 0 5px rgba(50, 130, 184, 0.2);
+            margin-bottom: 25px;
+        }
 
-    button.back-btn:hover {
-      background: #07406b;
-    }
+        .head-teacher img {
+            width: 250px;
+            height: 300px;
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.4s ease;
+        }
 
-    footer {
-      margin-top: 60px;
-      background: var(--primary);
-      color: white;
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      border-radius: 20px 20px 0 0;
-    }
-  </style>
+        .head-teacher img:hover {
+            transform: scale(1.01);
+        }
+
+        .head-teacher h2 {
+            margin: 0 0 5px;
+            font-size: 2.2rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .head-teacher p {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .teacher-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 35px;
+        }
+
+        .teacher-card-container {
+            perspective: 1200px;
+            height: 380px;
+        }
+
+        .teacher-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 1.0s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transform-style: preserve-3d;
+            box-shadow: var(--card-shadow);
+            border-radius: 18px;
+        }
+
+        .teacher-card-container:hover .teacher-card {
+            transform: rotateY(180deg);
+        }
+
+        .teacher-card-container.hover .teacher-card {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: white;
+            padding: 30px 20px;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            transform: rotateY(180deg);
+            padding: 40px 20px;
+        }
+
+        .teacher-card img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            border: 4px solid var(--secondary);
+        }
+
+        .card-front h3 {
+            margin: 10px 0 5px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .card-front .designation {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .card-front p {
+            font-size: 14px;
+            margin: 1px 0;
+            color: #555;
+        }
+
+        .card-back h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .card-back .info-line {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: left;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .card-back .info-line i {
+            margin-right: 12px;
+            font-size: 20px;
+            color: var(--accent);
+        }
+
+        .card-back .icons {
+            margin-top: 30px;
+        }
+
+        .card-back .icons a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .card-back .icons a:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .page-footer {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            font-size: 15px;
+            border-radius: 20px 20px 0 0;
+            font-weight: 400;
+            margin-top: 40px;
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <h1>Our Teachers Panel</h1>
-    <p>Department of Computer Science & Technology</p>
-  </header>
 
-  <div class="container">
-    <!-- Head Teacher -->
-    <div class="head-teacher">
-      <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//677/e03/c5b/677e03c5b1c4b058580591.jpeg" alt="Head Teacher">
-      <h2>Engr. Md. Akkas Ali Sheikh</h2>
-      <p>Principal of the Institute</p>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <div class="bg-slate-800 text-white py-2 text-sm hidden md:block" aria-label="Contact Information and Social Media">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <p><i class="fas fa-map-marker-alt mr-2"></i> Baitul Aman, Faridpur, Bangladesh</p>
+            <div class="space-x-4">
+                <a href="#" class="hover:text-cyan-400 transition" aria-label="Facebook"><i
+                        class="fab fa-facebook-f"></i></a>
+                <a href="#" class="hover:text-cyan-400 transition" aria-label="Twitter"><i
+                        class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-cyan-400 transition" aria-label="LinkedIn"><i
+                        class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
     </div>
 
-    <!-- Teachers -->
-    <div class="teacher-grid">
-      <div class="teacher-card">
-        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//68c/148/0d1/68c1480d1212c818828790.jpeg" alt="Teacher 1">
-        <h3>Engr. Reshedul Islam</h3>
-        <p>Chief Instructor, Computer Science</p>
-        <p>Email: reshedul@cst.com</p>
-        <p>Phone: 123-456-7890</p>
-      </div>
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-lg transition-all duration-300"
+        role="navigation" aria-label="Main Navigation">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary text-white p-2 rounded-lg">
+                        <i class="fas fa-laptop-code text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800 leading-none">CST Dept.</h1>
+                        <p class="text-xs text-gray-500 font-medium tracking-wide">Faridpur Polytechnic Institute</p>
+                    </div>
+                </div>
 
-      <div class="teacher-card">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_gw4q3ccqCBkxFNU1uvXOXb6TkCIIHRwe-A&s" alt="Teacher 2">
-        <h3>Engr. Anisur Rahman Sarker</h3>
-        <p>Instructor, Computer Science</p>
-        <p>Email: anisur@cst.com</p>
-        <p>Phone: 987-654-3210</p>
-      </div>
+                <nav class="hidden lg:flex items-center gap-6 font-medium text-sm">
+                    <a href="#" class="hover:text-primary transition py-2">Home</a>
+                    <a href="#" class="hover:text-primary transition py-2 text-primary" aria-current="page">Teachers</a>
+                    <a href="#" class="hover:text-primary transition py-2">Students</a>
+                    <a href="#" class="hover:text-primary transition py-2">Notice</a>
 
-      <div class="teacher-card">
-        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//66a/9d8/9aa/66a9d89aaa2f1403029871.jpg" alt="Teacher 3">
-        <h3>Aftabur Rahaman</h3>
-        <p>Instructor, Computer Science</p>
-        <p>Email: aftabur@cst.com</p>
-        <p>Phone: 555-123-4567</p>
-      </div>
+                    <div class="relative group py-2">
+                        <button class="flex items-center gap-1 hover:text-primary transition" aria-expanded="false"
+                            aria-controls="register-menu">
+                            Register <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div id="register-menu"
+                            class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 hidden group-hover:block z-50"
+                            role="menu">
+                            <a href="#"
+                                class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-t-lg"
+                                role="menuitem">Student Registration</a>
+                            <a href="#"
+                                class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-b-lg"
+                                role="menuitem">Teacher Registration</a>
+                        </div>
+                    </div>
 
-      <div class="teacher-card">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8PwddTWJl41DGqPcxnoLzC87an1V0ZBmicQ&s" alt="Teacher 4">
-        <h3>Sahanur Islam</h3>
-        <p>Junior Instructor, Computer Science</p>
-        <p>Email: sahanur@cst.com</p>
-        <p>Phone: 555-987-6543</p>
-      </div>
+                    <div class="relative group py-2">
+                        <button
+                            class="flex items-center gap-1 bg-primary text-white px-5 py-2 rounded-full shadow-lg hover:opacity-90 transition transform hover:-translate-y-0.5"
+                            aria-expanded="false" aria-controls="login-menu">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <div id="login-menu"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 hidden group-hover:block z-50"
+                            role="menu">
+                            <a href="#"
+                                class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-t-lg"
+                                role="menuitem">Student Login</a>
+                            <a href="#" class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition"
+                                role="menuitem">Teacher
+                                Login</a>
+                            <a href="#"
+                                class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-b-lg"
+                                role="menuitem">Principal Login</a>
+                        </div>
+                    </div>
+                </nav>
 
-      <div class="teacher-card">
-        <img src="data:image/jpeg;base64,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" alt="Teacher 5">
-        <h3>Al-Amin</h3>
-        <p>Junior Instructor, Computer Science</p>
-        <p>Email: alamin@cst.com</p>
-        <p>Phone: 555-321-6789</p>
-      </div>
+                <button class="lg:hidden text-2xl text-gray-700" id="mobile-menu-btn" aria-label="Toggle mobile menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
 
-      <div class="teacher-card">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIWFhUVFxYWFRUVFRUVFRcVFRYXFxUVFRUYHSggGBolGxUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGxAQGi0lHSAtLS8tLS0rLS0tLSsrLSstLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0rLS0tLS0tLf/AABEIALcBEwMBIgACEQEDEQH/xAAcAAABBQEBAQAAAAAAAAAAAAADAQIEBQYABwj/xAA9EAABAwIEAwUHAgQGAgMAAAABAAIRAyEEBRIxBkFREyJhcZEyUoGhscHwQtEUI3LhFiQzYpLxB6IVgsL/xAAZAQADAQEBAAAAAAAAAAAAAAAAAQIDBAX/xAAkEQACAgICAQUBAQEAAAAAAAAAAQIRAzESIRMEIjJBUWHhQv/aAAwDAQACEQMRAD8AsKLPD8KlMH5dNptR2NWBoOb+borAmsaitCAFa1PAStCI0JgI1qeAlATwEAI1wCjPr8rQE/EmyFh6YiUxCfxLpuLKZTqzdR6T9ciNlVZ7mYwtJxB77jDPu7yCGBLzvOmYdt7uOzbk+ix2N46dYFwZyOkXPqTHwWXx+Oc9znOqAk731H4kqqrFrx97R67KUmyukbs8W4hrRVaQ+nPei5A5kzzHNWOC4tqOhwLXNtIi8G4IjqvOeHsf2LnMf7DiJHSJ/dTcOOyrO0Omm9rg2ORBDw1w5EEH1Q4tAmj2XK80ZXEtkEbtO48uoVgAvOMvzDXT7WkTqaATG/nHPoR4FbXIM1bXZMjUB3gPqPBCYNFoAlhOhLCYhqcRzCXSl0oAaRyTYRNK6EwBEJsIxamlqQASEMhSC1MLUARnBAeFLe1Ae1ICDVaq/FMsVa1GqFXZuoaAqcFSuVYMFoQ8MzdHLU6sCI/WD7I9UisGUARMJFVCo5jUZgTWwitQMe1qK1qa2ERsJgOaEQBNBCeCEAOATgEgITgQmAHEU5CjUn6VYyEN9Fp5oERhXA2C8z4zxZq4lzTZrLRvPPVfYQvURhh1Xkmf4N761Ymb1Hyf9ocQAPQAJNjRm20n13kMENm0dFdYPhYnmfFX+T5aynTEBXGHHgubJma6R248Eat7M1g+Dg4wXWVk3gxg2eZ/ZaOi34KTTuVn5Zv7L8UF9GNZwtVoFz2OJBnUOoO6schxJotbXN3Wp1bTsbE3se8txQog2PisVTwxZVrUXWa4hwnY9fj7Pot4NvZzZElo3+FqB7Q4bEAj4o0Ko4WJGHaCdiQPKbK4DgtkYHAJYXagl1BMDoSQl1Dql1BADYSaUSEkIAEWpjmo8JpCQEVzUCo1THtQKjUAQKjVFqtU+qFEqBS0BCotRC1LSaiFqaAfSZYLkek2wSJis8ybxeehRW8YHoVkmhEY1acUc/kZsaHFTjyMI7eKjymQsuxoLPL6otFkukG373KOKF5JGgHGDvdKeOMHe6VmmgSehlEaRfz+XLkjigeRmjbxe73Snji93ulZxhAjblaL+N0ZsX236cumyVIXkkX44ud7pThxa73SqJoED4es77IgaCY5RvHzNkUg8ki6HFzvdKq8dWNSs0C3aGfg5od+6ilsqxo4cnE4d3Igj/gyFlkaSOj09zff0TqtSnRYO0dA5TuUPCcSYYmA8A+MhRM+a5z5DWk7an+y0D6nwVBiMJWF3dlI2DWtuPhdc8Yxez0nKS0elU8QwtlvyStzTD0/9Wsxp8XAKl4DYXh2tsWIA/PJUud4VwquYykwQe7qAMz58lMUrHJ9dHpuWY2lVdFOo0nlB3ULNMJFdpcPaB0nxj+wVJlGFqsFPtKbASDDqch7HRIJbeWmIkLVZyC8UHASSZ+OmPutovujmyJ0ZjHZ0cPUdSa2zY28QD90D/FT/dKDn8Gu48yG7jYwAbfD5qBA+e0cluqatHnznJSaLX/FT/dK7/FT/dKq4H9/wJCBfb0/snRPkkWn+KqnulEwfE73VGt0m5VLVb4b3P56rstH85nmlQ1OVnq2EfLQUZAy8dwKTCDpGwk0p8JHDYoGBc3ogVApUb9EB4QIgVQolQKfWCiP3/spYyJSF0QhdSH5+BEKYrDUm2CVOpiwXJiPBWhFaENqIFqcYak4jZG7Un+yAxFagAjU9oSNCI0IAVoR2MTWBGBUsBQE4BIERgSAQNV3ltI6qdRx7saWCf1QWut8Z9VVNarDB4stAbEjUCPC4n6LLLFyXR0+lyKEny0y2dh2zcW5DlCh4hlMENgSdgAoeMzMta48w8tHhzHyVQ3GPMuaJPWbrkUGevzVG94XoxUiN1YZrhadtYEnYuHylYPIs6xDAXGm5zhZp8zz6wtLiKlatQJfJIEgmAVVUqIbt2WuV5e0mBY8j/bZTs5ov7Njac9o0gtg7XAJPhErJ8K5u4vLHbhpcDyIb18dlfZtn/ZugNl5piDyBdf5WKcY2qWzLLNRak9GSzWprr1HdXn0BgR6KNpR+zS9muxKkeO3bsj6UmlSCxM0pgBe1Oy1v85nmnvalysfzmeaAWz0/ADuBSIQ8CO4FIhI6wcJIRYSEJgBcECoFKcEB4SodkGsFCqBWFcKDUUsoj0hdEITaYTygCTRFguTqPshcqJPAmogTGIgWpxhGIrQhsRmhIAjQitQ2orUAFYE8JjURqBBGhFYENqOykeiloLHsCIhNRAkADHnvEfpfDv/ALflvgo+Gy4U3dqxgdqEPY6YMGdVrh3KfHmrF9HUwnmCPQyo+HJ25en4VySXFtI9nDNSimy6wL8KYJw8HvWFWxJ9mRa26nZxkzMU1pI7KkySWUyQXnlrfYx4Kiw2WOJB7UgStVTZLW0wSWj2nHwU3+Gs2q/0pMmwgpyxoh1Qkf00hv67fHwRM3q6qz7eydMf0d37K8yzDt7UujmI+Gw8huqXPWRiaw/3uPrf7rbCu2ef6tukRWlEhCaitK3OEQhDLUVyaGk7BAwD07LG/wA5i6q0jdOyv/WYihLZ6hgR3QpEIOCHdCkIOsbCQhPhIQgYJwQKikuCBUQBAxCg1FOxKgvUMpAWBPKaxOKAZLo+yFydQb3QuVEng7KYk77H5dE4UxG/5OyjgnqiMk9VqchJFITF/wA5o1Ng6mBv5QmUcO47H5p76bm2I35pWhuLWxQU9qC1FagQZqc6oALpgQ8TQLxAQ+gSt0h9DMm3uJmFYYbFaocOfIfGbIOQ8Kh+4mVYYjI/4UyJjkDy6ws1kTdI6Mnp3GNjHkak8N+Vz6qMXSZT3uDRL3afP2j5BaHMidhmiHDw6dP+1ExGDO7DFpM81OylzX0u0Fi7UAJ5NMEuPMmPh80wmFw5Jrm6PYwY2sSTI+C/iDYNBg2ufnZa7KcLUI/mECdwNviVWZKWt1OJ5K/p4jTTnqo5Fygx9IgO9EDijD0jNQ91waDPvW2Pjyn6puFfLpWe4+zTvikDsAXef6R9/RVj5OVRIzRio+4eKDXE9k8OA5EgOHny5hMdTcNwR9PVZyhiHNaINz3ifoi0M8qMNjYzbf06L0KPLcC+BlEeTsOluWyBhsxp1XaXDSYkOB59CpVSlaZBHUEDfzSohxZFqGWp2Ut/nMPSZ8+X1XVwY9kgDwS5QP5zUMS2enYL2QjoODHdCOlR1JiSmyoGeZszD0y95gAflliqHHr3uJbQeW9efopk0ilFvR6E5AqqFkmaDEMDxN+u87GVKruQBBxBUN6r844ko0naS6/ROy/MmVhLVk2i0iUxPG0prU7UqQmS6QMD91ydQA0jdcqIPn5ql1BpaANzsrh+SBt42Qsowoq4i+zVOTIVgw99lrwzwsXjU9xk9FK4nyrsqTj7twfBXuU0Cx+kPtHoo3FQe2kBUIOo6fqudTd2deTGnGjzOljQSrGk6Vf5NkdE0nSBIlRsjynWXjcArqjlUjiyemcUmQGKXhmEG4WnwmQtB2CXMsta0F1gBuU2+SM4Y+LtkvhmELjCuAACQJ+Lj5NFys+c9NIFtI394/YKixWJc8y5xJO5Jk+qzx4mnbOnNlUlSJmIzFrBFMd73nXj+kbfH/tU9aoTcmSbk/3ROyJXOpDqug5kqLbhPG70yepb8bkK3qXWJBNMhzTEbFXeFz9hADwQRzAkFcebA+XKJ6GDPHjxkX2CrXhW1TFTDVlcXnNAEOY8kxcQd/ioFfiR99Agn9RuR5BZLDOX0bSzY4/Zrc2z5uHbAg1D7Leni7wWFq13VHFzjJJkk8yVEdULjLiSTuTcnzR6b4XbixKC/p5+XK8j/hPqVLnyhQqpun9pKj1HrYyD0sSQZlXGDze0EbrOF6K2sEhG94fxoJJOxEEcjO4j0VnhsuArNfTMs5jm313Cw+W4otA/LbrTZXmcRfmm1ZDR6dhPZCOqvJMwbVYBPeG/j4qyLlBqtGY45w+qifAg+hVNw7hxIGkXWpzyvTNMhxGyynDOOAcWnYEwfDkuXKvdZ2YH7WjW5bhBTBAEXn1QM+xPZ0nO6AlG/wDk6e2oT5qj42xYGGeeo+q0v2mLXuMhgKFJ4L6l3Ou4nqVbUmNwxY4HuOIHlKh5LSa5pEbiyPxe4DDMpNs4uaB67rkT7O2cVRp2uBEhIVAbiRRw+t36W/QLz/M+OajiezEDkSuqLtHFJdnruHeNIuuXiLOLMRHtrlZBvc+wrWUnHmsVkFc067p2K0vEldxHgqPK6YLjZcspXZ2Y48Td5K1hJfKoeIswbWrtoMMhlz58h9UbHVhToT1HJUfCxb2kkC/PnvdSl1Zcn2T8ZWfhqTiRA6qR/wCO6razXO6krWVcBTxdB1J7QZBHmsrwrl5wj3Up9l0ft8oW+JJI5802+jYVsOGrFcb5vJ7Fps0949XdPIT6rd4yoBTLzsBPovG8ze57nk3JJMyNyV0ROaTAuroXbkKNdPZScb8vP4KyQgqOKa8lOcYsN+aYUAMJKYW+fwRYXAIABHiiwiU6OowjlwAs3znewlMCO0IoTq7AII5ruz+3xnZADZQqoRtJ/I+qR1Ix8o59EAQlwP7I1GkdUHnPP7plKmZII9kkm/RAFjhKktJ90wfLl91ZYDF/JU+UzNWmehI82jV9k/D1LeSESz0Th/MYc0nkZWtz/OG0qeoGZHd8V5blNe4WizWmalIPB9kbciDzHj1HkpnorHuimzDHvqGXOJ8OXoo1LHup7ITHdUalSDnCR+y53FPZ0qTWixyuu97tRU7jOv8A5UtPOyPlWGGmYAhUHGOI1CByI+amTroqKt2yo4Qz596Z/TYFGr491XEt1GQ3YeKz2R0yKriNr/Lmr/h7Bl9dzjyUSilJs1U3xVmr4ucRl7j1AHqQCvIHm69Z4rqH+BeD+QQvKHUXdPp+Ba4tHPPYgC5O7Mi33C5aEHq2f4exHQqny2hdajMgC9zeosqrL6UP8CuKS7OyD6K7iBxLCwG8IOQATqdE2gKfmOAOp2rbl5Kkytul5Cf/ADQ3uz1Dh2tMKm4po1GYkFos4TO1wpPDVay0Od0A+mHgXC1g6RzzXZns0xLv4CoTYgNH/sAvLq1a5tuZ3O69QzakThKzf9s/8SHfZeT4l8fA3XRjkpLownFpkcVJcGx8ztvcKSMQHO7ogCx8fBQgCXEDf2Z8CRf/AIlTKUR3bAbHr4laEChvNJCWV0JgIlSLgUAEovgozmTO0GLqKSmSgCRiXiwGw+6a2ubeHz80GUqACmr4W6SfqlbVttsZCCQuagB9SqQdQG29ynYlzdcj9QuLztY+ISaZtPrdRqxu0xdvdPluD9fkgAuCrf5lgnmQSOciPoiUTDi1V2Wv/wAwz+oKZRqd9x80kItcDX0kHkD+ea2uTVZt7dJxuObT1C8/wr7z6q5wmObTIIcWwRb6qhaPRM14WpEamj/pRqORUwLbiD6J2S5g6u1w1xNxPQAC3TquxmJ0GJlcmSXF0dWOPNWhmNe2iw7SvP8AO6xILlps0a95tzSZpk7XUNLd43WKd9m1cejCcOgnUY2BvdbHhHBnSXkRqJPO6Bk+SljNEXJufqtxlODAaAAqfbJ0jN8cs04M/DrzIXmAqzy+v0Xq/wD5QEYbSN5H1leU4OnuTyCuPVi2BJB5fMrlMFHwSKuaFwZ6jmGrtA4bLmUzuAripgaYgOfcWF0bC5U4c7LN45FRlCu2ZvHVnP7oaouVZHqfDrE3C2jcobMkpamSSQ5pIIMhHikPyQImByo07K+NM9i4eFkx2Gf1T3FzWkKuPEy5Wec06uLJLXN7twfEbH5LAY4aXEdCQfEL2fOq3Z4es8C4Y6PMiB8yvGMcdndRf6FVgdrROYrTULTE8o82nY/NXLmw0AbQIVJXbNuY28lYZVitbNB9pm39P9tvRdBiGJSak1ybqTAeSulDLkhKACFyaChl6TWgA0rpQQ5OlABZT2uQWlGpNQAeko+YthrpEhwi246KWBCiY90iExFRl1WH6juGn1MgKZRfbzVX7Lj0P2Uyk9SMs6T/AM8FKw1SSXkSG7DqZhVbX2U7CvimPE/RUI2OQZgA6RM2kdRzV7iMDUcdTRqB2K8/wFfS8eO69N4UzNpZpceQieRWGfHyjf4a4MjhKv0iUqVQW7MlOOFrTIpn5LWBw3CTWRtC5Ywj9s6p5JPSM5SpVOdJw+CvMGNDdRBHmIUoY14/S0/FEq4tr294AQtYxh9MxcpfaMZxLgn1muLhyMLyWqQ0lv5Yr2nNc9pUw4OIiDsV4Tj8RqqPcLAucQPAmymEe9mt9aLOnXbAXKkDz1XK/GHkPb3EHdSKNd4sHmF5QeNKk/p59fhNk13GlWOXz3ncWWSw5FoTywZ6vmL6xpyypBB5qwweZvDAHEE9V5ll/ENdzXTGkiee3p4qiPF+Il1290mImDyj6KlDL+kueP8AD27+OJ/WnjFjm75rxLCcT4hxEvCvcPmNVw9sz4BDw5KtsFkhpG34vxDf4OrfcAf+wXkVZ1oP51WtztrhhXOe4kuc1ok23WJqvW2GPGJjldsBoJMBPw1MMqNOq/PxB3sn0SCCPyEPDtJcyDcG/ONJMStjMs8VTLSR9FFLufzVpnVRvadzYBkjxLQTHqq/ElrYHhbzJlAAHPSFy4vF4gXPImbcrIjXgwSRt02PogAYKQlGD23239RHK37JA4W2PW1/LZAAmuT9S6oADA5W/dMCYBWlSaJUemFJpu07oAMHkJtWjaXW8kWm8WM803FtE3tIufEQR8UAVtLAg1WH2mggkdb2H2QMZhzSqupkEXlvi03afG30K0/CWE112h3UfCAX/wD5Wt4pyFlag7SGiqwHs3EXF5LZ6ESocqY0rR5W16kh92tHL7oDqjQYIFjHiItBt1S08REwRqIF4sL+W6sRb4MkvtsB81rMjqEANIIkFu3WbhYmjizqGnkRsPrZavJq2IcCS7pHdtIna35CCWSqHF1XDvLKoJ0mDHJajA8W0KjdWsBY7P6ehpqPbJeGjURuQ0B3xsfks9nOIYaQFOm7VF9LSfoFySxK6R1Qyddnqj+J8OP1j1UWvxbhgLvC8Sp4Wu4/6VWP6H/srB+VVSyBRqE/0lLwL9H5f4aLjHP6VVsUjfmVjaNIuPh1UmjkuK0x2D/kPuptLh/FGnHYmb8xvy5q4qMerKcm1ZTVGMBILvmFytTwriDcsN/ELlpyj+mHu/DOlNK5crMzbcP1pokH3Cse5jiXEbAkn1XLlKKaJGBqw4LccOvku+CRctJfAmPyJHG+IcKTGDYvcT4kAQPmVhTWnf8AP3XLlENFS2MD7yCrjI6BqvAcbSJ0i/qVy5WQyxzljG1qgbsDHoAPsqGu+TKVckCB07orrLlyYxmpICuXIAWURhXLkAOpOurAG3n9Fy5MBALptWuQP3uuXIAuuDQ4ufU6SPKdP91psZXqaD5Lly557NIaPMs3pMaXHSdRMzNo526lVtI9BJ8dly5ax0Q9k6mHmxnyaQPqrfLQAe82rPXtbegSrlRLPROD+zeXU3MJ7s99xfsYi+3tLTnBUxsxvouXLkzfI6MPxGfw7PdHoEhpN6D0SrljRuAfRb0QC0BcuUtAN1+XolXLkgo//9k=" alt="Teacher 6">
-        <h3>Tanvir Hassan</h3>
-        <p>Junior Instructor, Computer Science</p>
-        <p>Email: tanvir@cst.com</p>
-        <p>Phone: 555-654-3210</p>
-      </div>
-
-      <div class="teacher-card">
-        <img src="data:image/jpeg;base64,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">
-        <h3>Demo Teacher</h3>
-        <p>Junior Instructor, Computer Science</p>
-        <p>Email: demo@cst.com</p>
-        <p>Phone: 555-000-0000</p>
-      </div>
-
-      <div class="teacher-card">
-        <img src="data:image/jpeg;base64,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">
-        <h3>Hassan</h3>
-        <p>Junior Instructor, Computer Science</p>
-        <p>Email: hassan@cst.com</p>
-        <p>Phone: 555-111-2222</p>
-      </div>
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 relative overflow-hidden"
+            aria-label="Latest Notice">
+            <div class="container mx-auto flex items-center">
+                <span
+                    class="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full mr-3 z-10 shadow-sm uppercase">Latest</span>
+                <div class="marquee-container flex-1">
+                    <div class="marquee-content text-sm font-medium">
+                        📢 Class started from 1st September. Collect your class routine from the department. || Exam
+                        form
+                        fill-up starts next week!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-200 p-4" role="menu">
+        <div class="flex flex-col gap-3">
+            <a href="#" class="block py-2 text-gray-700" role="menuitem">Home</a>
+            <a href="#" class="block py-2 text-primary" role="menuitem">Teachers</a>
+            <a href="#" class="block py-2 text-gray-700" role="menuitem">Students</a>
+            <a href="#" class="block py-2 text-gray-700" role="menuitem">Notice</a>
+            <a href="#" class="block py-2 text-gray-700 font-bold border-t pt-3 mt-2">Login</a>
+            <a href="#" class="block px-4 py-2 hover:bg-blue-50 hover:text-primary transition rounded-lg">Student
+                Login</a>
+            <a href="#" class="block px-4 py-2 hover:bg-blue-50 hover:text-primary transition rounded-lg">Teacher
+                Login</a>
+        </div>
+    </div>
+    <div class="hero-header">
+        <h1>Our Faculty Members</h1>
+        <p>Computer Science and Technology Department (CST)</p>
     </div>
 
-    <button class="back-btn" onclick="history.back()">⬅ Go Back</button>
-  </div>
+    <div class="container-teacher">
+        <div class="head-teacher">
+            <div class="image-wrapper">
+                <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//677/e03/c5b/677e03c5b1c4b058580591.jpeg"
+                    alt="Head Teacher: Engineer Md. Akkas Ali Sheikh">
+            </div>
+            <h2>Eng Md. Akkas Ali Sheikh</h2>
+            <p>Principal</p>
+            <p class="mt-1" style="color: var(--primary); font-weight: 500;">Faridpur Polytechnic Institute</p>
+        </div>
 
-  <footer>
-    <p>&copy; 2025 Department of Computer Science & Technology, Faridpur Polytechnic Institute</p>
-  </footer>
+        <div class="head-teacher" style="margin-top: -30px; margin-bottom: 70px;">
+            <div class="image-wrapper">
+                <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//683/3ee/861/6833ee861fc0a950175206.jpg"
+                    alt="Vice-Principal: Name goes here">
+            </div>
+            <h2>Nizam Uddin Ahmed</h2>
+            <p>Vice Principal</p>
+            <p class="mt-1" style="color: var(--primary); font-weight: 500;">Faridpur Polytechnic Institute</p>
+        </div>
+        <div class="teacher-grid">
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Chief Instructor Rashedul Islam's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//68c/148/0d1/68c1480d1212c818828790.jpeg"
+                            alt="Teacher 1: Engineer Rashedul Islam">
+                        <h3>Eng Rashedul Islam</h3>
+                        <p class="designation">Chief Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Chief Instructor (Tech)</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: rashedul@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 1234 567890</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Instructor Anisur Rahman's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="/media/teacher-images/anis-sir.jpeg" alt="Teacher 2: Engineer Anisur Rahman"
+                            onerror="this.src='https://via.placeholder.com/130?text=No+Image'">
+                        <h3> Anisur Rahman Sarker</h3>
+                        <p class="designation">Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: anisur@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 9876 543210</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Instructor Aftabur Rahman's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//66a/9d8/9aa/66a9d89aaa2f1403029871.jpg"
+                            alt="Teacher 3: Aftabur Rahman">
+                        <h3>Aftabur Rahman</h3>
+                        <p class="designation">Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: aftabur@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5551 234567</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Junior Instructor Shahanur Islam's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//67f/6ab/e57/67f6abe57f091609886435.jpg"
+                            alt="Teacher 4: Shahanur Islam">
+                        <h3>Shahanur Islam</h3>
+                        <p class="designation">Junior Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Junior Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: shahanur@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5559 876543</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Junior Instructor Al-Amin's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img
+                            src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//67f/6aa/128/67f6aa1289dcd276193949.jpeg">
+                        <h3>Md. Al Amin</h3>
+                        <p class="designation">Junior Instructor</p>
+                        <p>Department: Computer Science Technology  </p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Junior Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i> Email: alamin@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5553 216789</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Junior Instructor Al-Amin's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="/media/teacher-images/minhaz-junior-ins.png" alt="Teacher 5: Kazi-Minhaz"
+                            onerror="this.src='https://via.placeholder.com/130?text=No+Image'">
+                        <h3>Kazi-Minhaz</h3>
+                        <p class="designation">Junior Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Junior Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: minhaz@cst.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5553 216789</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Junior Instructor Md Mamun's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//67f/6a7/f27/67f6a7f2781b0028553642.jpeg"
+                            alt="Teacher 5: Md Mamun">
+                        <h3>Md Mamun</h3>
+                        <p class="designation">Junior Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Junior Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: mamunpost7700@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5553 216789</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Junior Instructor Sujon Kumar Shil's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//67f/6a7/50d/67f6a750d0add886682166.jpeg"
+                            alt="Teacher 5: Sujon Kumar Shil">
+                        <h3>Sujon Kumar Shil</h3>
+                        <p class="designation">Junior Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Junior Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: skssujon90@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5553 216789</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Junior Instructor Khadija Akter Suborna's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="/media/profile-pic.jpeg" alt="Teacher 5: Khadija Akter Suborna"
+                            onerror="this.src='https://via.placeholder.com/130?text=No+Image'">
+                        <h3>Khadija Akter Suborna</h3>
+                        <p class="designation">Junior Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Junior Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: khadijaakter8354@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5553 216789</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-card-container" tabindex="0" role="button"
+                aria-label="Junior Instructor Tanvir Hossain's details. Click or hover to flip.">
+                <div class="teacher-card">
+                    <div class="card-front">
+                        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//67f/6a9/822/67f6a98228f4d422060877.jpeg"
+                            alt="Teacher 6: Tanvir Hossain">
+                        <h3>Tanvir Hossain</h3>
+                        <p class="designation">Junior Instructor</p>
+                        <p>Department: Computer Science Technology</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>Contact Details</h3>
+                        <div class="info-line"><i class="fas fa-user-tie"></i> Junior Instructor</div>
+                        <div class="info-line"><i class="fas fa-envelope"></i>Email: tanvirhossain@gmail.com</div>
+                        <div class="info-line"><i class="fas fa-phone"></i> +880 5556 543210</div>
+                        <div class="icons">
+                            <a href="#" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="page-footer">
+        &copy; 2025 Computer Department, Faridpur Polytechnic Institute. All Rights Reserved.
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Mobile Menu Toggle
+            const mobileMenu = $('#mobile-menu');
+            const mobileMenuBtn = $('#mobile-menu-btn');
+
+            mobileMenuBtn.click(function () {
+                mobileMenu.slideToggle(300, function () {
+                    // Update ARIA attributes for accessibility
+                    const isExpanded = mobileMenu.is(':visible');
+                    mobileMenuBtn.attr('aria-expanded', isExpanded);
+                });
+            });
+            $('.teacher-card-container').on('focus', function () {
+                $(this).addClass('hover');
+            }).on('blur', function () {
+                $(this).removeClass('hover');
+            });
+            $('.teacher-card-container').hover(
+                function () { $(this).addClass('hover'); },
+                function () { $(this).removeClass('hover'); }
+            );
+        });
+    </script>
 </body>
+
 </html>

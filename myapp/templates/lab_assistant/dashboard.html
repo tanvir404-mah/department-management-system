@@ -1,0 +1,225 @@
+{% extends 'base_lab_assistant.html' %}
+
+{% block title %}Lab Operations | CST Portal{% endblock %}
+{% block header_title %}Tech Command Center{% endblock %}
+
+{% block content %}
+<div class="space-y-12 pb-20">
+
+    <!-- Operational Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div data-aos="fade-up" data-aos-delay="100" class="glass-dark border border-tech-500/10 rounded-3xl p-8 transition-all hover:-translate-y-2 hover:shadow-neon group">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 bg-tech-500/10 rounded-2xl flex items-center justify-center text-tech-400 text-xl group-hover:scale-110 transition-transform">
+                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[9px] font-extrabold text-tech-400 uppercase tracking-widest bg-tech-500/5 px-3 py-1 rounded-full border border-tech-500/20">Assets</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white tracking-tighter">{{ stats.total_items }}</h3>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-2">Total Lab Devices</p>
+        </div>
+
+        <div data-aos="fade-up" data-aos-delay="200" class="glass-dark border border-emerald-500/10 rounded-3xl p-8 transition-all hover:-translate-y-2 hover:shadow-emerald-500/10 group">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 text-xl group-hover:scale-110 transition-transform">
+                    <i data-lucide="zap" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[9px] font-extrabold text-emerald-400 uppercase tracking-widest bg-emerald-500/5 px-3 py-1 rounded-full border border-emerald-500/20">Online</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white tracking-tighter">{{ stats.functional_count }}</h3>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-2">Functional Units</p>
+        </div>
+
+        <div data-aos="fade-up" data-aos-delay="300" class="glass-dark border border-amber-500/10 rounded-3xl p-8 transition-all hover:-translate-y-2 hover:shadow-amber-500/10 group">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform">
+                    <i data-lucide="wrench" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest bg-amber-500/5 px-3 py-1 rounded-full border border-amber-500/20">Maintenance</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white tracking-tighter">{{ stats.repair_count }}</h3>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-2">Units in Repair</p>
+        </div>
+
+        <div data-aos="fade-up" data-aos-delay="400" class="glass-dark border border-rose-500/10 rounded-3xl p-8 transition-all hover:-translate-y-2 hover:shadow-rose-500/10 group">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-400 text-xl group-hover:scale-110 transition-transform">
+                    <i data-lucide="alert-octagon" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[9px] font-extrabold text-rose-400 uppercase tracking-widest bg-rose-500/5 px-3 py-1 rounded-full border border-rose-500/20">Critical</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white tracking-tighter">{{ stats.damaged_count }}</h3>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-2">Failed Hardware</p>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        
+        <!-- Inventory Management Table -->
+        <div class="lg:col-span-2 space-y-6">
+            <div data-aos="fade-right" class="flex items-center justify-between px-4">
+                <h3 class="text-xl font-bold text-white tracking-tight flex items-center space-x-4">
+                    <span class="w-1.5 h-8 bg-tech-400 rounded-full shadow-neon"></span>
+                    <span>HARDWARE LIFECYCLE</span>
+                </h3>
+                <button onclick="document.getElementById('report-modal').classList.remove('hidden')" 
+                    class="bg-tech-500 hover:bg-tech-600 text-white px-6 py-3 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-neon group active:scale-95">
+                    <i class="fas fa-plus mr-2 group-hover:rotate-90 transition-transform"></i> LOG INCIDENT
+                </button>
+            </div>
+
+            <div data-aos="zoom-in" class="glass-dark rounded-[2.5rem] overflow-hidden border border-slate-800/50 shadow-2xl">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-slate-900/50 border-b border-slate-800/50">
+                            <th class="px-8 py-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Device Specifics</th>
+                            <th class="px-8 py-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Category</th>
+                            <th class="px-8 py-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Status Console</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/20">
+                        {% for item in items %}
+                        <tr class="hover:bg-tech-500/5 transition-all duration-300 group">
+                            <td class="px-8 py-6">
+                                <p class="text-sm font-bold text-white leading-none mb-2 group-hover:text-tech-400 transition-colors">{{ item.item_name }}</p>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-[9px] font-bold text-slate-500 uppercase">SN: <span class="text-slate-400">{{ item.serial_number }}</span></span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-6">
+                                <span class="bg-dark-700 text-slate-400 text-[9px] font-extrabold px-3 py-1.5 rounded-lg uppercase tracking-widest border border-slate-700">{{ item.category }}</span>
+                            </td>
+                            <td class="px-8 py-6">
+                                <select data-item-id="{{ item.id }}" onchange="updateItemStatus(this.dataset.itemId, this.value)"
+                                    class="bg-dark-800 border border-slate-700/50 rounded-xl px-5 py-2.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-300 focus:outline-none focus:ring-2 focus:ring-tech-400/30 focus:border-tech-400 transition-all cursor-pointer">
+                                    <option value="Functional" {% if item.status == 'Functional' %}selected{% endif %}>Functional</option>
+                                    <option value="Repair" {% if item.status == 'Repair' %}selected{% endif %}>In Repair</option>
+                                    <option value="Damaged" {% if item.status == 'Damaged' %}selected{% endif %}>Damaged</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Live Lab Sessions -->
+        <div class="space-y-10">
+            <h3 data-aos="fade-left" class="text-xl font-bold text-white tracking-tight px-4 flex items-center space-x-4">
+                <span class="w-1.5 h-8 bg-amber-500 rounded-full shadow-lg shadow-amber-500/20"></span>
+                <span>LIVE SESSIONS</span>
+            </h3>
+
+            <div class="flex flex-col space-y-4">
+                {% for schedule in schedules %}
+                <div data-aos="fade-left" data-aos-delay="{{ forloop.counter|add:100 }}" class="glass-dark p-6 rounded-3xl border border-slate-800/50 relative group hover:border-tech-400 transition-all duration-300">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="text-[9px] font-extrabold text-tech-400 uppercase tracking-[0.2em] block mb-2">{{ schedule.time_slot }}</span>
+                            <h4 class="text-sm font-bold text-white group-hover:text-tech-400 transition-colors tracking-tight leading-tight">{{ schedule.course.title }}</h4>
+                        </div>
+                        <button data-schedule-id="{{ schedule.id }}" onclick="toggleLabStatus(this.dataset.scheduleId, this)" 
+                            class="w-3.5 h-3.5 rounded-full {% if schedule.is_occupied %}bg-rose-500 shadow-neon-strong{% else %}bg-emerald-500 shadow-neon-strong shadow-emerald-500/30{% endif %} animate-pulse border-2 border-white/10 transition-all cursor-pointer hover:scale-125"></button>
+                    </div>
+                    <div class="flex items-center space-x-5 text-slate-500">
+                        <div class="flex items-center text-[10px] font-bold uppercase tracking-widest">
+                            <i data-lucide="layers" class="w-3 h-3 mr-2 text-slate-500"></i> {{ schedule.semester }}th Sem
+                        </div>
+                        <div class="flex items-center text-[10px] font-bold uppercase tracking-widest text-tech-400/70">
+                            <i data-lucide="user" class="w-3 h-3 mr-2"></i> {{ schedule.teacher.user.username }}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-20 opacity-30 italic font-bold tracking-widest text-xs uppercase">No Active Slots</div>
+                {% endfor %}
+
+                <a data-aos="zoom-in-up" href="{% url 'lab_mark_ca' 5 %}" class="block bg-gradient-to-tr from-tech-600 to-indigo-600 p-8 rounded-[2.5rem] shadow-neon mt-4 text-center group active:scale-95 transition-all relative overflow-hidden">
+                    <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <i data-lucide="award" class="w-10 h-10 text-white mx-auto mb-4 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-white font-extrabold text-[11px] uppercase tracking-[0.2em]">Practical Assessment</p>
+                    <p class="text-blue-100/60 text-[9px] mt-1 font-bold uppercase tracking-widest italic">Marks Entry Console</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Report Management -->
+<div id="report-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-6">
+    <div class="absolute inset-0 bg-[#0B0F1A]/95 backdrop-blur-md" onclick="document.getElementById('report-modal').classList.add('hidden')"></div>
+    <div data-aos="zoom-in" class="glass-dark w-full max-w-lg p-10 rounded-[3rem] border border-white/5 shadow-2xl relative z-10">
+        <div class="flex items-center space-x-4 mb-8">
+            <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500">
+                <i data-lucide="file-warning" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-white tracking-tight">FILE <span class="text-amber-500 uppercase">Incident</span></h3>
+        </div>
+        
+        <form action="{% url 'lab_report_issue' %}" method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest block mb-3 ml-2">Target Hardware</label>
+                <select name="item_id" required class="w-full bg-dark-800 border border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-white focus:outline-none focus:border-amber-500 transition-all cursor-pointer">
+                    <option value="">Select Department Asset...</option>
+                    {% for item in items %}
+                    <option value="{{ item.id }}">{{ item.item_name }} #{{ item.serial_number }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest block mb-3 ml-2">Diagnostic Log</label>
+                <textarea name="description" required rows="4" placeholder="Describe the malfunction detected..." 
+                    class="w-full bg-dark-800 border border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-white focus:outline-none focus:border-amber-500 transition-all resize-none"></textarea>
+            </div>
+            <div class="flex space-x-4 pt-4">
+                <button type="button" onclick="document.getElementById('report-modal').classList.add('hidden')" 
+                    class="flex-1 px-8 py-5 rounded-2xl bg-white/5 text-slate-400 font-extrabold text-[10px] uppercase tracking-widest hover:bg-rose-500/10 hover:text-rose-400 transition-all border border-white/5">ABORT</button>
+                <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-[10px] uppercase tracking-widest rounded-2xl py-5 shadow-lg shadow-amber-500/20 transition-all active:scale-95">LOG INCIDENT</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function updateItemStatus(itemId, newStatus) {
+    const formData = new FormData();
+    formData.append('item_id', itemId);
+    formData.append('status', newStatus);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch("{% url 'lab_update_item_status' %}", {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.status === 'success') {
+            console.log("System Alert: Node Status synced to " + data.new_status);
+        }
+    });
+}
+
+function toggleLabStatus(scheduleId, btn) {
+    fetch(`/lab-assistant/toggle-status/${scheduleId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            if (data.is_occupied) {
+                btn.className = 'w-3.5 h-3.5 rounded-full bg-rose-500 shadow-neon-strong animate-pulse border-2 border-white/10 transition-all cursor-pointer hover:scale-125';
+            } else {
+                btn.className = 'w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-neon-strong shadow-emerald-500/30 animate-pulse border-2 border-white/10 transition-all cursor-pointer hover:scale-125';
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

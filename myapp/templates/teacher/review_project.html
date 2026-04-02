@@ -1,0 +1,102 @@
+{% extends 'base_teacher.html' %}
+
+{% block title %}Project Review | Teacher Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
+    
+    <!-- Header -->
+    <div class="bg-white p-10 rounded-[3rem] shadow-stripe thin-border flex items-center justify-between group">
+        <div class="flex items-center space-x-8">
+            <div class="w-20 h-20 bg-emerald-600 text-white rounded-3xl flex items-center justify-center text-4xl shadow-xl shadow-emerald-100 transform group-hover:scale-105 transition-transform">
+                <i data-lucide="monitor"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Project Review Hub</h2>
+                <p class="text-[11px] font-extrabold text-emerald-600 uppercase tracking-[0.2em] italic">Innovation Assessment Panel</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Information Card -->
+    <div class="bg-slate-900 rounded-[3rem] p-12 text-white shadow-2xl shadow-emerald-900/10 border border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full translate-x-32 -translate-y-32"></div>
+        <div class="relative z-10 space-y-8">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold px-3 py-1 bg-white/10 rounded-full uppercase tracking-widest text-emerald-300">
+                    Current: {{ project.get_status_display }}
+                </span>
+                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest italic">ID: #CST-PRJ-{{ project.id }}</p>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-3xl font-extrabold tracking-tight leading-tight">{{ project.title }}</h3>
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">
+                            {{ project.student.user.username|slice:":1"|upper }}
+                        </div>
+                        <p class="text-sm font-bold text-white/80">Submitted by: <span class="text-white">{{ project.student.user.get_full_name|default:project.student.user.username }}</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-white/10">
+                <p class="text-sm font-bold text-white/60 leading-relaxed italic">"{{ project.description }}"</p>
+            </div>
+            {% if project.github_link %}
+            <div class="pt-4">
+                <a href="{{ project.github_link }}" target="_blank" class="inline-flex items-center space-x-3 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all group">
+                    <i data-lucide="github" class="w-5 h-5 text-emerald-400"></i>
+                    <span class="text-xs font-bold text-emerald-50! group-hover:text-white">{{ project.github_link }}</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Review Form -->
+    <div class="bg-white rounded-[3rem] shadow-2xl shadow-emerald-900/5 p-12 border border-emerald-50 space-y-12">
+        <form method="POST" class="space-y-12">
+            {% csrf_token %}
+            
+            <!-- Status Selection -->
+            <div class="space-y-6">
+                <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest flex items-center">
+                    <i data-lucide="activity" class="w-5 h-5 mr-3 text-emerald-600"></i>
+                    Update Status
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {% for value, label in project.STATUS_CHOICES %}
+                    <label class="relative flex items-center p-5 border-2 border-slate-50 rounded-2xl cursor-pointer hover:bg-emerald-50 transition-all group overflow-hidden">
+                        <input type="radio" name="status" value="{{ value }}" {% if project.status == value %}checked{% endif %} class="peer sr-only">
+                        <div class="w-5 h-5 border-2 border-slate-200 rounded-full mr-4 peer-checked:border-emerald-600 peer-checked:bg-white flex items-center justify-center">
+                            <div class="w-2.5 h-2.5 bg-emerald-600 rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
+                        </div>
+                        <span class="text-xs font-extrabold text-slate-900 uppercase tracking-tight">{{ label }}</span>
+                        <div class="absolute inset-0 bg-emerald-600/5 opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="space-y-6">
+                <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest flex items-center">
+                    <i data-lucide="message-square" class="w-5 h-5 mr-3 text-emerald-600"></i>
+                    Reviewer Feedback
+                </h4>
+                <textarea name="feedback" rows="4" required placeholder="Provide guidance, commendations, or rework requirements..."
+                    class="w-full bg-slate-50 border border-slate-100 rounded-[2rem] p-8 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/5 transition-all leading-relaxed"></textarea>
+            </div>
+
+            <!-- Dashboard Action -->
+            <div class="pt-8 flex items-center justify-between">
+                <a href="{% url 'teacher_dashboard' %}" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-emerald-600 transition-colors">Cancel Review</a>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-5 px-16 rounded-[2rem] shadow-2xl shadow-emerald-100 transform hover:-translate-y-1 active:scale-95 transition-all text-xs uppercase tracking-widest flex items-center justify-center space-x-3">
+                    <span>Submit Review</span>
+                    <i data-lucide="send" class="w-4 h-4 ml-2"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

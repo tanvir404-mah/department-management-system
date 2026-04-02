@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CST Portal | Student Dashboard{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Outfit', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.08)',
+                        'premium': '0 20px 40px -15px rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans selection:bg-blue-100 selection:text-blue-700">
+
+    <!-- Section 1: Sidebar Navigation (Left, Fixed) -->
+    <aside class="fixed left-0 top-0 bottom-0 w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200 z-[100] flex flex-col hidden lg:flex">
+        <!-- Logo -->
+        <div class="p-8">
+            <div class="flex items-center space-x-3 mb-2">
+                <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+                    <i class="fas fa-microchip text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">CST <span class="text-blue-600">Portal</span></h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Management System</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto scroll-hide">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">Main Menu</p>
+            
+            <a href="{% url 'student_dashboard' %}" class="sidebar-link active flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group">
+                <i class="fas fa-grid-2 text-lg"></i>
+                <span class="font-bold text-sm tracking-tight">Dashboard</span>
+            </a>
+            
+            <a href="{% url 'student_subjects' %}" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="font-bold text-sm tracking-tight">My Courses</span>
+            </a>
+
+            <a href="{% url 'result' %}" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
+                <i class="fas fa-chart-bar text-lg"></i>
+                <span class="font-bold text-sm tracking-tight">Results & Transcripts</span>
+            </a>
+
+            <a href="{% url 'notice' %}" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
+                <i class="fas fa-bullhorn text-lg"></i>
+                <span class="font-bold text-sm tracking-tight">Notice Board</span>
+            </a>
+
+            <div class="pt-6">
+                <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">CST Specialized</p>
+                
+                <a href="#" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-emerald-600">
+                    <i class="fas fa-server text-lg"></i>
+                    <span class="font-bold text-sm tracking-tight">Lab Resources</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-6 border-t border-slate-100">
+            <div class="bg-slate-50 rounded-2xl p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-headset text-xs"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-600">Support</span>
+                </div>
+                <i class="fas fa-chevron-right text-[10px] text-slate-400"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="lg:ml-72 min-h-screen flex flex-col relative">
+
+        <!-- Section 2: Top Navigation (Header) -->
+        <header class="sticky top-0 h-24 bg-white/70 backdrop-blur-xl border-b border-slate-200 z-50 px-8 flex items-center justify-between">
+            <!-- Left: Breadcrumbs/Title -->
+            <div class="flex items-center space-x-4">
+                <button class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="hidden sm:block">
+                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">{% block header_title %}Student Dashboard{% endblock %}</h2>
+                    <p class="text-xs font-medium text-slate-400">Environment: <span class="text-emerald-600 font-bold">Live Production</span></p>
+                </div>
+            </div>
+
+            <!-- Center: Search (Optional but sleek) -->
+            <div class="hidden md:flex relative group w-96">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <i class="fas fa-search text-sm"></i>
+                </div>
+                <input type="text" placeholder="Search resources, courses, or routine..." 
+                    class="w-full bg-slate-100/50 border border-slate-200 rounded-2xl py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+            </div>
+
+            <!-- Right: User Actions -->
+            <div class="flex items-center space-x-6">
+                <!-- Notifications -->
+                <div class="relative" id="notification-wrapper">
+                    <button id="notification-btn" class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-all relative">
+                        <i class="fas fa-bell text-lg"></i>
+                        {% if new_notices_count > 0 %}
+                            <span class="absolute top-3 right-3 w-3 h-3 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
+                        {% endif %}
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div id="notification-dropdown" class="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-premium border border-slate-100 py-4 hidden z-[1001] animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div class="px-6 py-2 border-b border-slate-50 flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-extrabold text-slate-900 tracking-tight">Notifications</h4>
+                            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">{{ recent_notices|length }} New</span>
+                        </div>
+                        
+                        <div class="max-h-[400px] overflow-y-auto scroll-hide">
+                            {% for notice in recent_notices %}
+                            <div class="px-6 py-4 hover:bg-slate-50 transition-colors cursor-pointer group">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex-shrink-0 flex items-center justify-center text-sm group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                        <i class="fas fa-bullhorn"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-[13px] font-bold text-slate-800 leading-tight mb-1 truncate">{{ notice.title }}</p>
+                                        <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-2">{{ notice.content }}</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">{{ notice.created_at|timesince }} ago</span>
+                                            <span class="text-[9px] font-bold text-blue-600 uppercase">{{ notice.created_by.get_role_display|default:"Admin" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="py-12 text-center">
+                                <div class="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <i class="fas fa-bell-slash"></i>
+                                </div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No notifications yet</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="px-6 pt-4 mt-2 border-t border-slate-50">
+                            <a href="{% url 'notice' %}" class="block w-full py-3 bg-slate-900 hover:bg-slate-800 text-white text-center rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-slate-100">View All Notices</a>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const btn = document.getElementById('notification-btn');
+                        const dropdown = document.getElementById('notification-dropdown');
+                        
+                        btn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            dropdown.classList.toggle('hidden');
+                        });
+                        
+                        document.addEventListener('click', function() {
+                            dropdown.classList.add('hidden');
+                        });
+                        
+                        dropdown.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                        });
+                    });
+                </script>
+
+                <div class="h-8 w-[1px] bg-slate-200"></div>
+
+                <!-- Profile Dropdown -->
+                <div class="flex items-center space-x-4 pl-2 group cursor-pointer">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-[13px] font-bold text-slate-900 leading-none mb-1">{{ student.user.get_full_name }}</p>
+                        <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest leading-none">{{ student.roll_number }}</p>
+                    </div>
+                    <a href="{% url 'profile' %}" class="relative block">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 p-[2px] shadow-lg shadow-blue-200 hover:scale-105 transition-transform duration-300">
+                            <div class="w-full h-full bg-white rounded-2xl flex items-center justify-center overflow-hidden">
+                                {% if student.user.profile_picture %}
+                                    <img src="{{ student.user.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover">
+                                {% else %}
+                                    <i class="fas fa-user-graduate text-blue-600"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="flex items-center space-x-2">
+                        <!-- Logout Trigger -->
+                        <a href="{% url 'logout' %}" class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all duration-300 shadow-sm" title="Logout">
+                            <i class="fas fa-power-off text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-8 bg-[#f8fafc] overflow-y-auto">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Simple Footer -->
+        <footer class="p-8 bg-white border-t border-slate-200 text-center">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                &copy; 2025 CST Department Management System | BUILT BY <span class="text-blue-600">ANTIGRAVITY</span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Modals / Overlays (Optional) -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[1000] flex items-center justify-center hidden">
+        <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+</body>
+</html>

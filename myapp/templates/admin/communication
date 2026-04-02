@@ -1,0 +1,13 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<h3>Communication Panel</h3>
+
+<form method="POST">
+    {% csrf_token %}
+    <input class="form-control mb-2" name="to" placeholder="Send to (Student/Teacher)">
+    <textarea class="form-control mb-2" name="msg" placeholder="Message"></textarea>
+    <button class="btn btn-primary">Send</button>
+</form>
+
+{% endblock %}

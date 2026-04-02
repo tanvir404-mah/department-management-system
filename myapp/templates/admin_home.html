@@ -1,0 +1,31 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Institute Overview</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    
+    <div class="tw p-4 bg-white rounded-lg shadow">
+        <h4>Total Students</h4>
+        <p class="text-2xl font-bold">{{ total_students }}</p>
+    </div>
+
+    <div class="tw p-4 bg-white rounded-lg shadow">
+        <h4>Total Teachers</h4>
+        <p class="text-2xl font-bold">{{ total_teachers }}</p>
+    </div>
+
+    <div class="tw p-4 bg-white rounded-lg shadow">
+        <h4>Departments</h4>
+        <p class="text-2xl font-bold">{{ total_departments }}</p>
+    </div>
+
+    <div class="tw p-4 bg-white rounded-lg shadow">
+        <h4>Today’s Attendance</h4>
+        <p class="text-2xl font-bold">{{ today_attendance }}%</p>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,465 +1,461 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Computer Department | Faridpur Polytechnic</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!-- External CSS Libraries -->
+
+  <link rel="shortcut icon" href="/media/fpi-logo.png" type="image/x-icon">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="boostrap/css/bootstrap.css">
+  <link rel="stylesheet" href="boostrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="boostrap/css/bootstrap.rtl.css">
+  <link rel="stylesheet" href="boostrap/css/bootstrap.rtl.min.css">
+
+  <script src="boostrap/js/bootstrap.bundle.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
   <style>
-    /* ----- Your CSS (unchanged) ----- */
+    /* Custom Font Configuration */
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
     }
 
-    header {
-      background-color: #007bff;
-      color: white;
-      padding: 20px 0;
-      text-align: center;
+    /* Gradient Text */
+    .text-gradient {
+      background: linear-gradient(to right, #2563eb, #06b6d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .notice-bar {
-      background: #007bff;
-      color: white;
+    /* Marquee Animation for Notice */
+    .marquee-container {
       overflow: hidden;
       white-space: nowrap;
-      position: relative;
-      height: 40px;
-      display: flex;
-      align-items: center;
     }
 
-    .notice-text {
-      color: #fff;
+    .marquee-content {
       display: inline-block;
-      padding-left: 100%;
-      animation: scroll-left 15s linear infinite;
-      font-weight: bold;
+      animation: scroll-left 20s linear infinite;
     }
 
     @keyframes scroll-left {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
+      0% {
+        transform: translateX(100%);
+      }
 
-    header h1 {
-      margin: 0;
-      font-size: 32px;
-    }
-
-    nav {
-      background-color: #343a40;
-      display: flex;
-      justify-content: center;
-      padding: 10px 0;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-
-    nav a:hover {
-      color: #0084f1ff;
-    }
-
-    .hero-slider {
-      width: 100%;
-      height: 450px;
-      overflow: hidden;
-    }
-
-    .hero-slider img {
-      width: 100%;
-      height: 450px;
-      object-fit: cover;
-    }
-
-    .content {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 0 20px;
-      text-align: center;
-    }
-
-    .content h3 {
-      font-size: 26px;
-      color: #333;
-      margin-bottom: 20px;
-    }
-
-    .content p {
-      font-size: 18px;
-      color: #555;
-      line-height: 1.6;
-    }
-
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 40px;
-    }
-
-    @keyframes slide-up {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .feature-box {
-      background-color: white;
-      padding: 30px;
-      width: 250px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      text-align: center;
-      transition: transform 0.3s;
-      opacity: 0;
-      animation: slide-up 0.8s ease-out forwards;
-    }
-
-    .feature-box:nth-child(1) { animation-delay: 0.1s; }
-    .feature-box:nth-child(2) { animation-delay: 0.2s; }
-    .feature-box:nth-child(3) { animation-delay: 0.3s; }
-    .feature-box:nth-child(4) { animation-delay: 0.4s; }
-    .feature-box:nth-child(5) { animation-delay: 0.5s; }
-    .feature-box:nth-child(6) { animation-delay: 0.6s; }
-
-    .feature-box i {
-      font-size: 36px;
-      color: #007bff;
-      margin-bottom: 10px;
-    }
-
-    .feature-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
-      border: 1px solid #007bff;
-    }
-
-    footer {
-      background-color: #343a40;
-      color: white;
-      text-align: center;
-      padding: 15px 0;
-      margin-top: 40px;
-    }
-
-    .sidebar {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      width: 180px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      padding: 8px;
-      z-index: 1000;
-      text-align: center;
-    }
-
-    .sidebar img {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    .sidebar p {
-      margin: 5px 0 0;
-      font-size: 14px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 120px;
-        bottom: 70px;
-        right: 10px;
+      100% {
+        transform: translateX(-100%);
       }
     }
 
-    #leadership {
-      padding: 40px 20px;
-      background-color: #f8f8f8;
-      text-align: center;
-    }
-
-    #leadership h2 {
-      font-size: 28px;
-      margin-bottom: 30px;
-    }
-
-    .leaders-section {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 60px;
-    }
-
-    .leader-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 220px;
-    }
-
-    .leader-card img {
-      width: 180px;
-      height: 220px;
+    /* Slick Slider Customization */
+    .hero-slider .slick-slide img {
+      width: 100%;
+      height: 500px;
       object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #ccc;
+      filter: brightness(0.8);
+      /* Slightly dark for premium look */
     }
 
-    .leader-info {
-      margin-top: 12px;
+    /* Dropdown Hover Logic for Tailwind */
+    .group:hover .group-hover\:block {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
-    .leader-info h4 {
-      margin: 5px 0;
-      font-size: 18px;
-      color: #333;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-
-    .leader-info p {
-      font-size: 16px;
-      margin: 0;
-      color: #555;
-    }
-
-    /* Make entire feature box clickable with no underline */
-.feature-link {
-  text-decoration: none;    /* removes underline */
-  color: inherit;           /* uses the original text color */
-  display: block;
-}
-
-/* Optional: make sure hover doesn't change color */
-.feature-link:hover {
-  text-decoration: none;
-  color: inherit;
-}
-
-nav {
-  display: flex;
-  gap: 15px;
-  background-color: #3498db;
-  padding: 10px 20px;
-  border-radius: 8px;
-  align-items: center;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-}
-
-nav a:hover {
-  background-color: #2980b9;
-}
-
-.dropdown {
-  position: relative;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #ffffff;
-  min-width: 180px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  border-radius: 6px;
-  overflow: hidden;
-  z-index: 1000;
-}
-
-.dropdown-content a {
-  color: #333;
-  padding: 10px 15px;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
   </style>
-</head>
-<body>
 
-  <!-- Header -->
-  <header>
-    <h1>Computer Department</h1>
-    <p>Faridpur Polytechnic Institute,Faridpur</p>
-    <div class="notice-bar">
-      <div class="notice-text">
-        📢 Latest Notice: Class started from 1st September. Collect your class routine from the department.
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb', // Royal Blue
+            secondary: '#1e293b', // Dark Slate
+            accent: '#06b6d4', // Cyan
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+  <div class="bg-secondary text-white py-2 text-sm hidden md:block">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <p><i class="fas fa-map-marker-alt mr-2"></i> Baitul Aman, Faridpur, Bangladesh</p>
+      <div class="space-x-4">
+        <a href="#" class="hover:text-accent transition"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="hover:text-accent transition"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="hover:text-accent transition"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md transition-all duration-300">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center gap-3">
+          <div class="bg-blue-600 text-white p-2 rounded-lg">
+            <i class="fas fa-laptop-code text-2xl"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800 leading-none">CST Dept.</h1>
+            <p class="text-xs text-gray-500 font-medium tracking-wide">Faridpur Polytechnic Institute</p>
+          </div>
+        </div>
+
+        <nav class="hidden lg:flex items-center gap-6 font-medium text-sm">
+          <a href="{% url 'home' %}" class="hover:text-primary transition py-2">Home</a>
+          <a href="{% url 'teacher' %}" class="hover:text-primary transition py-2">Teachers</a>
+          <a href="{% url 'student' %}" class="hover:text-primary transition py-2">Students</a>
+          <a href="{% url 'notice' %}" class="hover:text-primary transition py-2">Notice</a>
+
+          <div class="relative group py-2">
+            <button class="flex items-center gap-1 hover:text-primary transition">
+              Register <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+            <div
+              class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 hidden group-hover:block z-50">
+              <a href="{% url 'student_register' %}"
+                class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-t-lg">Student
+                Registration</a>
+              <a href="{% url 'teacher_register' %}"
+                class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-b-lg">Teacher
+                Registration</a>
+            </div>
+          </div>
+
+          <div class="relative group py-2">
+            <button
+              class="flex items-center gap-1 bg-primary text-white px-5 py-2 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-0.5">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <div
+              class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-blue-50 hidden group-hover:block z-50 overflow-hidden">
+              <a href="{% url 'student_login' %}"
+                class="block px-6 py-4 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-blue-50 group/item">
+                <i class="fas fa-graduation-cap mr-3 text-blue-500 group-hover/item:scale-110 transition-transform"></i>
+                <span class="font-bold text-sm">Student Portal</span>
+              </a>
+              <a href="{% url 'unified_staff_login' %}"
+                class="block px-6 py-4 hover:bg-slate-50 hover:text-blue-600 transition-all group/item">
+                <i class="fas fa-shield-halved mr-3 text-slate-400 group-hover/item:text-blue-500 group-hover/item:scale-110 transition-all"></i>
+                <span class="font-bold text-sm">Staff Gateway</span>
+              </a>
+            </div>
+          </div>
+        </nav>
+
+        <button class="lg:hidden text-2xl text-gray-700" id="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 relative overflow-hidden">
+      <div class="container mx-auto flex items-center">
+        <span class="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full mr-3 z-10 shadow-sm uppercase">Latest</span>
+        <div class="marquee-container flex-1">
+          <div class="marquee-content text-sm font-medium">
+            {% if latest_ticker %}
+              📢 {{ latest_ticker.title }}: {{ latest_ticker.content }} 
+              {% if latest_ticker.file_attachment %}
+                <a href="{{ latest_ticker.file_attachment.url }}" class="ml-2 underline font-bold" target="_blank">[Download Attachment]</a>
+              {% endif %}
+            {% else %}
+              📢 Welcome to the Computer Department, Faridpur Polytechnic Institute. Stay tuned for official updates.
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
-<!-- Navigation -->
-<nav>
-  <a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
-  <a href="{% url 'teacher' %}"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
-  <a href="{% url 'student' %}"><i class="fas fa-user-graduate"></i> Students</a>
-  <a href="{% url 'contact' %}"><i class="fas fa-envelope"></i> Contact</a>
-  <a href="{% url 'developer' %}"><i class="fas fa-code"></i> Developer's</a>
-
-  <!-- Registration Dropdown -->
-  <div class="dropdown">
-    <a href="#"><i class="fas fa-user-plus"></i> Register ▼</a>
-    <div class="dropdown-content">
-      <a href="{% url 'student_register' %}">Student Registration</a>
-      <a href="{% url 'teacher_register' %}">Teacher Registration</a>
-    </div>
-  </div>
-
-  <!-- Login Dropdown -->
-  <div class="dropdown">
-    <a href="#"><i class="fas fa-sign-in-alt"></i> Login ▼</a>
-    <div class="dropdown-content">
-      <a href="{% url 'student_login' %}">Student Login</a>
-      <a href="{% url 'teacher_login' %}">Teacher Login</a>
-      <a href="{% url 'principal_login' %}">Principal Login</a>
-    </div>
-  </div>
-</nav>
-
-
-  <!-- Hero Image Slider -->
-  <div class="hero-slider">
-    <div><img src="https://scontent.fdac41-1.fna.fbcdn.net/v/t1.6435-9/153063183_10222266669728704_3156353897799525356_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=100&ccb=1-7&_nc_sid=2285d6&_nc_eui2=AeGCHAsYHy6GvzKra-bvNx3I_umcl8-nWT_-6ZyXz6dZP1Qdr_e1VPmzZyn27hMfNX1j-UVeF7Qbjma0ddzksRQe&_nc_ohc=Vmq8xzQYwKcQ7kNvwEU25mI&_nc_oc=AdkZ9SNeH92I0vrmMB-XIn_WJcyYJwtAcdeUbA614F6LDAmYyaZloQIwvdjsRk81Av4&_nc_zt=23&_nc_ht=scontent.fdac41-1.fna&_nc_gid=uJnFhBwrmUXl1c6gtgS1CQ&oh=00_AfZvNe_K8zC2KB81y1-lqDs14Ze7Co7JPLLffVCDzfzC8g&oe=68FE33F4"></div>
-    <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Faridpur_Polytechnic_Institute_Academic_Building.jpg/1280px-Faridpur_Polytechnic_Institute_Academic_Building.jpg"></div>
-    <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6%E0%A6%AA%E0%A7%81%E0%A6%B0_%E0%A6%AA%E0%A6%B2%E0%A6%BF%E0%A6%9F%E0%A7%87%E0%A6%95%E0%A6%A8%E0%A6%BF%E0%A6%95_%E0%A6%87%E0%A6%A8%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A6%BF%E0%A6%9F%E0%A6%BF%E0%A6%89%E0%A6%9F.jpg/1280px-%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6%E0%A6%AA%E0%A7%81%E0%A6%B0_%E0%A6%AA%E0%A6%B2%E0%A6%BF%E0%A6%9F%E0%A7%87%E0%A6%95%E0%A6%A8%E0%A6%BF%E0%A6%95_%E0%A6%87%E0%A6%A8%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A6%BF%E0%A6%9F%E0%A6%BF%E0%A6%89%E0%A6%9F.jpg"></div>
-  </div>
-
-  <!-- Welcome Section -->
-  <section class="content">
-    <h3>Welcome to the Department of Computer Science & Technology</h3>
-    <p>Our mission is to produce skilled computer engineers equipped with the latest knowledge in software, hardware, and networking. At Faridpur Polytechnic Institute, we provide modern lab facilities, experienced faculty, and an industry-focused curriculum to prepare students for successful careers in ICT.</p>
-
-   <div class="features">
-  <a href="{% url 'teacher' %}" class="feature-link">
-    <div class="feature-box" data-aos="fade-up">
-      <i class="fas fa-laptop-code"></i>
-      <h4>Our Teacher's</h4>
-      <p>Highly qualified and experienced faculty members.</p>
-    </div>
-  </a>
-
-  <a href="{% url 'classroom' %}" class="feature-link">
-    <div class="feature-box" data-aos="fade-up">
-      <i class="fas fa-chalkboard-teacher"></i>
-      <h4>Our Classroom</h4>
-      <p>Spacious and well-equipped classrooms.</p>
-    </div>
-  </a>
-
-  <a href="{% url 'lab' %}" class="feature-link">
-    <div class="feature-box" data-aos="fade-up">
-      <i class="fas fa-network-wired"></i>
-      <h4>Modern Labs</h4>
-      <p>Advanced labs for networking and programming.</p>
-    </div>
-  </a>
-
-  <a href="{% url 'curriculum' %}" class="feature-link">
-    <div class="feature-box" data-aos="fade-up">
-      <i class="fas fa-book"></i>
-      <h4>Curriculum</h4>
-      <p>View or download your curriculum.</p>
-    </div>
-  </a>
-
-  <a href="{% url 'success' %}" class="feature-link">
-    <div class="feature-box" data-aos="fade-up">
-      <i class="fas fa-trophy"></i>
-      <h4>Student's Success</h4>
-      <p>Success in national and international competitions.</p>
-    </div>
-  </a>
-
-  <a href="{% url 'internships' %}" class="feature-link">
-    <div class="feature-box" data-aos="fade-up">
-      <i class="fas fa-briefcase"></i>
-      <h4>Internship Opportunities</h4>
-      <p>Partnerships with leading IT companies.</p>
-    </div>
-  </a>
-</div>
-
-  </section>
-
-  <!-- Leadership Section -->
-  <section id="leadership">
-    <h2>Our Authorities </h2>
-    <div class="leaders-section">
-      <div class="leader-card">
-        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//677/e03/c5b/677e03c5b1c4b058580591.jpeg">
-        <div class="leader-info">
-          <h4>Principal</h4>
-          <p>Engr. Md. Akkas Ali Sheikh</p>
+  <!-- Hero Section -->
+  <div class="relative w-full overflow-hidden shadow-2xl">
+    <div class="hero-slider">
+      {% for banner in banners %}
+      <div class="relative h-[450px] lg:h-[600px]">
+        <img src="{{ banner.image.url }}" class="w-full h-full object-cover" alt="{{ banner.title }}">
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <div class="text-center text-white px-6 md:px-12" data-aos="fade-up">
+            <h2 class="text-3xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">{{ banner.title }}</h2>
+            <p class="text-lg md:text-2xl font-medium mb-8 text-slate-100 max-w-4xl mx-auto drop-shadow-lg opacity-90">{{ banner.subtitle }}</p>
+            <div class="flex justify-center gap-4">
+               <a href="{% url 'notice' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg">View Notices</a>
+               <a href="#about" class="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-8 py-3 rounded-xl font-bold transition-all">About CST</a>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="leader-card">
-        <img src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//68c/148/0d1/68c1480d1212c818828790.jpeg">
-        <div class="leader-info">
-          <h4>Chief Instructor, Computer Science</h4>
-          <p>Engr. Rashedul Islam</p>
+      {% empty %}
+      <div class="relative h-[450px] lg:h-[600px]">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Faridpur_Polytechnic_Institute_Academic_Building.jpg/1280px-Faridpur_Polytechnic_Institute_Academic_Building.jpg" alt="Academic Building" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <h2 class="text-3xl md:text-5xl font-bold text-white text-center px-4" data-aos="fade-up">Building Future Engineers</h2>
         </div>
       </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <section class="container mx-auto px-4 py-16">
+    <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+      <h3 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">Welcome to <span class="text-primary">Computer
+          Science</span></h3>
+      <div class="h-1 w-24 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto rounded-full mb-6"></div>
+      <p class="text-gray-600 text-lg leading-relaxed">
+        Our mission is to produce skilled computer engineers equipped with the latest knowledge in software, hardware,
+        and networking. At Faridpur Polytechnic Institute, we provide modern lab facilities to shape the future of ICT
+        in Bangladesh.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <a href="{% url 'teacher' %}" class="group" data-aos="fade-up" data-aos-delay="100">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-100 text-center relative overflow-hidden">
+          <div
+            class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-blue-100">
+          </div>
+          <div
+            class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition duration-300 z-10 relative">
+            <i class="fas fa-laptop-code"></i>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-primary transition">Our Teachers</h4>
+          <p class="text-gray-500 text-sm">Highly qualified and experienced faculty members guiding students.</p>
+        </div>
+      </a>
+
+      <a href="{% url 'classroom' %}" class="group" data-aos="fade-up" data-aos-delay="200">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-100 text-center relative overflow-hidden">
+          <div
+            class="absolute top-0 right-0 w-24 h-24 bg-teal-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-teal-100">
+          </div>
+          <div
+            class="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition duration-300 z-10 relative">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-teal-600 transition">Smart Classroom</h4>
+          <p class="text-gray-500 text-sm">Spacious, multimedia-enabled classrooms for interactive learning.</p>
+        </div>
+      </a>
+
+      <a href="{% url 'lab' %}" class="group" data-aos="fade-up" data-aos-delay="300">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-100 text-center relative overflow-hidden">
+          <div
+            class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-purple-100">
+          </div>
+          <div
+            class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition duration-300 z-10 relative">
+            <i class="fas fa-network-wired"></i>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-purple-600 transition">Modern Labs</h4>
+          <p class="text-gray-500 text-sm">Advanced labs for networking, hardware, and software development.</p>
+        </div>
+      </a>
+
+      <a href="{% url 'curriculum' %}" class="group" data-aos="fade-up" data-aos-delay="400">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-100 text-center relative overflow-hidden">
+          <div
+            class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-orange-100">
+          </div>
+          <div
+            class="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition duration-300 z-10 relative">
+            <i class="fas fa-book"></i>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-orange-600 transition">Curriculum</h4>
+          <p class="text-gray-500 text-sm">Download the latest BTEB syllabus and academic plans.</p>
+        </div>
+      </a>
+
+      <a href="{% url 'success' %}" class="group" data-aos="fade-up" data-aos-delay="500">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-100 text-center relative overflow-hidden">
+          <div
+            class="absolute top-0 right-0 w-24 h-24 bg-pink-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-pink-100">
+          </div>
+          <div
+            class="w-16 h-16 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition duration-300 z-10 relative">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-pink-600 transition">Student Success</h4>
+          <p class="text-gray-500 text-sm">Achievements in national and international skills competitions.</p>
+        </div>
+      </a>
+
+      <a href="{% url 'internships' %}" class="group" data-aos="fade-up" data-aos-delay="600">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-100 text-center relative overflow-hidden">
+          <div
+            class="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-green-100">
+          </div>
+          <div
+            class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition duration-300 z-10 relative">
+            <i class="fas fa-briefcase"></i>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition">Internships</h4>
+          <p class="text-gray-500 text-sm">Industrial attachment opportunities with top IT companies.</p>
+        </div>
+      </a>
     </div>
   </section>
 
- 
-  <!-- Footer -->
-  <footer>
-    &copy; 2025 Computer Department, Faridpur Polytechnic Institute. All rights reserved.
+  <section id="leadership" class="bg-gray-100 py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Our <span class="text-primary">Authorities</span>
+      </h2>
+
+      <div class="flex flex-wrap justify-center gap-10">
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden w-72 transform hover:scale-105 transition duration-300"
+          data-aos="zoom-in">
+          <div class="h-24 bg-gradient-to-r from-blue-600 to-blue-400"></div>
+          <div class="flex justify-center -mt-12">
+            <img class="w-32 h-32 rounded-full border-4 border-white object-cover bg-white"
+              src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//677/e03/c5b/677e03c5b1c4b058580591.jpeg"
+              alt="Principal">
+          </div>
+          <div class="p-6 text-center">
+            <h4 class="text-xl font-bold text-gray-800">Engr. Md. Akkas Ali</h4>
+            <p class="text-primary font-medium text-sm">Principal</p>
+            <p class="text-gray-500 text-xs mt-2">Faridpur Polytechnic Institute</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-10">
+          <div
+            class="bg-white rounded-xl shadow-lg overflow-hidden w-72 transform hover:scale-105 transition duration-300"
+            data-aos="zoom-in">
+            <div class="h-24 bg-gradient-to-r from-blue-600 to-blue-400"></div>
+            <div class="flex justify-center -mt-12">
+              <img class="w-32 h-32 rounded-full border-4 border-white object-cover bg-white"
+                src="/media/teacher-images/vice-principal.jpg"
+                alt="Vice-Principal">
+            </div>
+            <div class="p-6 text-center">
+              <h4 class="text-xl font-bold text-gray-800">Nizam Uddin Ahmed</h4>
+              <p class="text-primary font-medium text-sm">Vice-Principal</p>
+              <p class="text-gray-500 text-xs mt-2">Faridpur Polytechnic Institute</p>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-xl shadow-lg overflow-hidden w-72 transform hover:scale-105 transition duration-300"
+            data-aos="zoom-in" data-aos-delay="100">
+            <div class="h-24 bg-gradient-to-r from-cyan-600 to-cyan-400"></div>
+            <div class="flex justify-center -mt-12">
+              <img class="w-32 h-32 rounded-full border-4 border-white object-cover bg-white"
+                src="https://file-dhaka.portal.gov.bd/uploads/fcf69dac-d6e7-4193-a26b-e287cf3d3261//68c/148/0d1/68c1480d1212c818828790.jpeg"
+                alt="CI">
+            </div>
+            <div class="p-6 text-center">
+              <h4 class="text-xl font-bold text-gray-800">Engr. Rashedul Islam</h4>
+              <p class="text-cyan-600 font-medium text-sm">Chief Instructor (Tech)</p>
+              <p class="text-gray-500 text-xs mt-2">Computer Department</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+
+  <footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <h4 class="text-white text-lg font-bold mb-4">About Us</h4>
+        <p class="text-sm leading-6">Faridpur Polytechnic Institute is one of the oldest and most reputed diploma
+          engineering institutes in Bangladesh. The Computer Department is committed to technical excellence.</p>
+      </div>
+      <div class="text-center md:text-left">
+        <h4 class="text-white text-lg font-bold mb-4">Quick Links</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://bteb.gov.bd/site/page/14fc21a0-8a2d-400f-8e20-5fbd989a68f5"
+              class="hover:text-primary transition">Academic Calendar</a></li>
+          <li><a
+              href="https://bteb.gov.bd/site/page/46ea7fc6-2f18-48d8-a313-a377046a1323/%E0%A6%A1%E0%A6%BF%E0%A6%AA%E0%A7%8D%E0%A6%B2%E0%A7%8B%E0%A6%AE%E0%A6%BE-%E0%A6%AA%E0%A6%B0%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A7%9F"
+              class="hover:text-primary transition">Result</a></li>
+          <li><a href="{% url 'notice' %}" class="hover:text-primary transition">Class Routine</a></li>
+          <li><a href="{% url 'developer' %}" class="hover:text-primary transition">Developer Team</a></li>
+        </ul>
+      </div>
+      <div class="text-center md:text-right">
+        <h4 class="text-white text-lg font-bold mb-4">Contact</h4>
+        <p class="text-sm"><i class="fas fa-phone mr-2"></i> +880 1234 567890</p>
+        <p class="text-sm mt-2"><i class="fas fa-envelope mr-2"></i> info@faridpurpoly.edu.bd</p>
+        <div class="mt-4 space-x-3">
+          <a href="https://www.facebook.com/groups/2624242601196787"
+            class="inline-block w-8 h-8 rounded-full bg-gray-700 text-center leading-8 hover:bg-primary transition"><i
+              class="fab fa-facebook-f"></i></a>
+          <a href="#"
+            class="inline-block w-8 h-8 rounded-full bg-gray-700 text-center leading-8 hover:bg-primary transition"><i
+              class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-800 pt-8 text-center text-sm">
+      &copy; 2025 Computer Department, Faridpur Polytechnic. All rights reserved.
+    </div>
   </footer>
 
-  <!-- JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
   <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
+      // Slick Slider
       $('.hero-slider').slick({
         autoplay: true,
-        autoplaySpeed: 10000,
+        autoplaySpeed: 5000,
         dots: true,
         arrows: false,
-        fade: false,
-        speed: 800,
-        cssEase: 'linear',
-        rtl: false
+        fade: true,
+        speed: 1000,
+        cssEase: 'linear'
+      });
+
+      // Mobile Menu Toggle
+      $('#mobile-menu-btn').click(function () {
+        $('#mobile-menu').slideToggle();
       });
     });
 
+    // Initialize AOS (Animate On Scroll)
     AOS.init({
-      duration: 1000,
+      duration: 800,
       once: true,
-      offset: 100
+      offset: 50
     });
   </script>
 </body>
+
 </html>

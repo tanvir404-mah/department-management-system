@@ -1,0 +1,113 @@
+{% extends 'base_admin.html' %}
+{% block title %}Create User | System Admin{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto pb-24">
+    <div class="mb-10">
+        <a href="{% url 'admin_system_mgmt' %}" class="text-[10px] font-extrabold text-slate-400 hover:text-indigo-600 uppercase tracking-widest flex items-center space-x-2 mb-6">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i><span>Back to System Admin</span>
+        </a>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Create <span class="text-indigo-600">New User</span></h2>
+        <p class="text-sm font-bold text-slate-400 mt-1">Profile is auto-created based on assigned role.</p>
+    </div>
+
+    <form method="POST" class="bg-white rounded-[3rem] border border-slate-100 shadow-sm p-12 space-y-8">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">First Name</label>
+                <input type="text" name="first_name" placeholder="First name"
+                    class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Last Name</label>
+                <input type="text" name="last_name" placeholder="Last name"
+                    class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Username <span class="text-rose-500">*</span></label>
+            <input type="text" name="username" required placeholder="Unique username"
+                class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Email</label>
+            <input type="email" name="email" placeholder="user@example.com"
+                class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Password <span class="text-rose-500">*</span></label>
+            <input type="password" name="password" required placeholder="Set password"
+                class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Role <span class="text-rose-500">*</span></label>
+                <select name="role" id="roleSelect" onchange="updateRoleFields()" required
+                    class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="hod">HOD</option>
+                    <option value="lab_assistant">Lab Assistant</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Department</label>
+                <select name="department"
+                    class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                    <option value="">— Select Dept —</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}">{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Role-specific fields -->
+        <div id="studentFields" class="space-y-2">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Shift</label>
+            <select name="shift" class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                <option value="1st">1st Shift</option>
+                <option value="2nd">2nd Shift</option>
+            </select>
+        </div>
+        <div id="teacherFields" class="space-y-2 hidden">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Designation</label>
+            <input type="text" name="designation" placeholder="e.g. Lecturer, Assistant Professor"
+                class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all">
+        </div>
+
+        <!-- Permissions -->
+        <div class="bg-slate-50 rounded-2xl p-6 space-y-4 border border-slate-100">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">System Permissions</p>
+            <label class="flex items-center space-x-4 cursor-pointer">
+                <input type="checkbox" name="is_staff" class="w-5 h-5 rounded-lg accent-indigo-600">
+                <span class="text-sm font-bold text-slate-700">Staff Status (can access admin panel)</span>
+            </label>
+            <label class="flex items-center space-x-4 cursor-pointer">
+                <input type="checkbox" name="is_superuser" class="w-5 h-5 rounded-lg accent-purple-600">
+                <span class="text-sm font-bold text-slate-700">Superuser (full system access)</span>
+            </label>
+        </div>
+
+        <div class="flex space-x-4 pt-4">
+            <a href="{% url 'admin_system_mgmt' %}" class="flex-1 py-5 bg-slate-100 text-slate-500 text-xs font-extrabold uppercase tracking-widest rounded-2xl text-center hover:bg-slate-200 transition-all">Cancel</a>
+            <button type="submit" class="flex-1 py-5 bg-indigo-600 text-white text-xs font-extrabold uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100">
+                Create User
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+function updateRoleFields() {
+    const role = document.getElementById('roleSelect').value;
+    document.getElementById('studentFields').classList.toggle('hidden', role !== 'student');
+    document.getElementById('teacherFields').classList.toggle('hidden', role !== 'teacher');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HOD Command Center | CST Department{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & Lucide Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Instrument Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        indigo: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+                        'stripe': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .sidebar-item-active {
+            background-color: #f5f3ff;
+            color: #4f46e5;
+            border-right: 3px solid #4f46e5;
+        }
+        .thin-border {
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .minimal-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-[#fafafa] text-slate-900 font-sans antialiased overflow-x-hidden">
+
+    <!-- Section 1: HOD Sidebar (Fixed) -->
+    <aside class="fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-slate-100 z-[100] flex flex-col hidden lg:flex">
+        <!-- Brand -->
+        <div class="h-20 flex items-center px-8 border-b border-slate-50">
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white mr-3 shadow-lg shadow-indigo-100">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-extrabold tracking-tight">CST <span class="text-indigo-600">HOD</span></h1>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Command Center</p>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto scroll-hide">
+            <!-- Governance Section -->
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-6">Governance</p>
+            <a href="{% url 'hod_dashboard' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-indigo-600 bg-indigo-50 font-bold transition-all">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span class="text-sm">Command Center</span>
+            </a>
+            <a href="{% url 'hod_student_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span class="text-sm">Student Oracle</span>
+            </a>
+            <a href="{% url 'hod_parents_alert' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-rose-600 transition-all font-bold">
+                <i data-lucide="megaphone" class="w-5 h-5"></i>
+                <span class="text-sm">Parents Alert</span>
+            </a>
+            <a href="{% url 'hod_faculty_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                <span class="text-sm">Faculty Pulse</span>
+            </a>
+
+            <!-- Academic Section -->
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-8">Academics</p>
+            <a href="{% url 'hod_dept_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="building-2" class="w-5 h-5"></i>
+                <span class="text-sm">Departments</span>
+            </a>
+            <a href="{% url 'hod_course_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="text-sm">Course Engine</span>
+            </a>
+            <a href="{% url 'hod_course_allotment' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="git-merge" class="w-5 h-5"></i>
+                <span class="text-sm">Allotment</span>
+            </a>
+            <a href="{% url 'hod_routine_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="calendar-days" class="w-5 h-5"></i>
+                <span class="text-sm">Class Routine</span>
+            </a>
+
+            <!-- Resources Section -->
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-8">Resources</p>
+            <a href="{% url 'hod_lab_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="cpu" class="w-5 h-5"></i>
+                <span class="text-sm">Lab Control</span>
+            </a>
+            <a href="{% url 'lab_assistant_dashboard' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="monitor" class="w-5 h-5"></i>
+                <span class="text-sm">Tech Console</span>
+            </a>
+            <!-- Portal CMS -->
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-8">Portal CMS</p>
+            <a href="{% url 'admin_manage_banners' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="image" class="w-5 h-5"></i>
+                <span class="text-sm">Hero Banners</span>
+            </a>
+            <a href="{% url 'admin_manage_notices' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+                <i data-lucide="bell-ring" class="w-5 h-5"></i>
+                <span class="text-sm">Portal Notices</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-6 border-t border-slate-50 bg-slate-50/20">
+            <div class="bg-white thin-border rounded-2xl p-4 shadow-sm flex items-center space-x-3">
+                <div class="w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></div>
+                <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">System Operational</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="lg:ml-72 min-h-screen flex flex-col">
+
+        <!-- Section 2: Top Header -->
+        <header class="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-10 sticky top-0 z-50">
+            <!-- Search & Breadcrumbs -->
+            <div class="flex items-center space-x-8">
+                <div class="relative hidden sm:block">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </div>
+                    <input type="text" placeholder="Find student or teacher..." 
+                        class="bg-slate-50 border border-slate-100 rounded-2xl pl-11 pr-4 py-2.5 text-xs font-medium w-80 minimal-input transition-all">
+                </div>
+            </div>
+
+            <!-- Profile Actions -->
+            <div class="flex items-center space-x-6">
+                <!-- Notifications -->
+                <!-- Notifications -->
+                <div class="relative" id="notification-wrapper">
+                    <button id="notification-btn" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-all relative">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        {% if new_notices_count > 0 %}
+                            <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
+                        {% endif %}
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div id="notification-dropdown" class="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-soft border border-slate-100 py-4 hidden z-[1001] animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div class="px-6 py-2 border-b border-slate-50 flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-extrabold text-slate-900 tracking-tight">Notifications</h4>
+                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg">{{ recent_notices|length }} New</span>
+                        </div>
+                        
+                        <div class="max-h-[400px] overflow-y-auto scroll-hide">
+                            {% for notice in recent_notices %}
+                            <div class="px-6 py-4 hover:bg-indigo-50/50 transition-colors cursor-pointer group">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex-shrink-0 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                        <i data-lucide="megaphone" class="w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-[13px] font-bold text-slate-800 leading-tight mb-1 truncate">{{ notice.title }}</p>
+                                        <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-2">{{ notice.content }}</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">{{ notice.created_at|timesince }} ago</span>
+                                            <span class="text-[9px] font-bold text-indigo-600 uppercase">Admin</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="py-12 text-center text-slate-300">
+                                <i data-lucide="bell-off" class="w-8 h-8 mx-auto mb-3 opacity-20"></i>
+                                <div class="text-[10px] font-bold uppercase tracking-widest">No notifications</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="px-6 pt-4 mt-2 border-t border-slate-50">
+                            <a href="{% url 'notice' %}" class="block w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-center rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-stripe">All Notices</a>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const btn = document.getElementById('notification-btn');
+                        const dropdown = document.getElementById('notification-dropdown');
+                        
+                        if(btn && dropdown) {
+                            btn.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                dropdown.classList.toggle('hidden');
+                            });
+                            
+                            document.addEventListener('click', function() {
+                                dropdown.classList.add('hidden');
+                            });
+                            
+                            dropdown.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                            });
+                        }
+                    });
+                </script>
+
+                <div class="flex items-center space-x-4 pl-4 border-l border-slate-100">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-[13px] font-bold text-slate-900 leading-none mb-1">CST HOD</p>
+                        <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest leading-none">Head of Dept</p>
+                    </div>
+                    <a href="{% url 'profile' %}" class="block">
+                        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 hover:scale-105 transition-all outline-none">
+                            <i data-lucide="user-cog" class="w-5 h-5"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <a href="{% url 'logout' %}" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all shadow-sm" title="Logout">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Surface -->
+        <main class="flex-1 p-10 max-w-7xl mx-auto w-full">
+            
+            {% if messages %}
+                {% for message in messages %}
+                <div class="mb-8 p-5 rounded-2xl {% if message.tags == 'success' %}bg-indigo-50 border-indigo-100 text-indigo-700{% else %}bg-rose-50 border-rose-100 text-rose-700{% endif %} border shadow-stripe flex items-center animate-fade-in">
+                    <i data-lucide="{% if message.tags == 'success' %}check-circle{% else %}alert-circle{% endif %}" class="w-5 h-5 mr-4"></i>
+                    <span class="text-xs font-bold uppercase tracking-wide">{{ message }}</span>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="p-10 border-t border-slate-50 bg-white">
+            <div class="flex flex-col md:flex-row items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <p>&copy; 2025 CST Management Portal</p>
+                <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-indigo-600 transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-indigo-600 transition-colors">Staff Support</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

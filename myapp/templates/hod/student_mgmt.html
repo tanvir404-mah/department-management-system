@@ -1,0 +1,100 @@
+{% extends 'base_hod.html' %}
+
+{% block title %}Student Directory | HOD Command Center{% endblock %}
+
+{% block content %}
+<div class="space-y-10 animate-fade-in">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between bg-white p-8 rounded-[2.5rem] shadow-stripe thin-border">
+        <div class="flex items-center space-x-6">
+            <div class="w-16 h-16 bg-slate-900 text-white rounded-3xl flex items-center justify-center text-3xl shadow-lg shadow-slate-200">
+                <i data-lucide="contact-2"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Student Directory</h2>
+                <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] italic">Full Enrollment Database</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="bg-white thin-border px-8 py-4 rounded-2xl text-xs font-extrabold uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
+                Import CSV
+            </button>
+            <button class="bg-indigo-600 text-white px-8 py-4 rounded-2xl text-xs font-extrabold uppercase tracking-widest shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">
+                Add New Student
+            </button>
+        </div>
+    </div>
+
+    <!-- Student List Table -->
+    <div class="bg-white rounded-[2.5rem] shadow-stripe thin-border overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-slate-50 border-b border-slate-100">
+                <tr>
+                    <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Student Information</th>
+                    <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Semester/Shift</th>
+                    <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Academic Status</th>
+                    <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for student in students %}
+                <tr class="hover:bg-indigo-50/20 transition-all group">
+                    <td class="px-8 py-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 border border-slate-200 text-sm font-bold">
+                                {{ student.user.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-extrabold text-slate-900 leading-none mb-1">{{ student.user.get_full_name|default:student.user.username }}</p>
+                                <div class="flex items-center space-x-2">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Roll: {{ student.roll_number }}</p>
+                                    <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                                    <p class="text-[10px] font-bold text-indigo-600 uppercase">#{{ student.student_id|default:"FPI-CST-TBA" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-6">
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-tight italic">Semester {{ student.get_semester_display|default:student.semester }}</span>
+                            <p class="text-[9px] font-bold text-slate-400 px-1 uppercase tracking-widest">{{ student.shift }} Shift</p>
+                        </div>
+                    </td>
+                    <td class="px-8 py-6">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-widest text-slate-400 px-1">
+                                <span>CGPA</span>
+                                <span class="text-slate-900">{{ student.cgpa|default:"0.00" }}</span>
+                            </div>
+                            <div class="w-32 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-indigo-500 rounded-full" style="width: {{ student.cgpa|floatformat:0 }}0%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-6 text-right">
+                        <div class="flex items-center justify-end space-x-2">
+                            <button class="w-10 h-10 rounded-xl hover:bg-white thin-border flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-all">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+                            <a href="{% url 'student_delete' %}?id={{ student.id }}" class="w-10 h-10 rounded-xl hover:bg-rose-50 flex items-center justify-center text-slate-400 hover:text-rose-600 transition-all">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-8 py-20 text-center">
+                        <div class="opacity-30 space-y-4">
+                            <i data-lucide="contact-2" class="w-12 h-12 mx-auto"></i>
+                            <p class="text-xs font-extrabold uppercase tracking-widest">No students found in the department.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

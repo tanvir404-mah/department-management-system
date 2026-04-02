@@ -1,0 +1,95 @@
+{% extends 'base_admin.html' %}
+{% block title %}Notice Management | CST Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-10 pb-20">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-[10px] font-extrabold text-indigo-500 uppercase tracking-[0.25em] mb-1">Portal CMS</p>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Global <span class="text-indigo-600">Notices</span></h2>
+        </div>
+        <a href="{% url 'staff_dashboard' %}" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-all">Back to Dashboard</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Notice Form -->
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm h-fit sticky top-10">
+            <h3 class="text-base font-extrabold text-slate-900 mb-8">Publish New Notice</h3>
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <div class="space-y-2">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Category</label>
+                    <select name="category" required class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                        <option value="ACADEMIC">Academic</option>
+                        <option value="EXAMINATION">Examination</option>
+                        <option value="REGISTRATION">Registration</option>
+                        <option value="MAINTENANCE">Maintenance</option>
+                        <option value="EVENT">Event</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Headline</label>
+                    <input type="text" name="title" required placeholder="Main notice title..." class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Detailed Content</label>
+                    <textarea name="content" required rows="4" placeholder="Announcement details..." class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all resize-none"></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Attachment (Optional PDF)</label>
+                    <input type="file" name="file_attachment" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl text-xs font-bold">
+                </div>
+                <div class="flex items-center space-x-3 pt-2">
+                    <input type="checkbox" name="is_latest" id="is_latest" checked class="w-5 h-5 rounded-lg border-slate-200 text-indigo-600 focus:ring-indigo-500">
+                    <label for="is_latest" class="text-xs font-bold text-slate-600">Show in Top Ticker</label>
+                </div>
+                <button type="submit" class="w-full py-5 bg-indigo-600 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">Publish Notice</button>
+            </form>
+        </div>
+
+        <!-- Notice List -->
+        <div class="lg:col-span-2 space-y-6">
+            {% for notice in notices %}
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm flex items-start gap-6 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 group relative">
+                <div class="w-1.5 h-16 
+                    {% if notice.category == 'ACADEMIC' %}bg-blue-400
+                    {% elif notice.category == 'EXAMINATION' %}bg-rose-400
+                    {% elif notice.category == 'REGISTRATION' %}bg-emerald-400
+                    {% elif notice.category == 'MAINTENANCE' %}bg-amber-400
+                    {% else %}bg-slate-400{% endif %} rounded-full shrink-0"></div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                             <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-widest">{{ notice.get_category_display }}</span>
+                             {% if notice.is_latest %}<span class="text-[8px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded font-extrabold">POPULAR</span>{% endif %}
+                        </div>
+                        <form method="POST" action="{% url 'admin_delete_global_notice' notice.id %}" onsubmit="return confirm('Permanently delete this notice?')">
+                            {% csrf_token %}
+                            <button type="submit" class="p-2 opacity-0 group-hover:opacity-100 transition-opacity bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <h4 class="text-xl font-extrabold text-slate-900 leading-tight mb-2">{{ notice.title }}</h4>
+                    <p class="text-sm font-medium text-slate-500 leading-relaxed mb-6">{{ notice.content|truncatechars:150 }}</p>
+                    
+                    <div class="flex items-center gap-4">
+                        {% if notice.file_attachment %}
+                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                             <i data-lucide="file-text" class="w-3.5 h-3.5 text-rose-500"></i>
+                             <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Attachment Incl.</span>
+                        </div>
+                        {% endif %}
+                        <p class="text-[10px] font-bold text-slate-300 uppercase">Published {{ notice.created_at|timesince }} ago</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] py-24 text-center">
+                <p class="text-sm font-bold text-slate-300 uppercase tracking-widest italic">No global notices published yet</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

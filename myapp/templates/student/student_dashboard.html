@@ -1,527 +1,279 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Premium Student Dashboard</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  
-  <style>
-    /* Reuse your existing styles here */
-    * {
-      box-sizing: border-box;
-      margin: 0; padding: 0;
-      font-family: 'Poppins', sans-serif;
-    }
-    body {
-      display: flex;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-      color: #f0f0f0;
-    }
+{% extends 'base_dashboard.html' %}
 
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: linear-gradient(180deg, #4f46e5, #4338ca);
-      color: #e0e7ff;
-      padding: 25px 20px;
-      height: 100vh;
-      position: fixed;
-      top: 0; left: 0;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.6);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.3s ease;
-      z-index: 200;
-    }
-    .sidebar h2 {
-      font-weight: 700;
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 40px;
-      letter-spacing: 2px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    .sidebar nav a {
-      display: flex;
-      align-items: center;
-      padding: 15px 20px;
-      color: #d1d5db;
-      font-weight: 500;
-      font-size: 16px;
-      text-decoration: none;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-    .sidebar nav a i {
-      margin-right: 12px;
-      font-size: 18px;
-      width: 22px;
-      text-align: center;
-    }
-    .sidebar nav a:hover, .sidebar nav a.active {
-      background: rgba(255 255 255 / 0.15);
-      color: #fff;
-      font-weight: 700;
-      box-shadow: 0 0 10px #6366f1;
-    }
+{% block title %}Dashboard | {{ student.user.get_full_name }}{% endblock %}
 
-    .sidebar .profile {
-      border-top: 1px solid rgba(255 255 255 / 0.2);
-      padding-top: 20px;
-      text-align: center;
-    }
-    .sidebar .profile img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 2px solid #8b5cf6;
-      margin-bottom: 12px;
-      box-shadow: 0 0 8px #8b5cf6aa;
-    }
-    .sidebar .profile p {
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .sidebar .profile span {
-      font-size: 14px;
-      color: #a5b4fc;
-    }
+{% block header_title %}Student Overview{% endblock %}
 
-    /* Main content */
-    .main {
-      margin-left: 260px;
-      flex: 1;
-      padding: 25px 30px;
-      background: #111827;
-      overflow-y: auto;
-      min-height: 100vh;
-      transition: margin-left 0.3s ease;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-    .topbar h1 {
-      font-size: 32px;
-      font-weight: 700;
-      color: #a5b4fc;
-      text-shadow: 0 0 8px #a5b4fcaa;
-    }
-    .topbar .user {
-      font-weight: 600;
-      background: #4338ca;
-      padding: 10px 18px;
-      border-radius: 30px;
-      box-shadow: 0 0 10px #6366f1cc;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .topbar .user i {
-      font-size: 18px;
-    }
-
-    /* Summary cards */
-    .summary-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-    .card {
-      background: #1e293b;
-      border-radius: 15px;
-      padding: 25px 30px;
-      box-shadow: 0 0 15px rgba(100, 100, 255, 0.4);
-      transition: transform 0.3s ease;
-      cursor: default;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-    }
-    .card h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
-      color: #c7d2fe;
-      letter-spacing: 1px;
-    }
-    .card p {
-      font-size: 36px;
-      font-weight: 700;
-      color: #a5b4fc;
-      text-shadow: 0 0 5px #a5b4fcbb;
-    }
-
-    /* Table */
-    .subject-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #1e293b;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-    }
-    .subject-table th, .subject-table td {
-      padding: 15px 20px;
-      border-bottom: 1px solid #374151;
-      text-align: left;
-      color: #c7d2fe;
-    }
-    .subject-table th {
-      background: #4338ca;
-      font-weight: 600;
-      letter-spacing: 1px;
-      font-size: 15px;
-    }
-    .subject-table tr:hover {
-      background: #3730a3;
-      cursor: default;
-    }
-
-    /* --- NEW SECTION: Profile Styling --- */
-    .profile-section {
-      background: #1e293b;
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 0 15px rgba(100, 100, 255, 0.4);
-      margin-bottom: 40px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      align-items: flex-start;
-    }
-    .profile-section .avatar-box {
-      flex: 0 0 150px;
-      text-align: center;
-    }
-    .profile-section .avatar-box img {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      border: 4px solid #8b5cf6;
-      box-shadow: 0 0 15px #8b5cf6aa;
-    }
-    .profile-section .info-list {
-      flex: 1;
-      min-width: 250px;
-    }
-    .profile-section .info-list div {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px dashed #374151;
-    }
-    .profile-section .info-list div:last-child {
-      border-bottom: none;
-    }
-    .profile-section .info-list span:first-child {
-      font-weight: 500;
-      color: #a5b4fc;
-    }
-    .profile-section .info-list span:last-child {
-      font-weight: 600;
-      color: #c7d2fe;
-    }
-    /* --- END NEW SECTION: Profile Styling --- */
-
-    /* --- NEW SECTION: Notice Board Styling --- */
-    .notice-board {
-      background: #1e293b;
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 0 15px rgba(100, 100, 255, 0.4);
-    }
-    .notice-item {
-      padding: 15px 0;
-      border-bottom: 1px solid #374151;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .notice-item:last-child {
-      border-bottom: none;
-    }
-    .notice-item:hover {
-        background: #2b394d;
-    }
-    .notice-item h4 {
-      margin-bottom: 5px;
-      color: #a5b4fc;
-      font-size: 18px;
-    }
-    .notice-item p {
-      font-size: 14px;
-      color: #94a3b8;
-    }
-    .notice-item .date {
-      font-size: 12px;
-      font-style: italic;
-      color: #6b7280;
-      float: right;
-    }
-    /* --- END NEW SECTION: Notice Board Styling --- */
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      .sidebar {
-        width: 200px;
-      }
-      .main {
-        margin-left: 200px;
-        padding: 20px 25px;
-      }
-      .summary-cards {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-    }
-    @media (max-width: 600px) {
-      body {
-        flex-direction: column;
-      }
-      .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
-        box-shadow: none;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #4338ca;
-      }
-      .main {
-        margin-left: 0;
-        padding: 15px 20px;
-      }
-      .summary-cards {
-        grid-template-columns: 1fr;
-        gap: 15px;
-      }
-      .topbar {
-        flex-direction: column;
-        gap: 10px;
-      }
-      /* Adjust profile layout for small screens */
-      .profile-section {
-        flex-direction: column;
-        text-align: center;
-      }
-      .profile-section .info-list {
-        width: 100%;
-      }
-      .profile-section .info-list div {
-          justify-content: space-between;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="sidebar" id="sidebar">
-    <h2>FPI CST</h2>
-    <nav>
-      <a href='{% url "student_dashboard" %}' class="active"><i class="fas fa-Dashboard"></i>Dashboard</a>
-      <a href="{% url 'profile' %}"><i class="fas fa-user-circle"></i>My Profile</a>
-       <a href="{% url 'subjects' %}"><i class="fas fa-book"></i>My Subjects</a>
-      <a href="{% url 'attendance_show' %}"><i class="fas fa-calendar-check"></i>Attendance</a>
-      <a href="{% url 'assignments' %}"><i class="fas fa-tasks"></i>Assignments</a>
-      <a href="{% url 'contact' %}"><i class="fas fa-envelope"></i>Contact</a>
-      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
-    </nav>
-    <div class="profile">
-      <img src="https://media.licdn.com/dms/image/v2/D5603AQFWb3EBF9ZYjg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1718993233601?e=1761782400&v=beta&t=Q8R0OyD8gG42Tm1YdtJue23uonMZ5ycw8hZU37tHIoo" alt="Student Avatar" />
-      <p>Tanvir Mahmud</p>
-      <span>Computer Science & Technology</span>
-    </div>
-  </div>
-
-  <div class="main">
-    <div class="topbar">
-      <h1><i class="fas fa-user-graduate"></i> Student Dashboard</h1>
-      <div class="user"><i class="fas fa-user-circle"></i>tanvir.mahmud</div>
-    </div>
-
-    <div class="summary-cards">
-      <div class="card">
-        <h3>Enrolled Subjects</h3>
-        <p id="enrolledSubjectsCount">0</p>
-      </div>
-      <div class="card">
-        <h3>Attendance %</h3>
-        <p id="attendancePercent">0%</p>
-      </div>
-      <div class="card">
-        <h3>Upcoming Assignments</h3>
-        <p id="upcomingAssignmentsCount">0</p>
-      </div>
-      <div class="card">
-        <h3>Completed Assignments</h3>
-        <p id="completedAssignmentsCount">0</p>
-      </div>
-    </div>
+{% block content %}
+<div class="space-y-10 animate-fade-in">
     
-    <h2 style="margin-bottom: 15px; color:#a5b4fc;">My Profile</h2>
-    <div class="profile-section">
-        <div class="avatar-box">
-            <img src="https://media.licdn.com/dms/image/v2/D5603AQFWb3EBF9ZYjg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1718993233601?e=1761782400&v=beta&t=Q8R0OyD8gG42Tm1YdtJue23uonMZ5ycw8hZU37tHIoo" alt="Student Avatar" />
-            <h3 style="margin-top: 15px; color: white;">Tanvir Mahmud</h3>
-            <span style="color: #a5b4fc;">ID: FPI12345</span>
-        </div>
-        <div class="info-list">
-            <div><span>Roll No:</span><span>748923</span></div>
-            <div><span>Department:</span><span>Computer Science & Tech</span></div>
-            <div><span>Semester:</span><span>6th </span></div>
-            <div><span>Email:</span><span>tanvir.mahmud@fpi.edu</span></div>
-            <div><span>Phone:</span><span>+880 1743812478</span></div>
-        </div>
-    </div>
-    <h2 style="margin: 40px 0 15px; color:#a5b4fc;">Notice Board</h2>
-    <h2 style="margin: 40px 0 15px; color:#a5b4fc;">Updates from Teachers & Principal</h2>
-<div class="notice-board">
-    {% if posts %}
-        {% for post in posts %}
-            <div class="notice-item">
-                <h4>
-                    <i class="fas fa-bullhorn" style="margin-right: 10px; color: #facc15;"></i>
-                    [{{ post.get_category_display }}] {{ post.title }}
-                    <span class="date">{{ post.created_at|date:"Y-m-d H:i" }}</span>
-                </h4>
-                <p>{{ post.content }}</p>
-                <small style="color:#94a3b8;">— Sent by {{ post.sender.username }}</small>
+    <!-- Section 3: Quick Stats (Top Section - 4 Cards) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Card 1: Semester -->
+        <div class="glass rounded-3xl p-6 shadow-glass hover:shadow-premium transition-all duration-500 group border-l-4 border-l-blue-600">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <span class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest">Active</span>
             </div>
-        {% endfor %}
-    {% else %}
-        <p style="text-align: center; padding: 20px;">No updates available.</p>
-    {% endif %}
-</div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Current Semester</p>
+            <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ student.semester }}<span class="text-sm font-bold text-slate-400 ml-1">th</span></h3>
+        </div>
 
-    <h2 style="margin: 40px 0 15px; color:#a5b4fc;">My Subjects</h2>
-    <table class="subject-table" aria-label="My Subjects Table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Subject Code</th>
-          <th>Subject Name</th>
-          <th>Description</th>
-          <th>Attendance</th>
-        </tr>
-      </thead>
-      <tbody id="subject-list"></tbody>
-    </table>
+        <!-- Card 2: CGPA -->
+        <div class="glass rounded-3xl p-6 shadow-glass hover:shadow-premium transition-all duration-500 group border-l-4 border-l-indigo-600">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-widest italic">Academic</span>
+            </div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Academic CGPA</p>
+            <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ student.cgpa|default:"0.00" }}</h3>
+        </div>
 
-    <h2 style="margin: 40px 0 15px; color:#a5b4fc;">Upcoming Assignments</h2>
-    <table class="subject-table" aria-label="Upcoming Assignments Table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Assignment Title</th>
-          <th>Subject</th>
-          <th>Due Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="assignment-list"></tbody>
-    </table>
-  </div>
+        <!-- Card 3: Total Credits -->
+        <div class="glass rounded-3xl p-6 shadow-glass hover:shadow-premium transition-all duration-500 group border-l-4 border-l-violet-600">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fas fa-award"></i>
+                </div>
+                <span class="text-[10px] font-extrabold text-violet-600 bg-violet-50 px-3 py-1 rounded-full uppercase tracking-widest">{{ today_name }}</span>
+            </div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Credits</p>
+            <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ total_credits }}</h3>
+        </div>
 
-  <script>
-    const subjects = [
-      { id: 1, code: "CST101", name: "Programming 1", desc: "Intro to C and Python", attendance: 95 },
-      { id: 2, code: "CST102", name: "Data Structures", desc: "Arrays, Lists, Trees", attendance: 89 },
-      { id: 3, code: "CST103", name: "Database Systems", desc: "SQL, ER Diagrams", attendance: 92 },
-    ];
+        <!-- Card 4: Attendance % -->
+        <div class="glass rounded-3xl p-6 shadow-glass hover:shadow-premium transition-all duration-500 group border-l-4 border-l-rose-600">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="w-10 h-10 rounded-full border-2 border-rose-200 border-t-rose-600 flex items-center justify-center text-[10px] font-bold text-rose-600 transition-all duration-700">
+                    {{ attendance_percentage }}%
+                </div>
+            </div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Attendance Rate</p>
+            <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ attendance_percentage }}%</h3>
+        </div>
+    </div>
 
-    const assignments = [
-      { id: 1, title: "Project Proposal", subject: "Programming 1", due: "2025-10-05", status: "Pending" },
-      { id: 2, title: "Linked List Implementation", subject: "Data Structures", due: "2025-10-12", status: "Pending" },
-      { id: 3, title: "Database Normalization", subject: "Database Systems", due: "2025-10-20", status: "Completed" },
-    ];
-
-    // --- NEW JS DATA ---
-    const notices = [
-        { id: 1, title: "Midterm Exam Schedule Released", content: "Check the official college website for the full schedule and room assignments.", date: "2025-09-25" },
-        { id: 2, title: "Deadline for Project Submission Extended", content: "The new deadline for the Programming Project is October 10th.", date: "2025-09-22" },
-        { id: 3, title: "Career Fair Next Week", content: "A campus career fair will be held on Oct 2nd. Don't forget your resumes!", date: "2025-09-18" },
-    ];
-    // --- END NEW JS DATA ---
-
-    function renderSubjects() {
-      const tbody = document.getElementById('subject-list');
-      tbody.innerHTML = "";
-      subjects.forEach((sub, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${sub.code}</td>
-          <td>${sub.name}</td>
-          <td>${sub.desc}</td>
-          <td>${sub.attendance}%</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      // Update summary counts
-      document.getElementById('enrolledSubjectsCount').innerText = subjects.length;
-      
-      // Calculate average attendance
-      const avgAttendance = subjects.reduce((acc, s) => acc + s.attendance, 0) / subjects.length || 0;
-      document.getElementById('attendancePercent').innerText = avgAttendance.toFixed(1) + '%';
-    }
-
-    function renderAssignments() {
-      const tbody = document.getElementById('assignment-list');
-      tbody.innerHTML = "";
-      const upcoming = assignments.filter(a => a.status === "Pending");
-      const completed = assignments.filter(a => a.status === "Completed");
-
-      assignments.forEach((assg, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${assg.title}</td>
-          <td>${assg.subject}</td>
-          <td>${assg.due}</td>
-          <td>${assg.status}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      document.getElementById('upcomingAssignmentsCount').innerText = upcoming.length;
-      document.getElementById('completedAssignmentsCount').innerText = completed.length;
-    }
-    
-    // --- NEW JS FUNCTION: Render Notices ---
-    function renderNotices() {
-        const noticeBoard = document.getElementById('notice-list');
-        noticeBoard.innerHTML = "";
+    <!-- Section 4: Current Courses & Routine (Middle Section) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        if (notices.length === 0) {
-            noticeBoard.innerHTML = '<p style="text-align: center; padding: 20px;">No new notices at the moment.</p>';
-            return;
-        }
+        <!-- Enrolled Courses Table (Left, 2 Columns) -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-extrabold text-slate-800 tracking-tight flex items-center space-x-3">
+                    <span class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm shadow-lg shadow-blue-100">
+                        <i class="fas fa-graduation-cap"></i>
+                    </span>
+                    <span>Enrolled Courses</span>
+                </h3>
+                <a href="{% url 'student_subjects' %}" class="text-xs font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm">View Full Curriculum</a>
+            </div>
 
-        notices.forEach(notice => {
-            const div = document.createElement('div');
-            div.classList.add('notice-item');
-            div.innerHTML = `
-                <h4><i class="fas fa-bullhorn" style="margin-right: 10px; color: #facc15;"></i>${notice.title} <span class="date">${notice.date}</span></h4>
-                <p>${notice.content}</p>
-            `;
-            noticeBoard.appendChild(div);
-        });
-    }
-    // --- END NEW JS FUNCTION: Render Notices ---
+            <div class="glass rounded-[2rem] overflow-hidden shadow-glass border border-slate-100">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50 border-b border-slate-100">
+                            <th class="px-8 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Course Code</th>
+                            <th class="px-8 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Course Name</th>
+                            <th class="px-8 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Instructor</th>
+                            <th class="px-8 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Credits</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for course in enrolled_courses %}
+                        <tr class="hover:bg-blue-50/30 transition-colors duration-200 cursor-default group">
+                            <td class="px-8 py-5">
+                                <span class="bg-white border border-slate-200 text-blue-600 font-extrabold text-[10px] px-3 py-1.5 rounded-lg shadow-sm">{{ course.code }}</span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <p class="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{{ course.title }}</p>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-[10px]">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <span class="text-sm font-semibold text-slate-500 italic">
+                                        {% with teacher=course.teachers.first %}
+                                            {{ teacher.user.get_full_name|default:teacher.user.username|default:"CST Faculty" }}
+                                        {% endwith %}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <span class="text-xs font-extrabold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">{{ course.credits }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-8 py-12 text-center text-slate-400 font-bold italic text-sm">No courses enrolled for this semester yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    renderSubjects();
-    renderAssignments();
-    renderNotices(); // --- CALL NEW FUNCTION ---
-  </script>
+        <!-- Today's Routine (Right, 1 Column) -->
+        <div class="space-y-6">
+            <h3 class="text-lg font-extrabold text-slate-800 tracking-tight flex items-center space-x-3">
+                <span class="w-8 h-8 bg-amber-500 text-white rounded-lg flex items-center justify-center text-sm shadow-lg shadow-amber-100">
+                    <i class="fas fa-clock"></i>
+                </span>
+                <span>Today's Classes</span>
+            </h3>
 
-</body>
-</html>
+            <div class="glass rounded-[2rem] p-6 shadow-glass border border-slate-100 flex flex-col space-y-6 min-h-[400px]">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">{{ today_name }}, {% now "d M Y" %}</p>
+                
+                <div class="flex-1 space-y-4 overflow-y-auto scroll-hide">
+                    {% for item in today_routine %}
+                    <div class="relative pl-8 pb-4 last:pb-0 group">
+                        <!-- Timeline Line -->
+                        <div class="absolute left-3 top-2 bottom-0 w-[2px] bg-slate-100 group-last:bg-transparent"></div>
+                        <!-- Timeline Dot -->
+                        <div class="absolute left-1 top-2 w-4 h-4 bg-white border-2 border-amber-500 rounded-full group-hover:bg-amber-500 transition-colors z-10"></div>
+                        
+                        <div class="p-4 bg-slate-50 rounded-2xl group-hover:bg-amber-50 group-hover:shadow-lg group-hover:shadow-amber-100/50 transition-all duration-300">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-[10px] font-extrabold text-amber-600 bg-amber-100 px-2.5 py-1 rounded-lg uppercase tracking-widest">{{ item.start_time|time:"H:i" }}</span>
+                                <span class="text-[10px] font-bold text-slate-400">Room: {{ item.room_number|default:"Lab 102" }}</span>
+                            </div>
+                            <h5 class="text-sm font-bold text-slate-800">{{ item.course.title }}</h5>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mt-1">{{ item.course.code }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="flex-1 flex flex-col items-center justify-center text-center opacity-50 space-y-4">
+                        <i class="fas fa-calendar-day text-5xl text-slate-200"></i>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No classes scheduled today</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-4 border-t border-slate-100">
+                    <button class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl shadow-slate-200">Full TimeTable</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section Layout (Grid 3 Columns) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Section 5: Departmental Notice Board (Left/Bottom Section) -->
+        <div class="lg:col-span-2 space-y-6">
+            <h3 class="text-lg font-extrabold text-slate-800 tracking-tight flex items-center space-x-3">
+                <span class="w-8 h-8 bg-rose-600 text-white rounded-lg flex items-center justify-center text-sm shadow-lg shadow-rose-100">
+                    <i class="fas fa-bullhorn rotate-[-15deg]"></i>
+                </span>
+                <span>CST Notice Board</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for notice in recent_notices %}
+                <div class="glass p-8 rounded-[2rem] shadow-glass border-l-8 border-l-rose-500 hover:translate-y-[-4px] transition-all duration-300 group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-extrabold text-rose-500 uppercase tracking-widest bg-rose-50 px-3 py-1 rounded-lg italic">{{ notice.created_at|date:"d M, Y" }}</span>
+                        <div class="flex -space-x-1 opacity-40">
+                            <i class="fas fa-ellipsis-h text-xs"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2 leading-tight group-hover:text-rose-600 transition-colors">{{ notice.title }}</h4>
+                    <p class="text-xs font-medium text-slate-500 leading-relaxed">{{ notice.content|truncatewords:20 }}</p>
+                    <div class="mt-6 flex items-center justify-between border-t border-slate-50 pt-4">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center"><i class="fas fa-user-circle mr-2"></i>Admin CST</span>
+                        <a href="{% url 'notice' %}" class="text-[10px] font-extrabold text-rose-600 hover:underline">READ FULL NOTICE</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-2 bg-slate-100/50 rounded-[2rem] p-12 text-center border-2 border-dashed border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No recently published notices</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Section 6 & 7: Specialized & Results (Right/Bottom Section) -->
+        <div class="space-y-8">
+            
+            <!-- Section 6: Results Shortcut -->
+            <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[2.5rem] p-8 text-white shadow-premium relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full translate-x-10 -translate-y-10 blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="relative z-10 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-lg">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-widest uppercase opacity-70">Latest Semester</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-extrabold mb-1 tracking-tight">Academic Results</h4>
+                        <p class="text-xs text-blue-100 font-medium">Verify your latest grades and transcripts.</p>
+                    </div>
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <p class="text-[10px] uppercase font-bold opacity-70 mb-1">Latest GPA</p>
+                            <span class="text-4xl font-extrabold">{{ latest_result.grade_point|default:"0.00" }}</span>
+                        </div>
+                        <a href="{% url 'result' %}" class="bg-white text-indigo-700 px-6 py-3 rounded-2xl text-[10px] font-extrabold shadow-lg hover:bg-slate-50 transition-all">MY TRANSCRIPT</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: CST Specialized Section (Project Submission) -->
+            <div class="glass p-8 rounded-[2.5rem] shadow-glass border border-slate-100 space-y-6">
+                <h3 class="text-lg font-extrabold text-slate-800 tracking-tight flex items-center space-x-3">
+                    <span class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center text-sm shadow-lg shadow-emerald-100">
+                        <i class="fab fa-github"></i>
+                    </span>
+                    <span>Project Submission</span>
+                </h3>
+                <form action="{% url 'submit_project' %}" method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <div class="space-y-2">
+                        <input type="text" name="title" required placeholder="Project / Lab Title" 
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-inner">
+                        <input type="url" name="github_link" required placeholder="GitHub Repository URL" 
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-inner">
+                        <select name="supervisor_id" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-inner">
+                            <option value="">Select Supervisor</option>
+                            {% for teacher in all_teachers %}
+                            <option value="{{ teacher.id }}">{{ teacher.user.get_full_name|default:teacher.user.username }}</p>
+                            {% endfor %}
+                        </select>
+                        <textarea name="description" placeholder="Short Project Description..." rows="2" 
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-inner"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-2xl font-bold text-[11px] uppercase tracking-widest shadow-lg shadow-emerald-100 flex items-center justify-center space-x-2 transition-all active:scale-95">
+                        <span>Submit Project</span>
+                        <i class="fas fa-paper-plane text-[9px]"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Section 7 (Part 2): Lab Resources -->
+            <a href="{% url 'hod_lab_mgmt' %}" class="bg-white p-8 rounded-[2.5rem] shadow-glass border border-slate-100 flex items-center justify-between group cursor-pointer hover:border-blue-500 transition-all">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors">Lab Resources</h4>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pc / Requisition</p>
+                    </div>
+                </div>
+                <i class="fas fa-arrow-right text-xs text-slate-300 group-hover:text-blue-600 group-hover:translate-x-2 transition-all"></i>
+            </a>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

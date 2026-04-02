@@ -1,132 +1,424 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Curriculum - Diploma in Engineering</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f3f4f6;
-      color: #333;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CST Diploma Curriculum (Enhanced View)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Configuration for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#0f172a', // Slate-900
+                        'primary-accent': '#1e40af', // Blue-800
+                        'cst-core': '#3b82f6',     // Blue for Core Tech
+                        'cst-applied': '#10b981',  // Emerald for Applied/Lab
+                        'sci-math': '#f97316',     // Orange for Science/Math
+                        'non-tech': '#6b7280',     // Gray for Non-Tech/Management
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base styles for the accordion icon transition */
+        .accordion-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        /* Rotates the icon when the accordion is open */
+        .accordion-button[aria-expanded="true"] .accordion-icon {
+            transform: rotate(180deg);
+            color: white !important; /* Ensure icon is white when active */
+        }
+        /* Ensures smooth height transition for the content */
+        .accordion-content {
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .accordion-content.active {
+            max-height: 2000px; /* Increased max-height for robustness */
+            opacity: 1;
+        }
 
-    h1, h2, h3 {
-      color: #2c3e50;
-    }
-
-    .curriculum-header {
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .semester-list {
-      list-style: none;
-      padding: 0;
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .semester-list li {
-      display: inline-block;
-      margin: 10px;
-    }
-
-    .semester-list a {
-      text-decoration: none;
-      background-color: #3498db;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-
-    .semester-list a:hover {
-      background-color: #2980b9;
-    }
-
-    .semester-section {
-      margin-bottom: 60px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-
-    .semester-section h3 {
-      margin-top: 0;
-    }
-     footer {
-      background-color: #343a40;
-      color: white;
-      text-align: center;
-      padding: 15px 0;
-      margin-top: 40px;
-    }
-  </style>
+        /* Timeline-like styling for visual flow */
+        .timeline-item {
+            position: relative;
+            padding-left: 20px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 25px;
+            width: 8px;
+            height: 8px;
+            background: theme('colors.primary-accent');
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 30px;
+            bottom: -5px;
+            width: 2px;
+            background: theme('colors.gray.300');
+            z-index: 5;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen p-4 sm:p-8 font-sans antialiased">
 
-  <div class="curriculum-header">
-    <h1>Diploma in Engineering</h1>
-    <h2>Department of Computer Science & Technology</h2>
-    <p>Probidhan 2022</p>
-  </div>
+    <div class="max-w-5xl mx-auto">
+        <!-- Header Section -->
+        <header class="text-center mb-12 pt-8">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-primary-dark tracking-tight mb-3">
+                CST Diploma Curriculum
+            </h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto">
+                Comprehensive 4-Year (8 Semesters) Structure based on BTEB Probidhan-2022.
+            </p>
+            <!-- Subject Type Legend (Moved to JS for Summary Card integration) -->
+        </header>
+        
+        <!-- Credit Summary Card - Injected by JS -->
+        <div id="curriculum-summary" class="mb-10">
+            <!-- Summary content will be injected here -->
+        </div>
 
-  <ul class="semester-list">
-    <li><a href="#sem1">1st Semester</a></li>
-    <li><a href="#sem2">2nd Semester</a></li>
-    <li><a href="#sem3">3rd Semester</a></li>
-    <li><a href="#sem4">4th Semester</a></li>
-    <li><a href="#sem5">5th Semester</a></li>
-    <li><a href="#sem6">6th Semester</a></li>
-    <li><a href="#sem7">7th Semester</a></li>
-    <li><a href="#sem8">8th Semester</a></li>
-  </ul>
+        <!-- Curriculum Accordion Section (with Timeline effect) -->
+        <div id="curriculum-accordion" class="space-y-6">
+            <!-- Content will be injected by JavaScript -->
+        </div>
+    </div>
 
+    <script>
+        // Data structure includes a 'type' for each subject for visual distinction (badges)
+        const curriculumData = [
+            {
+                semester: "1st Semester | Year 1",
+                total_credit: 20,
+                subjects: [
+                    { code: '21011', name: 'Engineering Drawing', credit: 2, type: 'CST-APPL' },
+                    { code: '25711', name: 'Bangla-I', credit: 2, type: 'NON-TECH' },
+                    { code: '25712', name: 'English-I', credit: 2, type: 'NON-TECH' },
+                    { code: '25911', name: 'Mathematics -I', credit: 4, type: 'SCI-MATH' },
+                    { code: '25912', name: 'Physics -I', credit: 4, type: 'SCI-MATH' },
+                    { code: '26611', name: 'Computer Office Application', credit: 2, type: 'CST-APPL' },
+                    { code: '26711', name: 'Basic Electricity', credit: 4, type: 'SCI-MATH' },
+                ]
+            },
+            {
+                semester: "2nd Semester | Year 1",
+                total_credit: 21,
+                subjects: [
+                    { code: '25721', name: 'Bangla -II', credit: 2, type: 'NON-TECH' },
+                    { code: '25722', name: 'English-II', credit: 2, type: 'NON-TECH' },
+                    { code: '25812', name: 'Physical Education & Life skills', credit: 1, type: 'NON-TECH' },
+                    { code: '25921', name: 'Mathematics-II', credit: 4, type: 'SCI-MATH' },
+                    { code: '25922', name: 'Physics -II', credit: 4, type: 'SCI-MATH' },
+                    { code: '26621', name: 'Python Programming', credit: 3, type: 'CST-CORE' },
+                    { code: '26622', name: 'Computer Graphics Design-I', credit: 2, type: 'CST-APPL' },
+                    { code: '26811', name: 'Basic Electronics', credit: 3, type: 'SCI-MATH' },
+                ]
+            },
+            {
+                semester: "3rd Semester | Year 2",
+                total_credit: 21,
+                subjects: [
+                    { code: '25811', name: 'Social Science', credit: 2, type: 'NON-TECH' },
+                    { code: '25931', name: 'Mathematics-III', credit: 4, type: 'SCI-MATH' },
+                    { code: '28531', name: 'Application Development Using Python', credit: 3, type: 'CST-CORE' },
+                    { code: '28532', name: 'Web Design & Development-I (HTML/CSS)', credit: 3, type: 'CST-APPL' },
+                    { code: '28533', name: 'Digital Logic Design', credit: 4, type: 'CST-CORE' },
+                    { code: '28534', name: 'Basic Workshop Practice', credit: 2, type: 'CST-APPL' },
+                    { code: '25913', name: 'Chemistry', credit: 3, type: 'SCI-MATH' },
+                ]
+            },
+            {
+                semester: "4th Semester | Year 2",
+                total_credit: 21,
+                subjects: [
+                    { code: '25841', name: 'Accounting', credit: 2, type: 'NON-TECH' },
+                    { code: '28541', name: 'Data Structure & Algorithm', credit: 4, type: 'CST-CORE' },
+                    { code: '28542', name: 'Object Oriented Programming (C++/Java)', credit: 4, type: 'CST-CORE' },
+                    { code: '28543', name: 'Computer Peripherals', credit: 3, type: 'CST-APPL' },
+                    { code: '28544', name: 'Operating System', credit: 3, type: 'CST-CORE' },
+                    { code: '28545', name: 'Data Communication', credit: 3, type: 'CST-CORE' },
+                    { code: '28546', name: 'Business Organization & Communication', credit: 2, type: 'NON-TECH' },
+                ]
+            },
+            {
+                semester: "5th Semester | Year 3",
+                total_credit: 20,
+                subjects: [
+                    { code: '25851', name: 'Principles of Marketing', credit: 2, type: 'NON-TECH' },
+                    { code: '28551', name: 'Application Development Using Java', credit: 3, type: 'CST-CORE' },
+                    { code: '28552', name: 'Web Design & Development-II (JS/PHP)', credit: 3, type: 'CST-APPL' },
+                    { code: '28553', name: 'Computer Networking', credit: 3, type: 'CST-CORE' },
+                    { code: '28554', name: 'Microprocessor & Interfacing', credit: 4, type: 'CST-CORE' },
+                    { code: '28555', name: 'Software Engineering', credit: 3, type: 'CST-CORE' },
+                    { code: '28556', name: 'Surveillance Security System', credit: 2, type: 'CST-APPL' },
+                ]
+            },
+            {
+                semester: "6th Semester | Year 3",
+                // FIX: Updated total_credit from 20 to 21 (Sum of subjects: 2+3+4+3+4+3+2 = 21)
+                total_credit: 21, 
+                subjects: [
+                    { code: '25861', name: 'Environmental Studies', credit: 2, type: 'NON-TECH' },
+                    { code: '28561', name: 'Database Management System (DBMS)', credit: 3, type: 'CST-CORE' },
+                    { code: '28562', name: 'Network Administration & Services', credit: 4, type: 'CST-CORE' },
+                    { code: '28563', name: 'System Analysis & Design (SAD)', credit: 3, type: 'CST-CORE' },
+                    { code: '28564', name: 'Web Programming (Frameworks)', credit: 4, type: 'CST-APPL' },
+                    { code: '28565', name: 'Microcontroller Application', credit: 3, type: 'CST-APPL' },
+                    { code: '25852', name: 'Industrial Management', credit: 2, type: 'NON-TECH' },
+                ]
+            },
+            {
+                semester: "7th Semester | Year 4",
+                // FIX: Updated total_credit from 19 to 20 (Sum of subjects: 2+3+3+4+3+3+2 = 20)
+                total_credit: 20, 
+                subjects: [
+                    { code: '25871', name: 'Innovation & Entrepreneurship', credit: 2, type: 'NON-TECH' },
+                    { code: '28571', name: 'Digital Marketing Technique', credit: 3, type: 'CST-APPL' },
+                    { code: '28572', name: 'System Security & Ethics', credit: 3, type: 'CST-CORE' },
+                    { code: '28573', name: 'Application Development Project', credit: 4, type: 'CST-APPL' },
+                    { code: '28574', name: 'Computer Vision & Image Processing (Optional)', credit: 3, type: 'CST-CORE' },
+                    { code: '28575', name: 'Multimedia & Animation', credit: 3, type: 'CST-APPL' },
+                    { code: '28576', name: 'Project Work-II', credit: 2, type: 'CST-APPL' },
+                ]
+            },
+            {
+                semester: "8th Semester | Year 4 (Final Stage)",
+                total_credit: 12,
+                subjects: [
+                    { code: '28581', name: 'Industrial Attachment (Internship)', credit: 8, type: 'CST-APPL' },
+                    { code: '28582', name: 'Project Presentation & Viva', credit: 4, type: 'CST-APPL' },
+                ]
+            }
+        ];
 
-  <div id="sem1" class="semester-section">
-    <h3>1st Semester</h3>
-    <p>📘 Example subjects: Mathematics-I, Physics-I, Basic Computer, Workshop Practice...</p>
-  </div>
+        const accordion = document.getElementById('curriculum-accordion');
+        const summaryContainer = document.getElementById('curriculum-summary');
 
-  <div id="sem2" class="semester-section">
-    <h3>2nd Semester</h3>
-    <p>📘 Example subjects: Mathematics-II, Physics-II, Communicative English, Programming Fundamentals...</p>
-  </div>
+        // Function to determine badge style based on subject type
+        function getBadgeStyle(type) {
+            switch (type) {
+                case 'CST-CORE': return 'bg-cst-core/10 text-cst-core border-cst-core';
+                case 'CST-APPL': return 'bg-cst-applied/10 text-cst-applied border-cst-applied';
+                case 'SCI-MATH': return 'bg-sci-math/10 text-sci-math border-sci-math';
+                case 'NON-TECH': return 'bg-non-tech/10 text-non-tech border-non-tech';
+                default: return 'bg-gray-200 text-gray-700 border-gray-400';
+            }
+        }
 
-  <div id="sem3" class="semester-section">
-    <h3>3rd Semester</h3>
-    <p>📘 Example subjects: Data Structure, Digital Electronics, Web Design...</p>
-  </div>
+        // Function to determine solid color background based on subject type
+        function getCategoryColor(type) {
+            switch (type) {
+                case 'CST-CORE': return 'bg-cst-core';
+                case 'CST-APPL': return 'bg-cst-applied';
+                case 'SCI-MATH': return 'bg-sci-math';
+                case 'NON-TECH': return 'bg-non-tech';
+                default: return 'bg-gray-400';
+            }
+        }
+        
+        // Function to calculate and render the credit summary
+        function calculateCreditSummary() {
+            const totals = {
+                'CST-CORE': { name: 'Core Technology', credit: 0, percentage: 0 },
+                'CST-APPL': { name: 'Applied/Lab Work', credit: 0, percentage: 0 },
+                'SCI-MATH': { name: 'Science & Math', credit: 0, percentage: 0 },
+                'NON-TECH': { name: 'Non-Technical/Soft Skills', credit: 0, percentage: 0 }
+            };
+            let overallTotal = 0;
 
-  <div id="sem4" class="semester-section">
-    <h3>4th Semester</h3>
-    <p>📘 Example subjects: OOP in Java, Operating Systems, Computer Architecture...</p>
-  </div>
+            curriculumData.forEach(sem => {
+                sem.subjects.forEach(sub => {
+                    if (totals[sub.type]) {
+                        totals[sub.type].credit += sub.credit;
+                        overallTotal += sub.credit;
+                    }
+                });
+            });
 
-  <div id="sem5" class="semester-section">
-    <h3>5th Semester</h3>
-    <p>📘 Example subjects: Database Management System, Software Engineering, Network Fundamentals...</p>
-  </div>
+            // Calculate percentages
+            Object.values(totals).forEach(category => {
+                category.percentage = overallTotal > 0 ? ((category.credit / overallTotal) * 100).toFixed(1) : 0;
+            });
+            
+            const summaryHtml = `
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-2xl font-bold text-primary-dark mb-4 border-b pb-2">
+                        Total Curriculum Summary
+                        <span class="text-primary-accent ml-3 text-3xl">${overallTotal}</span>
+                        <span class="text-lg text-gray-500 font-medium">Credits</span>
+                    </h2>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        ${Object.keys(totals).map(type => {
+                            const category = totals[type];
+                            const colorClass = getCategoryColor(type);
+                            const percent = parseFloat(category.percentage);
+                            
+                            return `
+                                <div class="p-4 rounded-lg bg-gray-50 border border-gray-100 hover:shadow-md transition duration-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="text-sm font-semibold text-gray-600">${category.name}</div>
+                                        <div class="text-lg font-extrabold ${colorClass.replace('bg-', 'text-')}">${category.credit}</div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="${colorClass} h-2.5 rounded-full" style="width: ${percent}%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">${percent}% of total credits</p>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
 
-  <div id="sem6" class="semester-section">
-    <h3>6th Semester</h3>
-    <p>📘 Example subjects: Advanced Web Development, Mobile App Development, Networking Lab...</p>
-  </div>
+            summaryContainer.innerHTML = summaryHtml;
+        }
 
-  <div id="sem7" class="semester-section">
-    <h3>7th Semester</h3>
-    <p>📘 Example subjects: Cyber Security, Cloud Computing, Project Work (Part 1)...</p>
-  </div>
+        // Function to create the HTML structure for a single semester
+        function createSemesterCard(semesterData, index) {
+            const semesterNumber = index + 1;
+            const id = `sem-${semesterNumber}`;
+            // Open the first item by default
+            const isFirst = index === 0; 
+            const activeClass = isFirst ? 'active' : '';
+            
+            let subjectsHtml = '';
+            semesterData.subjects.forEach(sub => {
+                const badgeStyle = getBadgeStyle(sub.type);
+                subjectsHtml += `
+                    <tr class="border-b border-gray-100 transition duration-150 hover:bg-blue-50/50">
+                        <td class="py-4 px-4 text-sm font-medium text-gray-500 w-1/6 sm:w-1/12">${sub.code}</td>
+                        <td class="py-4 px-4 text-sm font-semibold text-primary-dark w-1/2">
+                            ${sub.name}
+                        </td>
+                        <td class="py-4 px-4 text-center w-1/4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${badgeStyle}">
+                                ${sub.type.replace('-', ' ')}
+                            </span>
+                        </td>
+                        <td class="py-4 px-4 text-base text-primary-accent font-extrabold text-center w-1/12">${sub.credit}</td>
+                    </tr>
+                `;
+            });
 
-  <div id="sem8" class="semester-section">
-    <h3>8th Semester</h3>
-    <p>📘 Example subjects: Industrial Training, Project Work (Part 2), Viva-Voce...</p>
-  </div>
-<footer>
-    &copy; 2025 Computer Department, Faridpur Polytechnic Institute. All rights reserved.
-</footer>
+            // Card HTML with timeline styling
+            return `
+                <div class="timeline-item">
+                    <div class="bg-white rounded-xl shadow-lg transition-shadow duration-300 hover:shadow-xl border-l-4 border-primary-accent overflow-hidden">
+                        <button id="${id}-btn"
+                                class="accordion-button flex justify-between items-center w-full p-4 sm:p-5 text-left text-xl font-bold transition duration-300 focus:outline-none 
+                                    ${isFirst ? 'bg-primary-accent text-white' : 'bg-gray-100 text-primary-dark hover:bg-gray-200'}"
+                                aria-expanded="${isFirst}" 
+                                aria-controls="${id}-content">
+                            <span>
+                                <span class="text-lg font-extrabold">${semesterData.semester}</span>
+                                <span class="ml-4 text-sm font-medium ${isFirst ? 'bg-white/20' : 'bg-primary-accent/10 text-primary-accent'} rounded-full py-1 px-3">
+                                    Total Credits: ${semesterData.total_credit}
+                                </span>
+                            </span>
+                            <svg class="accordion-icon w-6 h-6 transform ${isFirst ? 'rotate-180 text-white' : 'text-primary-accent'}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <div id="${id}-content" 
+                             class="accordion-content ${activeClass}" 
+                             aria-labelledby="${id}-btn" 
+                             role="region">
+                            <div class="p-3 sm:p-6 bg-white">
+                                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                                    <table class="min-w-full bg-white">
+                                        <thead class="bg-gray-50 border-b border-gray-200">
+                                            <tr class="text-xs uppercase text-gray-500 tracking-wider">
+                                                <th class="py-3 px-4 text-left font-bold w-1/6 sm:w-1/12">Code</th>
+                                                <th class="py-3 px-4 text-left font-bold w-1/2">Subject Name</th>
+                                                <th class="py-3 px-4 text-center font-bold w-1/4">Category</th>
+                                                <th class="py-3 px-4 text-center font-bold w-1/12">Credit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${subjectsHtml}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                ${semesterNumber === 8 ? '<p class="text-center text-sm font-semibold mt-4 text-green-600 p-2 bg-green-50 rounded-lg">Final Semester: Focus on real-world industrial experience and project completion.</p>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render all semester cards and the summary
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Render Summary Card
+            calculateCreditSummary();
+            
+            // 2. Render Accordion Cards
+            curriculumData.forEach((data, index) => {
+                accordion.innerHTML += createSemesterCard(data, index);
+            });
+
+            // 3. Setup Accordion Interactivity
+            const buttons = document.querySelectorAll('.accordion-button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const contentId = button.getAttribute('aria-controls');
+                    const content = document.getElementById(contentId);
+                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+                    // Close all currently open items
+                    document.querySelectorAll('.accordion-button[aria-expanded="true"]').forEach(openButton => {
+                        if (openButton !== button) {
+                            openButton.setAttribute('aria-expanded', 'false');
+                            const openContent = document.getElementById(openButton.getAttribute('aria-controls'));
+                            openContent.classList.remove('active');
+                            // Reset background color/text for closed buttons
+                            openButton.classList.remove('bg-primary-accent', 'text-white');
+                            openButton.classList.add('bg-gray-100', 'text-primary-dark', 'hover:bg-gray-200');
+                            openButton.querySelector('.accordion-icon').classList.remove('text-white');
+                            openButton.querySelector('.accordion-icon').classList.add('text-primary-accent');
+                        }
+                    });
+
+                    // Toggle the clicked item
+                    const newExpandedState = !isExpanded;
+                    button.setAttribute('aria-expanded', newExpandedState);
+                    content.classList.toggle('active');
+
+                    // Apply active styling
+                    if (newExpandedState) {
+                        button.classList.remove('bg-gray-100', 'text-primary-dark', 'hover:bg-gray-200');
+                        button.classList.add('bg-primary-accent', 'text-white');
+                        button.querySelector('.accordion-icon').classList.remove('text-primary-accent');
+                        button.querySelector('.accordion-icon').classList.add('text-white');
+                    } else {
+                        button.classList.remove('bg-primary-accent', 'text-white');
+                        button.classList.add('bg-gray-100', 'text-primary-dark', 'hover:bg-gray-200');
+                        button.querySelector('.accordion-icon').classList.remove('text-white');
+                        button.querySelector('.accordion-icon').classList.add('text-primary-accent');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

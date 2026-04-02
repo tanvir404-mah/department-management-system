@@ -1,0 +1,77 @@
+{% extends 'base_admin.html' %}
+{% block title %}Edit User | System Admin{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto pb-24">
+    <div class="mb-10">
+        <a href="{% url 'admin_system_mgmt' %}" class="text-[10px] font-extrabold text-slate-400 hover:text-indigo-600 uppercase tracking-widest flex items-center space-x-2 mb-6">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i><span>Back to System Admin</span>
+        </a>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Edit <span class="text-indigo-600">{{ target.username }}</span></h2>
+        <p class="text-sm font-bold text-slate-400 mt-1">UID: #{{ target.id }} — Joined {{ target.date_joined|date:"M d, Y" }}</p>
+    </div>
+
+    <form method="POST" class="bg-white rounded-[3rem] border border-slate-100 shadow-sm p-12 space-y-8">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">First Name</label>
+                <input type="text" name="first_name" value="{{ target.first_name }}"
+                    class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Last Name</label>
+                <input type="text" name="last_name" value="{{ target.last_name }}"
+                    class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Email</label>
+            <input type="email" name="email" value="{{ target.email }}"
+                class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Role</label>
+            <select name="role" class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                <option value="student" {% if target.role == 'student' %}selected{% endif %}>Student</option>
+                <option value="teacher" {% if target.role == 'teacher' %}selected{% endif %}>Teacher</option>
+                <option value="hod" {% if target.role == 'hod' %}selected{% endif %}>HOD</option>
+                <option value="lab_assistant" {% if target.role == 'lab_assistant' %}selected{% endif %}>Lab Assistant</option>
+                <option value="admin" {% if target.role == 'admin' %}selected{% endif %}>Admin</option>
+            </select>
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">New Password <span class="text-slate-300 font-bold text-[9px]">(leave blank to keep current)</span></label>
+            <input type="password" name="new_password" placeholder="Enter new password to override..."
+                class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+        </div>
+
+        <!-- Permissions -->
+        <div class="bg-slate-50 rounded-2xl p-6 space-y-4 border border-slate-100">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">System Permissions</p>
+            <label class="flex items-center space-x-4 cursor-pointer">
+                <input type="checkbox" name="is_active" {% if target.is_active %}checked{% endif %} class="w-5 h-5 rounded-lg accent-emerald-600">
+                <span class="text-sm font-bold text-slate-700">Account Active</span>
+            </label>
+            <label class="flex items-center space-x-4 cursor-pointer">
+                <input type="checkbox" name="is_staff" {% if target.is_staff %}checked{% endif %} class="w-5 h-5 rounded-lg accent-indigo-600">
+                <span class="text-sm font-bold text-slate-700">Staff Status</span>
+            </label>
+            <label class="flex items-center space-x-4 cursor-pointer">
+                <input type="checkbox" name="is_superuser" {% if target.is_superuser %}checked{% endif %} class="w-5 h-5 rounded-lg accent-purple-600">
+                <span class="text-sm font-bold text-slate-700">Superuser Access</span>
+            </label>
+        </div>
+
+        <div class="flex space-x-4 pt-4">
+            <a href="{% url 'admin_system_mgmt' %}" class="flex-1 py-5 bg-slate-100 text-slate-500 text-xs font-extrabold uppercase tracking-widest rounded-2xl text-center hover:bg-slate-200 transition-all">Cancel</a>
+            <button type="submit" class="flex-1 py-5 bg-indigo-600 text-white text-xs font-extrabold uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

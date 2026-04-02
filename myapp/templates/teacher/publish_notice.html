@@ -1,0 +1,81 @@
+{% extends 'base_teacher.html' %}
+
+{% block title %}Publish Notice | CST Department{% endblock %}
+
+{% block header_title %}Create Announcement{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-8 animate-fade-in">
+    
+    <!-- Header Section -->
+    <div class="flex items-center justify-between bg-white p-8 rounded-[2.5rem] shadow-xl shadow-emerald-900/5 border border-emerald-50 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
+        <div class="relative z-10 flex items-center space-x-6">
+            <div class="w-16 h-16 bg-emerald-600 text-white rounded-3xl flex items-center justify-center text-3xl shadow-lg shadow-emerald-200">
+                <i class="fas fa-bullhorn rotate-[-15deg]"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight leading-none mb-2">Publish Notice</h2>
+                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.2em] leading-none italic">Departmental Broadcast Hub</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notice Form -->
+    <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-emerald-900/5 border border-emerald-50 overflow-hidden">
+        <form method="POST" action="{% url 'teacher_publish_notice' %}" class="p-10 space-y-10">
+            {% csrf_token %}
+            
+            <!-- Title -->
+            <div class="space-y-4">
+                <label class="block text-xs font-extrabold text-slate-500 uppercase tracking-widest ml-1">Notice Headline</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                        <i class="fas fa-heading"></i>
+                    </div>
+                    <input type="text" name="title" required 
+                        class="block w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-extrabold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all"
+                        placeholder="e.g. Schedule Change for CST-302">
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-4">
+                <label class="block text-xs font-extrabold text-slate-500 uppercase tracking-widest ml-1">Message Detail</label>
+                <textarea name="content" rows="6" required 
+                    class="block w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-8 text-sm font-bold text-slate-800 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all placeholder:text-slate-300"
+                    placeholder="Enter the full description of your announcement..."></textarea>
+            </div>
+
+            <!-- Options -->
+            <div class="bg-slate-50/50 p-6 rounded-3xl border border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-50">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-[10px] font-extrabold text-slate-700 uppercase tracking-widest leading-none mb-1">Global Broadcast</h4>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Visible to all departments</p>
+                    </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="is_global" class="sr-only peer">
+                    <div class="w-14 h-8 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-8 flex items-center justify-between border-t border-slate-50">
+                <a href="{% url 'teacher_dashboard' %}" class="text-xs font-extrabold text-slate-400 hover:text-slate-600 uppercase tracking-[0.2em] flex items-center group">
+                    <i class="fas fa-chevron-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                    Cancel & Back
+                </a>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-5 px-12 rounded-2xl shadow-2xl shadow-emerald-200 transform hover:-translate-y-1 active:scale-95 transition-all text-xs uppercase tracking-widest flex items-center space-x-3">
+                    <span>Broadcast Now</span>
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

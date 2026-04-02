@@ -1,0 +1,55 @@
+{% extends 'base_admin.html' %}
+{% block title %}Notice Board | System Admin{% endblock %}
+{% block content %}
+<div class="space-y-10 pb-24">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-[10px] font-extrabold text-rose-500 uppercase tracking-[0.3em] mb-1">Global Notices</p>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Notice <span class="text-rose-600">Board</span> Manager</h2>
+        </div>
+        <a href="{% url 'admin_system_mgmt' %}" class="text-[10px] font-extrabold text-slate-400 hover:text-indigo-600 uppercase tracking-widest flex items-center space-x-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i><span>System Admin</span>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-8 border-b border-slate-50">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em]">{{ notices|length }} Notice{{ notices|length|pluralize }} in System</p>
+        </div>
+        <div class="divide-y divide-slate-50">
+            {% for notice in notices %}
+            <div class="flex items-start justify-between px-10 py-8 hover:bg-slate-50/30 transition-all group">
+                <div class="flex items-start space-x-6 flex-1 min-w-0">
+                    <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center flex-shrink-0 mt-1">
+                        <i data-lucide="bell" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-4 mb-2">
+                            <h4 class="text-sm font-extrabold text-slate-900">{{ notice.title }}</h4>
+                            {% if notice.is_global %}
+                            <span class="text-[8px] font-extrabold bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full uppercase tracking-widest">Global</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-xs font-bold text-slate-500 line-clamp-2 leading-relaxed">{{ notice.content }}</p>
+                        <p class="text-[9px] font-extrabold text-slate-300 uppercase tracking-widest mt-3">
+                            By {{ notice.created_by.username }} · {{ notice.created_at|timesince }} ago
+                        </p>
+                    </div>
+                </div>
+                <form method="POST" action="{% url 'admin_delete_notice' notice.id %}" class="ml-6 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onsubmit="return confirm('Delete this notice?')">
+                    {% csrf_token %}
+                    <button type="submit" class="p-3 rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-all">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </button>
+                </form>
+            </div>
+            {% empty %}
+            <div class="py-24 text-center">
+                <i data-lucide="bell-off" class="w-16 h-16 text-slate-200 mx-auto mb-6"></i>
+                <p class="text-xs font-extrabold text-slate-300 uppercase tracking-[0.3em]">No notices in the system</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}User Governance | CST Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-12 animate-fade-in pb-20">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Security & <span class="text-indigo-600">Governance</span></h2>
+            <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Universal Personnel Control Panel</p>
+        </div>
+        <div class="flex space-x-4">
+             <div class="bg-indigo-50 border border-indigo-100 px-6 py-4 rounded-2xl flex items-center space-x-4 shadow-sm">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Directory</p>
+                    <p class="text-sm font-extrabold text-slate-900 leading-none">{{ users|length }} Identities</p>
+                </div>
+             </div>
+        </div>
+    </div>
+
+    <!-- User List Section -->
+    <div class="glass-card border-none rounded-[3.5rem] shadow-2xl overflow-hidden">
+        <div class="p-10 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
+            <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-[0.25em]">Global Personnel Directory</h3>
+            <div class="relative w-80">
+                <i data-lucide="search" class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                <input type="text" id="userSearch" placeholder="Filter identities..." 
+                    class="w-full bg-white border border-slate-100 rounded-2xl pl-14 pr-6 py-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm">
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+                        <th class="px-10 py-8 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Protocol Identity</th>
+                        <th class="px-10 py-8 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Status</th>
+                        <th class="px-10 py-8 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Rank</th>
+                        <th class="px-10 py-8 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest text-right">Overrides</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50" id="userTable">
+                    {% for target_user in users %}
+                    <tr class="hover:bg-slate-50/30 transition-all duration-300 group">
+                        <td class="px-10 py-8">
+                            <div class="flex items-center space-x-5">
+                                <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-extrabold text-sm shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-all transform group-hover:rotate-6">
+                                    {{ target_user.username|make_list|first|upper }}
+                                </div>
+                                <div>
+                                    <p class="text-[15px] font-bold text-slate-900 leading-none mb-2">{{ target_user.get_full_name|default:target_user.username }}</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">UID: #{{ target_user.id|stringformat:"04d" }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-10 py-8 text-center">
+                            {% if target_user.is_active %}
+                            <span class="inline-flex items-center text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl uppercase tracking-widest border border-emerald-100 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> Authorized
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center text-[10px] font-extrabold text-rose-500 bg-rose-50 px-4 py-2 rounded-xl uppercase tracking-widest border border-rose-100">
+                                Suspended
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-10 py-8 text-center">
+                            <form method="POST" class="inline shadow-sm">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ target_user.id }}">
+                                <select name="role" onchange="this.form.submit()" 
+                                    class="bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all cursor-pointer">
+                                    <option value="student" {% if target_user.role == 'student' %}selected{% endif %}>Student</option>
+                                    <option value="teacher" {% if target_user.role == 'teacher' %}selected{% endif %}>Teacher</option>
+                                    <option value="lab_assistant" {% if target_user.role == 'lab_assistant' %}selected{% endif %}>Lab Assist</option>
+                                    <option value="hod" {% if target_user.role == 'hod' %}selected{% endif %}>HOD</option>
+                                    <option value="admin" {% if target_user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="px-10 py-8 text-right">
+                            <button onclick="toggleResetModal('{{ target_user.id }}', '{{ target_user.username }}')" 
+                                class="bg-slate-900 border-none text-white px-5 py-3 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all hover:bg-rose-600 hover:scale-105 active:scale-[0.98] shadow-lg shadow-slate-200">
+                                Reset Protocol
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Security Override Modal -->
+    <div id="resetModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[999] hidden items-center justify-center p-8">
+        <div class="bg-white rounded-[3.5rem] p-16 max-w-md w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-48 h-48 bg-indigo-50/50 rounded-bl-[10rem] -mr-16 -mt-16"></div>
+            <div class="relative z-10 space-y-10">
+                <div class="flex items-center space-x-6">
+                    <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center shadow-sm">
+                        <i data-lucide="shield-check" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Security <span class="text-indigo-600">Override</span></h3>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]" id="modalUsername">Identity: </p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'admin_reset_password' %}" class="space-y-8">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" id="modalUserId">
+                    <div class="space-y-4">
+                        <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-widest px-1">New System Password</label>
+                        <input type="password" name="new_password" required placeholder="Generate new secret..."
+                            class="w-full bg-slate-50 border border-slate-100 px-8 py-5 rounded-2xl text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all shadow-inner">
+                    </div>
+                    <div class="flex space-x-4 pt-4">
+                        <button type="button" onclick="toggleResetModal()" class="flex-1 py-5 bg-slate-50 text-slate-400 text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-all">Abort</button>
+                        <button type="submit" class="flex-1 py-5 bg-slate-900 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-100">Force Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleResetModal(userId = null, username = null) {
+        const modal = document.getElementById('resetModal');
+        const userIdInput = document.getElementById('modalUserId');
+        const usernameDisplay = document.getElementById('modalUsername');
+        
+        if (userId) {
+            userIdInput.value = userId;
+            usernameDisplay.textContent = `Identity: ${username}`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        } else {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
+    document.getElementById('userSearch').addEventListener('input', function(e) {
+        let filter = e.target.value.toLowerCase();
+        let rows = document.querySelectorAll('#userTable tr');
+        rows.forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}坐坐

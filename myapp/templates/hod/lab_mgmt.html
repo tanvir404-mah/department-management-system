@@ -1,0 +1,123 @@
+{% extends 'base_hod.html' %}
+
+{% block title %}Lab & Inventory | HOD Command Center{% endblock %}
+
+{% block content %}
+<div class="space-y-12 animate-fade-in">
+    
+    <!-- Hero Header -->
+    <div class="bg-slate-900 rounded-[3rem] p-12 text-white shadow-2xl shadow-indigo-900/15 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full translate-x-20 -translate-y-20 group-hover:scale-150 transition-all duration-1000"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div class="flex items-center space-x-8">
+                <div class="w-20 h-20 bg-indigo-600 text-white rounded-3xl flex items-center justify-center text-4xl shadow-xl shadow-indigo-400/20">
+                    <i data-lucide="package"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold tracking-tight">CST Lab & Inventory</h2>
+                    <p class="text-[11px] font-extrabold text-indigo-400 uppercase tracking-[0.3em] mt-1">Resource Oversight Hub</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="text-right">
+                    <p class="text-[10px] font-extrabold text-white/40 uppercase tracking-widest mb-1">Total Assets</p>
+                    <h4 class="text-2xl font-extrabold">{{ inventory.count }} Items</h4>
+                </div>
+                <div class="w-px h-12 bg-white/10"></div>
+                <div class="text-right">
+                    <p class="text-[10px] font-extrabold text-rose-400 uppercase tracking-widest mb-1">Pending Alerts</p>
+                    <h4 class="text-2xl font-extrabold text-rose-400">{{ requisitions.count }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory & Requisitions Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        
+        <!-- Lab Inventory Section -->
+        <div class="space-y-8">
+            <div class="flex items-center justify-between px-2">
+                <h3 class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center">
+                    <i data-lucide="cpu" class="w-5 h-5 mr-3 text-indigo-600"></i>
+                    Inventory Status
+                </h3>
+                <button class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-widest hover:underline transition-all">Export Report</button>
+            </div>
+
+            <div class="bg-white rounded-[2.5rem] shadow-stripe thin-border divide-y divide-slate-50">
+                {% for item in inventory %}
+                <div class="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white thin-border rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                            <i data-lucide="monitor" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-extrabold text-slate-800 leading-none mb-1">{{ item.item_name }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">SN: {{ item.serial_number|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[9px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest 
+                            {% if item.status == 'functional' %}bg-emerald-50 text-emerald-600{% elif item.status == 'repair' %}bg-amber-50 text-amber-600{% else %}bg-rose-50 text-rose-600{% endif %}">
+                            {{ item.status }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-20 text-center opacity-30">
+                    <i data-lucide="layers" class="w-10 h-10 mx-auto mb-4"></i>
+                    <p class="text-[10px] font-extrabold uppercase tracking-widest">No inventory items tracking.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Resource Requisitions Section -->
+        <div class="space-y-8">
+            <div class="flex items-center justify-between px-2">
+                <h3 class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 mr-3 text-indigo-600"></i>
+                    Material Requisitions
+                </h3>
+            </div>
+
+            <div class="space-y-4">
+                {% for req in requisitions %}
+                <div class="bg-white p-6 rounded-[2rem] shadow-stripe thin-border flex flex-col space-y-4 relative overflow-hidden hover:scale-[1.01] transition-transform">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-extrabold text-slate-900 tracking-tight mb-1">{{ req.item_name }}</h5>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Requested by: {{ req.requested_by.username }}</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] font-extrabold px-2.5 py-1 rounded-lg uppercase tracking-tight 
+                            {% if req.status == 'pending' %}bg-amber-50 text-amber-600{% elif req.status == 'approved' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
+                            {{ req.status }}
+                        </span>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-500 leading-relaxed italic bg-slate-50/50 p-4 rounded-xl">"{{ req.reason|truncatewords:20 }}"</p>
+                    
+                    <div class="pt-4 border-t border-slate-50 flex items-center justify-between">
+                        <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">{{ req.date_requested|date:"d M Y" }}</span>
+                        <div class="flex space-x-3">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-indigo-700 transition-all">Approve</button>
+                            <button class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-slate-200 transition-all">Reject</button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="bg-white p-20 rounded-[2.5rem] shadow-stripe thin-border text-center opacity-30">
+                    <p class="text-[10px] font-extrabold uppercase tracking-widest">No pending requisitions.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

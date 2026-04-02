@@ -1,0 +1,66 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<h3 class="mb-3">Students Management</h3>
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+    + Add Student
+</button>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Roll</th>
+        <th>Semester</th>
+        <th>Shift</th>
+        <th>Action</th>
+    </tr>
+
+    {% for s in students %}
+    <tr>
+        <td>{{ s.id }}</td>
+        <td>{{ s.user.first_name }}</td>
+        <td>{{ s.roll_number }}</td>
+        <td>{{ s.semester }}</td>
+        <td>{{ s.shift }}</td>
+        <td>
+            <a href="/admin/students/edit/{{ s.id }}/" class="btn btn-warning btn-sm">Edit</a>
+            <a href="/admin/students/delete/{{ s.id }}/" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+<!-- ADD Student Modal -->
+<div class="modal fade" id="addStudentModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5>Add Student</h5>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <input name="name" class="form-control mb-2" placeholder="Name">
+                    <input name="roll" class="form-control mb-2" placeholder="Roll">
+                    <input name="semester" class="form-control mb-2" placeholder="Semester">
+                    <input name="shift" class="form-control mb-2" placeholder="Shift">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success">Save</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

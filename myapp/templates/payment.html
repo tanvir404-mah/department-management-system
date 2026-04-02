@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Payment</title>
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <style>
+    body{font-family:Arial;background:#eef1f6;padding:40px}
+    .box{max-width:450px;margin:0 auto;background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+    select,input{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:1px solid #dcdcdc}
+    button{padding:12px;margin-top:20px;width:100%;border:none;background:#5566ff;color:#fff;font-size:16px;border-radius:10px;cursor:pointer}
+    #card-element{padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:8px;background:#fafafa}
+    .result{margin-top:10px;font-weight:600}
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Student Fee Payment</h2>
+
+  <label>Student</label>
+  <select id="studentSelect">
+    <option value="">Select Student</option>
+    {% for student in students %}
+      <option value="{{ student.id }}" data-fee="{{ student.fee_amount }}">
+        {{ student.name }} (Roll: {{ student.roll }})
+      </option>
+    {% endfor %}
+  </select>
+
+  <label>Fee Amount (BDT)</label>
+  <input id="amount" type="number" readonly placeholder="Select student first">
+
+  <label>Card Information</label>
+  <div id="card-element"></div>
+
+  <button id="payBtn">Pay Now</button>
+
+  <div id="payment-result" class="result"></div>
+</div>
+
+<script>
+  const stripe = Stripe("pk_test_REPLACE");
+
+  const elements = stripe.elements();
+  const card = elements.create("card");
+  card.mount("#card-element");
+
+  const studentSelect = document.getElementById("studentSelect");
+  const amountInput = document.getElementById("amount");
+  const payBtn = document.getElementById("payBtn");
+  const result = document.getElementById("payment-result");
+
+  studentSelect.addEventListener("change", function () {
+    const fee = this.options[this.selectedIndex].getAttribute("data-fee");
+    amountInput.value = fee || "";
+  });
+
+  payBtn.addEventListener("click", async () => {
+    const studentId = studentSelect.value;
+    const amount = amountInput.value;
+
+    if (!studentId) {
+      result.textContent = "Please select a student.";
+      return;
+    }
+
+    payBtn.disabled = true;
+    result.textContent = "Processing...";
+
+    const res = await fetch("/create-payment-intent/", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ studentId, amount })
+    });
+
+    const data = await res.json();
+    const clientSecret = data.clientSecret;
+
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: { card: card }
+    });
+
+    if (error) {
+      result.textContent = error.message;
+      payBtn.disabled = false;
+      return;
+    }
+
+    if (paymentIntent.status === "succeeded") {
+      result.textContent = "Payment Successful!";
+      window.location.href = "/payment-success/" + paymentIntent.id + "/";
+    }
+  });
+</script>
+</body>
+</html>

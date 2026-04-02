@@ -1,0 +1,83 @@
+{% extends 'base_hod.html' %}
+
+{% block title %}Bulk Actions | CST Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
+    <!-- Header -->
+    <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">System <span class="text-indigo-600">Engineering</span> Hub</h2>
+        <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Bulk Processing & Lifecycle Operations</p>
+    </div>
+
+    <!-- CSV Import Card -->
+    <div class="bg-white rounded-[3rem] p-12 border border-slate-100 shadow-xl space-y-10 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-bl-[6rem] -mr-12 -mt-12"></div>
+        <div class="relative z-10">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                    <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-900 tracking-tight">Student Data <span class="text-indigo-600">Import</span></h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Scale System Register via CSV</p>
+                </div>
+            </div>
+
+            <div class="bg-indigo-50/50 border border-indigo-100 p-8 rounded-3xl space-y-4">
+                <div class="flex items-start space-x-4">
+                    <i data-lucide="info" class="w-5 h-5 text-indigo-400 mt-0.5"></i>
+                    <div class="space-y-4">
+                        <p class="text-xs font-bold text-slate-700 leading-relaxed">Ensure your CSV file matches the engineering protocol. Missing columns or invalid department codes will trigger a system rejection.</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <span class="text-[9px] font-extrabold bg-white border border-indigo-100 px-3 py-1.5 rounded-lg text-indigo-400 uppercase tracking-widest text-center">Username</span>
+                            <span class="text-[9px] font-extrabold bg-white border border-indigo-100 px-3 py-1.5 rounded-lg text-indigo-400 uppercase tracking-widest text-center">Password</span>
+                            <span class="text-[9px] font-extrabold bg-white border border-indigo-100 px-3 py-1.5 rounded-lg text-indigo-400 uppercase tracking-widest text-center">Roll Number</span>
+                            <span class="text-[9px] font-extrabold bg-white border border-indigo-100 px-3 py-1.5 rounded-lg text-indigo-400 uppercase tracking-widest text-center">Department Code</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="mt-10 space-y-8">
+                {% csrf_token %}
+                <div class="relative group">
+                    <input type="file" name="csv_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                    <div class="w-full h-40 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center space-y-4 group-hover:border-indigo-400 group-hover:bg-indigo-50/20 transition-all">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-300 group-hover:text-indigo-400 group-hover:scale-110 transition-all"></i>
+                        <p class="text-xs font-extrabold text-slate-400 group-hover:text-indigo-500 uppercase tracking-widest">Signal Source File: Select CSV</p>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-slate-900 text-white font-extrabold py-6 rounded-3xl shadow-2xl hover:bg-black transition-all active:scale-[0.98] uppercase tracking-[0.25em] text-xs">
+                    Execute Bulk Register
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Lifecycle Control -->
+    <div class="bg-rose-900 rounded-[3rem] p-12 text-white shadow-2xl space-y-10 relative overflow-hidden">
+        <div class="absolute bottom-0 right-0 w-48 h-48 bg-white/5 rounded-tl-[8rem] -mb-16 -mr-16"></div>
+        <div class="relative z-10">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                    <i data-lucide="zap" class="w-6 h-6 text-rose-300"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold tracking-tight">Semester <span class="text-rose-400">Transition</span> Control</h3>
+                    <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Irreversible Global System Mutation</p>
+                </div>
+            </div>
+
+            <p class="text-sm font-bold text-white/60 leading-relaxed mb-10 max-w-2xl">This action will automatically promote every student currently registered in the database to their next respective semester. This protocol should only be executed during the official department-wide transition phase.</p>
+
+            <form method="POST" action="{% url 'hod_semester_transition' %}" onsubmit="return confirm('WARNING: You are about to initiate a GLOBAL system transition. This cannot be undone. Proceed?')">
+                {% csrf_token %}
+                <button type="submit" class="bg-white text-rose-900 font-extrabold px-12 py-5 rounded-2xl hover:scale-105 transition-all text-xs uppercase tracking-widest shadow-xl shadow-rose-900/50">
+                    Force Transition
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

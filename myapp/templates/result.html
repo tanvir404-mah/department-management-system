@@ -1,12 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Results</title>
-</head>
-<body>
-    <h1>Your Results</h1>
-    <p>This is the results page where you can view your assessment results.</p>
-</body>
-</html>
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Academic Transcript | {{ student.user.get_full_name }}{% endblock %}
+
+{% block header_title %}Academic Transcript{% endblock %}
+
+{% block content %}
+<div class="space-y-10 animate-fade-in print:bg-white print:text-black">
+    
+    <!-- Header Section (Transcript Profile) -->
+    <div class="glass rounded-[2rem] p-8 shadow-glass border-l-8 border-l-blue-600 flex flex-col md:flex-row items-center justify-between print:border-none print:shadow-none">
+        <div class="flex items-center space-x-6 mb-6 md:mb-0">
+            <div class="w-24 h-24 rounded-3xl bg-blue-600 p-[2px] shadow-lg shadow-blue-200 overflow-hidden">
+                <div class="w-full h-full bg-white rounded-3xl flex items-center justify-center overflow-hidden">
+                    {% if student.user.profile_picture %}
+                        <img src="{{ student.user.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover">
+                    {% else %}
+                        <i class="fas fa-user-graduate text-3xl text-blue-600"></i>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ student.user.get_full_name }}</h1>
+                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">{{ student.department.name }} | {{ student.shift }} Shift</p>
+                <p class="text-xs font-bold text-blue-600 mt-1 uppercase tracking-widest">ID: {{ student.roll_number }}</p>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 print:hidden">
+            <button onclick="window.print()" class="bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center space-x-2">
+                <i class="fas fa-print"></i>
+                <span>Print Transcript</span>
+            </button>
+            <button class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center space-x-2 shadow-lg shadow-blue-100">
+                <i class="fas fa-share-alt"></i>
+                <span>Digital Share</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary Stats (Top Grid) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- CGPA -->
+        <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[2rem] p-6 text-white shadow-premium relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full translate-x-8 -translate-y-8 blur-xl group-hover:scale-150 transition-all"></div>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-blue-100 mb-1">Cumulative CGPA</p>
+            <h3 class="text-3xl font-extrabold">{{ cgpa|floatformat:2 }}</h3>
+            <div class="mt-4 flex items-center text-[10px] bg-white/20 w-fit px-2 py-1 rounded-lg">
+                <i class="fas fa-star mr-1"></i> Excellent Standing
+            </div>
+        </div>
+
+        <!-- Semester Result -->
+        <div class="glass rounded-[2rem] p-6 border-l-4 border-l-emerald-500 group shadow-glass">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Semester GPA</p>
+            <h3 class="text-3xl font-extrabold text-slate-900">
+                {% if results_by_semester %}
+                    {% for sem, data in results_by_semester.items %}
+                        {% if forloop.first %}{{ data.gpa|floatformat:2 }}{% endif %}
+                    {% endfor %}
+                {% else %}
+                    0.00
+                {% endif %}
+            </h3>
+            <p class="mt-2 text-[10px] font-bold text-emerald-600 flex items-center">
+                <i class="fas fa-arrow-up mr-1 text-[8px]"></i> Predicted Growth
+            </p>
+        </div>
+
+        <!-- Credits Earned -->
+        <div class="glass rounded-[2rem] p-6 border-l-4 border-l-amber-500 shadow-glass">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Credits Earned</p>
+            <h3 class="text-3xl font-extrabold text-slate-900">{{ total_credits_earned }}</h3>
+            <div class="mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-widest">Across all semesters</div>
+        </div>
+
+        <!-- Attendance Linkage -->
+        <div class="glass rounded-[2rem] p-6 border-l-4 border-l-rose-500 shadow-glass">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Academic Status</p>
+            <h3 class="text-3xl font-extrabold text-slate-900">Passed</h3>
+            <div class="mt-2 text-[10px] text-rose-500 font-bold uppercase tracking-widest flex items-center">
+                <i class="fas fa-check-circle mr-1 text-[8px]"></i> Verified Official
+            </div>
+        </div>
+    </div>
+
+    <!-- Transcript Details (By Semester) -->
+    <div class="space-y-12">
+        {% for sem, data in results_by_semester.items %}
+        <div class="space-y-6">
+            <div class="flex items-center justify-between px-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-extrabold">{{ sem }}</div>
+                    <h3 class="text-lg font-extrabold text-slate-800 tracking-tight italic uppercase tracking-widest">
+                        Semester {{ sem }} <span class="ml-2 text-xs font-bold text-slate-400 font-normal">Academic Results</span>
+                    </h3>
+                </div>
+                <div class="text-right">
+                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Semester GPA</p>
+                    <p class="text-lg font-extrabold text-blue-600">{{ data.gpa|floatformat:2 }}</p>
+                </div>
+            </div>
+
+            <div class="glass rounded-[2.5rem] overflow-hidden shadow-glass border border-slate-100 print:border-none">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50/50 border-b border-slate-100">
+                        <tr>
+                            <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Course Info</th>
+                            <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Marks</th>
+                            <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Letter Grade</th>
+                            <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Grade Point</th>
+                            <th class="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Credits</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for result in data.results %}
+                        <tr class="hover:bg-slate-50/50 group transition-all">
+                            <td class="px-8 py-5">
+                                <p class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{{ result.course.title }}</p>
+                                <p class="text-[10px] font-extrabold text-slate-400 uppercase mt-1 tracking-widest">{{ result.course.code }}</p>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <span class="bg-slate-100 text-slate-700 font-extrabold text-[11px] px-3 py-1 rounded-lg">{{ result.marks }}</span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <span class="{% if result.letter_grade == 'F' %}bg-rose-50 text-rose-600{% else %}bg-blue-50 text-blue-600{% endif %} font-extrabold text-sm px-4 py-2 rounded-xl">
+                                    {{ result.letter_grade }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <p class="text-sm font-extrabold text-slate-900 tracking-tight">{{ result.grade_point|floatformat:2 }}</p>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <p class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-lg inline-block">{{ result.course.credits }}</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% empty %}
+        <div class="glass bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] p-20 text-center">
+            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-6">
+                <i class="fas fa-file-invoice text-2xl text-slate-300"></i>
+            </div>
+            <h4 class="text-lg font-bold text-slate-800 mb-2">No Verified Results Found</h4>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest max-w-xs mx-auto leading-relaxed">
+                Your transcript is currently empty. Please contact your department if you believe this is an error.
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Official Seal (Print Only) -->
+    <div class="hidden print:flex justify-between items-end mt-20 px-10">
+        <div class="text-center font-bold">
+            <div class="w-40 border-b-2 border-black mb-2"></div>
+            <p class="text-xs">Controller of Examinations</p>
+        </div>
+        <div class="text-center font-bold">
+            <div class="w-40 border-b-2 border-black mb-2"></div>
+            <p class="text-xs">Principal Seal / Stamp</p>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    @media print {
+        @page { size: landscape; margin: 1cm; }
+        .glass { background: white !important; border: 1px solid #eee !important; box-shadow: none !important; backdrop-filter: none !important; }
+        .bg-gradient-to-br { background: white !important; color: black !important; border: 1px solid #000 !important; }
+        .print-only { display: block !important; }
+        .text-slate-400, .text-blue-100 { color: #666 !important; }
+        aside, header, footer, .print\:hidden { display: none !important; }
+        main { margin-left: 0 !important; padding: 0 !important; }
+    }
+</style>
+{% endblock %}

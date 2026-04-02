@@ -1,0 +1,58 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<h3 class="mb-3">Teachers Management</h3>
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addTeacherModal">
+    + Add Teacher
+</button>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Dept</th>
+        <th>Action</th>
+    </tr>
+
+    {% for t in teachers %}
+    <tr>
+        <td>{{ t.id }}</td>
+        <td>{{ t.user.first_name }}</td>
+        <td>{{ t.department }}</td>
+        <td>
+            <a class="btn btn-warning btn-sm">Edit</a>
+            <a class="btn btn-danger btn-sm">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<!-- Add Teacher Modal -->
+<div class="modal fade" id="addTeacherModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5>Add Teacher</h5>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <input name="name" class="form-control mb-2" placeholder="Teacher Name">
+                    <input name="department" class="form-control mb-2" placeholder="Department">
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success">Save</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,97 +1,109 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #33add9ff;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 30px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
-    }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #3498db;
-      border: none;
-      color: white;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #2980b9;
-    }
-    .login-section {
-      margin-bottom: 40px;
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-    }
-    .login-section h3 {
-      text-align: center;
-      color: #3498db;
-      margin-bottom: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | CST Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-student {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        }
+        .student-glow:focus {
+            box-shadow: 0 0 20px -5px rgba(37, 99, 235, 0.2);
+            border-color: #2563eb;
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center p-6 relative">
 
-<div class="container">
-  <h2>🔐 Login Portal</h2>
+    <!-- Decorative Circles -->
+    <div class="absolute top-[-5%] right-[-5%] w-[400px] h-[400px] bg-blue-100/50 rounded-full blur-[100px] -z-10"></div>
+    <div class="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-emerald-100/50 rounded-full blur-[100px] -z-10"></div>
 
-  <!-- Student Login -->
-  <div class="login-section">
-    <h3>Student Login</h3>
-    <form method="POST" action="{% url 'student_login' %}">
-      {% csrf_token %}
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" name="username" required>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required>
-      </div>
-      <button type="submit">Login as Student</button>
-    </form>
-    <p style="text-align:center;margin-top:10px;">
-      <a href="{% url 'student_register' %}">Register as Student</a>
-    </p>
-  </div>
+    <div class="w-full max-w-lg">
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-blue-500/30">
+                <i class="fas fa-graduation-cap text-white text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none mb-2">Student <span class="text-blue-600">Access</span></h1>
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">Faridpur Polytechnic Institute</p>
+        </div>
 
+        <div class="glass-student rounded-[3rem] p-12 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-32 h-32 bg-blue-600/5 rounded-br-[5rem] -ml-10 -mt-10 transition-all group-hover:bg-blue-600/10"></div>
+            
+            {% if messages %}
+                {% for message in messages %}
+                <div class="mb-8 p-4 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center text-xs font-bold uppercase tracking-widest">
+                    <i class="fas fa-circle-exclamation mr-3"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
 
-</div>
+            <form method="POST" action="{% url 'student_login' %}" class="space-y-10">
+                {% csrf_token %}
+                
+                <div class="space-y-8">
+                    <!-- Roll Number Field -->
+                    <div class="space-y-3 group">
+                        <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-4 block transition-colors group-focus-within:text-blue-600">Polytechnic Roll Number</label>
+                        <div class="relative">
+                            <i class="fas fa-id-card absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 text-sm transition-colors group-focus-within:text-blue-600"></i>
+                            <input type="text" name="username" required 
+                                placeholder="Enter Your Roll"
+                                class="w-full bg-white/50 border border-slate-200 rounded-2xl py-5 pl-14 pr-6 text-slate-900 text-sm font-semibold placeholder:text-slate-400 focus:outline-none student-glow transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="space-y-3 group">
+                        <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-4 block transition-colors group-focus-within:text-blue-600">Student Security Pin (Password)</label>
+                        <div class="relative">
+                            <i class="fas fa-key absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 text-sm transition-colors group-focus-within:text-blue-600"></i>
+                            <input type="password" name="password" required 
+                                placeholder="••••••••"
+                                class="w-full bg-white/50 border border-slate-200 rounded-2xl py-5 pl-14 pr-6 text-slate-900 text-sm font-semibold placeholder:text-slate-400 focus:outline-none student-glow transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 transition-all active:scale-95 flex items-center justify-center space-x-3">
+                    <span>Enter My Dashboard</span>
+                    <i class="fas fa-arrow-right-long text-sm"></i>
+                </button>
+            </form>
+
+            <div class="mt-12 pt-8 border-t border-slate-100 text-center">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                    First time here? <a href="{% url 'student_registration_step1' %}" class="text-blue-600 hover:underline inline-flex items-center">Apply for Access <i class="fas fa-chevron-right ml-2 text-[8px]"></i></a>
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-10 flex items-center justify-center space-x-6">
+            <a href="{% url 'home' %}" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors">
+                <i class="fas fa-house mr-1"></i> Home
+            </a>
+            <div class="h-3 w-[1px] bg-slate-200"></div>
+            <a href="{% url 'unified_staff_login' %}" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-blue-600 transition-colors">
+                Staff Portal <i class="fas fa-user-tie ml-1"></i>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

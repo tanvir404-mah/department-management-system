@@ -1,0 +1,113 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Security Matrix | CST Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-12 animate-fade-in pb-20">
+    <!-- Header -->
+    <div>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">System <span class="text-rose-600">Audit</span> Matrix</h2>
+        <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Universal Forensic Trace & Security Monitoring</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Audit Logs (Admin Actions) -->
+        <div class="space-y-8">
+            <div class="flex items-center space-x-5">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <i data-lucide="activity" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-widest leading-none">Operational Audit Trace</h3>
+            </div>
+
+            <div class="glass-card border-none rounded-[3.5rem] shadow-2xl overflow-hidden">
+                <div class="p-8 bg-slate-50/30 border-b border-slate-50 text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em]">Administrative Mutations</div>
+                <div class="divide-y divide-slate-50 max-h-[700px] overflow-y-auto scroll-hide">
+                    {% for log in audit_logs %}
+                    <div class="p-10 hover:bg-slate-50/50 transition-all group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                <span class="text-xs font-bold text-slate-900 underline decoration-indigo-200">{{ log.user.username }}</span>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ log.timestamp|timesince }} ago</span>
+                        </div>
+                        <p class="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors leading-relaxed">{{ log.action }}</p>
+                        <div class="mt-4 flex items-center space-x-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                <i data-lucide="monitor" class="w-2.5 h-2.5 mr-1.5"></i>
+                                IP: {{ log.ip_address|default:"127.0.0.1" }}
+                            </span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="py-32 text-center opacity-30 italic text-xs font-bold uppercase tracking-widest">No mutation logs detected</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Access Logs (Failed Logins) -->
+        <div class="space-y-8">
+            <div class="flex items-center space-x-5">
+                <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-sm font-extrabold text-rose-600 uppercase tracking-widest leading-none">Unauthorized Access Matrix</h3>
+            </div>
+
+            <div class="bg-slate-900 rounded-[3.5rem] shadow-2xl overflow-hidden border-none text-white">
+                <div class="p-8 bg-white/5 border-b border-white/5 text-[10px] font-extrabold text-rose-400 uppercase tracking-[0.3em]">Security Incident Feed</div>
+                <div class="divide-y divide-white/5 max-h-[700px] overflow-y-auto scroll-hide">
+                    {% for log in access_failed %}
+                    <div class="p-10 hover:bg-white/5 transition-all group border-l-4 border-l-rose-600">
+                        <div class="flex items-center justify-between mb-5 text-white">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
+                                <span class="text-xs font-extrabold text-rose-400 uppercase tracking-widest">Breach Attempt</span>
+                            </div>
+                            <span class="text-[9px] font-bold text-white/20 uppercase tracking-widest font-mono text-[8px]">{{ log.timestamp|date:"Y-m-d H:i:s" }}</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-6 mb-6">
+                            <div class="space-y-1">
+                                <p class="text-[9px] font-extrabold text-white/30 uppercase tracking-widest">Target User</p>
+                                <p class="text-xs font-bold text-white">{{ log.username_attempted }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[9px] font-extrabold text-white/30 uppercase tracking-widest">Origin Protocol</p>
+                                <p class="text-xs font-bold text-rose-300 font-mono">{{ log.ip_address }}</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-4 mb-8">
+                            <p class="text-[9px] font-extrabold text-white/20 uppercase tracking-widest mb-2">User Agent String</p>
+                            <p class="text-[9px] font-bold text-white/40 italic break-all leading-relaxed">{{ log.user_agent|truncatechars:150 }}</p>
+                        </div>
+
+                        <button onclick="blockIP('{{ log.ip_address }}')" 
+                            class="w-full py-4 bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white text-[10px] font-extrabold uppercase tracking-[0.3em] rounded-2xl transition-all border border-rose-600/30 active:scale-95">
+                            Block Protocol IP
+                        </button>
+                    </div>
+                    {% empty %}
+                    <div class="py-32 text-center opacity-10 flex flex-col items-center">
+                        <i data-lucide="shield-check" class="w-20 h-20 mb-6"></i>
+                        <p class="text-xs font-extrabold uppercase tracking-[0.4em] text-white">System Secure: No failed attempts</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function blockIP(ip) {
+        if(confirm(`INITIATE IP BLOCKING: Are you sure you want to blacklist protocol target ${ip}?`)) {
+            alert(`Protocol IP ${ip} has been added to the internal system blacklist (Simulation).`);
+        }
+    }
+</script>
+{% endblock %}
+坐坐

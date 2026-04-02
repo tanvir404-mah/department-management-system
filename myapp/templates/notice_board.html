@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Board | CST Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="glass-nav sticky top-0 z-50 py-4">
+        <div class="container mx-auto px-6 flex items-center justify-between">
+            <a href="{% url 'home' %}" class="flex items-center space-x-3">
+                <img src="/media/fpi-logo.png" alt="Logo" class="w-10 h-10">
+                <div>
+                    <h1 class="text-lg font-extrabold text-slate-900 leading-none">CST Portal</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Faridpur Polytechnic</p>
+                </div>
+            </a>
+            <div class="flex items-center space-x-8">
+                <a href="{% url 'home' %}" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-all">Home</a>
+                <a href="{% url 'notice_board' %}" class="text-sm font-bold text-indigo-600">Notice Board</a>
+                <a href="{% url 'unified_staff_login' %}" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-600 transition-all">Staff Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="bg-white py-20 border-b border-slate-100">
+        <div class="container mx-auto px-6">
+            <div class="max-w-3xl">
+                <p class="text-[10px] font-extrabold text-indigo-500 uppercase tracking-[0.3em] mb-4">Official Announcements</p>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
+                    Departmental <span class="text-indigo-600">Notice Board</span>
+                </h2>
+                <p class="text-lg text-slate-500 font-medium leading-relaxed">
+                    Stay updated with the latest academic schedules, examination routines, and official notifications from the Computer Department.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for notice in notices %}
+            <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 group overflow-hidden flex flex-col">
+                <div class="p-8 flex-1">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-widest 
+                            {% if notice.category == 'ACADEMIC' %}bg-blue-50 text-blue-600
+                            {% elif notice.category == 'EXAMINATION' %}bg-rose-50 text-rose-600
+                            {% elif notice.category == 'REGISTRATION' %}bg-emerald-50 text-emerald-600
+                            {% elif notice.category == 'MAINTENANCE' %}bg-amber-50 text-amber-600
+                            {% else %}bg-slate-100 text-slate-500{% endif %}">
+                            {{ notice.get_category_display }}
+                        </span>
+                        <span class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                            {{ notice.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors leading-snug">
+                        {{ notice.title }}
+                    </h3>
+                    
+                    <p class="text-sm text-slate-500 font-medium leading-relaxed mb-8 line-clamp-3">
+                        {{ notice.content }}
+                    </p>
+                </div>
+                
+                <div class="px-8 pb-8 flex flex-col gap-3">
+                    {% if notice.file_attachment %}
+                    <a href="{{ notice.file_attachment.url }}" target="_blank" 
+                        class="w-full flex items-center justify-center space-x-2 bg-rose-50 text-rose-600 py-4 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>Download PDF Attachment</span>
+                    </a>
+                    {% endif %}
+                    
+                    <button onclick="openNoticeModal('{{ notice.title|escapejs }}', '{{ notice.content|escapejs }}', '{{ notice.get_category_display }}')" 
+                        class="w-full bg-slate-50 text-slate-900 py-4 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all">
+                        View Details
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full py-24 text-center">
+                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-900 mb-2">No Notices Yet</h3>
+                <p class="text-slate-400 font-medium">Check back later for departmental updates.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- Notice Modal -->
+    <div id="noticeModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-6 sm:p-12">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeNoticeModal()"></div>
+        <div class="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl relative z-10 overflow-hidden transform transition-all">
+            <div class="p-10 sm:p-14">
+                <div class="flex items-center space-x-4 mb-8">
+                    <span id="modalCategory" class="px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-widest bg-indigo-50 text-indigo-600">CATEGORY</span>
+                </div>
+                <h2 id="modalTitle" class="text-3xl font-extrabold text-slate-900 mb-6 leading-tight">Notice Title</h2>
+                <div class="prose prose-slate max-w-none">
+                    <p id="modalContent" class="text-slate-600 text-lg leading-relaxed whitespace-pre-line font-medium"></p>
+                </div>
+                <div class="mt-12">
+                    <button onclick="closeNoticeModal()" class="w-full bg-slate-900 text-white py-5 rounded-2xl text-[12px] font-extrabold uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200">Close Notice</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openNoticeModal(title, content, category) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalContent').innerText = content;
+            document.getElementById('modalCategory').innerText = category;
+            
+            const modal = document.getElementById('noticeModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNoticeModal() {
+            const modal = document.getElementById('noticeModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+
+    <footer class="bg-white py-12 border-t border-slate-100 mt-20">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">&copy; 2026 Computer Science & Technology Department, FPI</p>
+        </div>
+    </footer>
+</body>
+</html>

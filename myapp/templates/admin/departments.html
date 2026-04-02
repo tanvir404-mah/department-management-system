@@ -1,0 +1,20 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<h3 class="mb-3">Department Monitoring</h3>
+
+<div class="row">
+
+    {% for d in departments %}
+    <div class="col-md-4 mb-3">
+        <div class="tw bg-white p-4 rounded shadow">
+            <h4>{{ d.name }}</h4>
+            <p>Teachers: {{ d.teacher_count }}</p>
+            <p>Students: {{ d.student_count }}</p>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

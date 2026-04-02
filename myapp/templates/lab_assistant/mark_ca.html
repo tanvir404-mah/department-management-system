@@ -1,0 +1,105 @@
+{% extends 'base_lab_assistant.html' %}
+
+{% block title %}Mark CA | CST Portal{% endblock %}
+
+{% block header_title %}{{ course.code }} CA Marks{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-fade-in pb-12">
+
+    <!-- Header Section -->
+    <div class="flex items-center justify-between px-2">
+        <div>
+            <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ course.title }}</h3>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
+                <i class="fas fa-layer-group text-sky-600 mr-2"></i> Practical Continuous Assessment
+            </p>
+        </div>
+        <a href="{% url 'lab_assistant_dashboard' %}" class="bg-white/80 hover:bg-white text-slate-600 px-6 py-3 rounded-2xl transition-all border border-slate-200 text-[10px] font-extrabold uppercase tracking-widest shadow-sm">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Console
+        </a>
+    </div>
+
+    <!-- Mark Entry Form -->
+    <div class="glass rounded-[2.5rem] overflow-hidden shadow-glass border border-slate-100">
+        <form method="POST" class="space-y-0">
+            {% csrf_token %}
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+                        <th class="px-8 py-6 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Student Information</th>
+                        <th class="px-8 py-6 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">ID / Roll</th>
+                        <th class="px-8 py-6 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Semester Status</th>
+                        <th class="px-8 py-6 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest text-right w-48">CA Marks (Max 30)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for student in students %}
+                    <tr class="hover:bg-sky-50/30 transition-all duration-200">
+                        <td class="px-8 py-5">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-100 to-slate-200 p-[2px]">
+                                    <div class="w-full h-full bg-white rounded-xl flex items-center justify-center overflow-hidden">
+                                        {% if student.user.profile_picture %}
+                                            <img src="{{ student.user.profile_picture.url }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            <i class="fas fa-user text-slate-300 text-xs"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800 leading-none">{{ student.user.get_full_name }}</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">CST Regular</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5">
+                            <p class="text-xs font-bold text-slate-600 tracking-tight">{{ student.student_id }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Roll: {{ student.roll_number }}</p>
+                        </td>
+                        <td class="px-8 py-5 text-center">
+                            <span class="bg-emerald-50 text-emerald-600 text-[10px] font-extrabold px-3 py-1.5 rounded-lg uppercase tracking-widest border border-emerald-100">
+                                {{ student.semester }}th Semester
+                            </span>
+                        </td>
+                        <td class="px-8 py-5 text-right">
+                            <div class="relative group inline-block">
+                                <input type="number" step="0.5" max="30" min="0" name="ca_{{ student.id }}" 
+                                    placeholder="0.0"
+                                    class="w-32 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-center text-sm font-extrabold text-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all">
+                                <div class="absolute -right-16 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-all">
+                                    <i class="fas fa-edit text-sky-500 animate-pulse"></i>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-8 py-16 text-center text-slate-400 font-bold italic tracking-wide">
+                            <div class="flex flex-col items-center justify-center space-y-4">
+                                <i class="fas fa-search text-3xl opacity-20"></i>
+                                <span>No students discovered for this specific course.</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if students %}
+            <div class="p-8 bg-slate-50/50 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400">
+                        <i class="fas fa-info-circle text-xs"></i>
+                    </div>
+                    <p class="text-xs font-medium text-slate-500 max-w-sm italic">Marks are saved directly to the student academic record and will reflect on their next transcript.</p>
+                </div>
+                <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-12 py-5 rounded-[2rem] transition-all shadow-xl shadow-sky-200 active:scale-95 text-[10px] uppercase tracking-widest">
+                    Submit CA Results
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

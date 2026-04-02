@@ -1,0 +1,147 @@
+{% extends 'base_hod.html' %}
+
+{% block title %}User Governance | CST Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-fade-in pb-20">
+    <!-- Header -->
+    <div>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Security & <span class="text-indigo-600">Roles</span></h2>
+        <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">User Privilege Promotion Panel</p>
+    </div>
+
+    <!-- User List Section -->
+    <div class="bg-white border border-slate-100 rounded-[3rem] shadow-xl overflow-hidden">
+        <div class="p-8 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
+            <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-[0.25em]">Registered Personnel Directory</h3>
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                <input type="text" placeholder="Filter by username..." class="bg-white border border-slate-200 rounded-xl pl-12 pr-4 py-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+            </div>
+        </div>
+        
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 border-b border-slate-100">
+                    <th class="px-8 py-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Oracle Identity</th>
+                    <th class="px-8 py-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Active Standing</th>
+                    <th class="px-8 py-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Target Rank</th>
+                    <th class="px-8 py-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-right">Escalate / Reset</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for target_user in users %}
+                <tr class="hover:bg-slate-50/50 transition-all duration-300 group">
+                    <td class="px-8 py-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-extrabold text-xs">
+                                {{ target_user.username|make_list|first|upper }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-900 leading-none mb-1 group-hover:text-indigo-600 transition-colors">{{ target_user.get_full_name|default:target_user.username }}</p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">UID: #{{ target_user.id|stringformat:"04d" }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-6">
+                        {% if target_user.is_active %}
+                        <span class="inline-flex items-center text-[9px] font-extrabold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-widest border border-emerald-100">
+                            Authorized
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center text-[9px] font-extrabold text-rose-500 bg-rose-50 px-3 py-1 rounded-full uppercase tracking-widest border border-rose-100">
+                            Suspended
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-8 py-6">
+                        <form method="POST" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ target_user.id }}">
+                            <select name="role" onchange="this.form.submit()" 
+                                class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all cursor-pointer">
+                                <option value="student" {% if target_user.role == 'student' %}selected{% endif %}>Student</option>
+                                <option value="teacher" {% if target_user.role == 'teacher' %}selected{% endif %}>Teacher</option>
+                                <option value="lab_assistant" {% if target_user.role == 'lab_assistant' %}selected{% endif %}>Lab Assist</option>
+                                <option value="hod" {% if target_user.role == 'hod' %}selected{% endif %}>HOD</option>
+                                <option value="admin" {% if target_user.role == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td class="px-8 py-6 text-right">
+                        <button onclick="toggleResetModal('{{ target_user.id }}', '{{ target_user.username }}')" 
+                            class="bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white px-4 py-2 rounded-xl text-[9px] font-extrabold uppercase tracking-widest transition-all">
+                            Reset Password
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="resetModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] hidden items-center justify-center p-6">
+        <div class="bg-white rounded-[3rem] p-12 max-w-md w-full shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-bl-[6rem] -mr-12 -mt-12"></div>
+            <div class="relative z-10 space-y-8">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="key" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-900 tracking-tight">Security <span class="text-indigo-600">Override</span></h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" id="modalUsername">User: </p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'hod_reset_password' %}" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" id="modalUserId">
+                    <div class="space-y-4">
+                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">New Terminal Password</label>
+                        <input type="password" name="new_password" required placeholder="Enter new credentials..."
+                            class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-xs font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="toggleResetModal()" class="flex-1 py-4 bg-slate-50 text-slate-400 text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-all">Cancel</button>
+                        <button type="submit" class="flex-1 py-4 bg-indigo-600 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">Force Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Warning -->
+    <div class="bg-amber-50 border border-amber-100 p-8 rounded-[2.5rem] flex items-start space-x-6">
+        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 flex-shrink-0">
+            <i data-lucide="shield-alert" class="w-6 h-6"></i>
+        </div>
+        <div>
+            <h4 class="text-sm font-extrabold text-amber-900 uppercase tracking-widest mb-1">Administrative Protocol Notice</h4>
+            <p class="text-xs font-bold text-amber-700/70 leading-relaxed uppercase tracking-wider">
+                Resetting passwords and promoting users are high-level mutations. All overrides are logged in the secure audit matrix. Unauthorized privilege escalation is strictly monitored.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleResetModal(userId = null, username = null) {
+        const modal = document.getElementById('resetModal');
+        const userIdInput = document.getElementById('modalUserId');
+        const usernameDisplay = document.getElementById('modalUsername');
+        
+        if (userId) {
+            userIdInput.value = userId;
+            usernameDisplay.textContent = `Target: ${username}`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        } else {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+</script>
+</div>
+{% endblock %}

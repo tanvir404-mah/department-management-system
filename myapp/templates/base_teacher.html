@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CST Portal | Teacher Dashboard{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Instrument Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-teal {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+        }
+        .sidebar-link-teacher.active {
+            background: #059669;
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-[#f0f9f6] text-slate-800 font-sans">
+
+    <!-- Section 1: Sidebar Navigation (Emerald Theme) -->
+    <aside class="fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-emerald-100 z-[100] flex flex-col hidden lg:flex">
+        <!-- Logo -->
+        <div class="p-8">
+            <div class="flex items-center space-x-3 mb-2">
+                <div class="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200">
+                    <i class="fas fa-chalkboard-teacher text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">CST <span class="text-emerald-600">Portal</span></h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Teacher Dashboard</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">Core Panel</p>
+            
+            <a href="{% url 'teacher_dashboard' %}" class="sidebar-link-teacher active flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300">
+                <i class="fas fa-columns text-lg"></i>
+                <span class="font-bold text-sm">Dashboard</span>
+            </a>
+            
+            <a href="#" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+                <i class="fas fa-book text-lg"></i>
+                <span class="font-bold text-sm">My Courses</span>
+            </a>
+
+            <a href="#" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+                <i class="fas fa-user-check text-lg"></i>
+                <span class="font-bold text-sm">Attendance</span>
+            </a>
+
+            <a href="#" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+                <i class="fas fa-file-signature text-lg"></i>
+                <span class="font-bold text-sm">Project Reviews</span>
+            </a>
+
+            <div class="pt-6">
+                <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">Communication</p>
+                <a href="{% url 'notice' %}" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+                    <i class="fas fa-bullhorn text-lg"></i>
+                    <span class="font-bold text-sm">Notice Board</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-6 border-t border-emerald-50 bg-emerald-50/30">
+            <div class="flex items-center space-x-3 text-emerald-700 font-bold text-xs uppercase tracking-wider">
+                <i class="fas fa-shield-alt"></i>
+                <span>Faculty Secure Portal</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="lg:ml-72 min-h-screen flex flex-col">
+
+        <!-- Top Header Overlay -->
+        <header class="sticky top-0 h-24 bg-white/80 backdrop-blur-xl border-b border-emerald-100 z-50 px-8 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <button class="lg:hidden w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">{% block header_title %}Teacher Portal{% endblock %}</h2>
+                    <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-widest">Faculty Management System</p>
+                </div>
+            </div>
+
+            <!-- Profile Info & Logout -->
+            <div class="flex items-center space-x-6">
+                <!-- Notifications -->
+                <div class="relative" id="notification-wrapper">
+                    <button id="notification-btn" class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-emerald-100 hover:text-emerald-600 transition-all relative">
+                        <i class="fas fa-bell text-lg"></i>
+                        {% if new_notices_count > 0 %}
+                            <span class="absolute top-3 right-3 w-3 h-3 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
+                        {% endif %}
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div id="notification-dropdown" class="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-premium border border-emerald-50 py-4 hidden z-[1001] animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div class="px-6 py-2 border-b border-emerald-50 flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-extrabold text-slate-900 tracking-tight">Notifications</h4>
+                            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">{{ recent_notices|length }} New</span>
+                        </div>
+                        
+                        <div class="max-h-[400px] overflow-y-auto scroll-hide">
+                            {% for notice in recent_notices %}
+                            <div class="px-6 py-4 hover:bg-emerald-50 transition-colors cursor-pointer group">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex-shrink-0 flex items-center justify-center text-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                                        <i class="fas fa-bullhorn"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-[13px] font-bold text-slate-800 leading-tight mb-1 truncate">{{ notice.title }}</p>
+                                        <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-2">{{ notice.content }}</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">{{ notice.created_at|timesince }} ago</span>
+                                            <span class="text-[9px] font-bold text-emerald-600 uppercase">{{ notice.created_by.get_role_display|default:"Admin" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="py-12 text-center text-slate-300">
+                                <i class="fas fa-bell-slash text-4xl mb-3 opacity-20"></i>
+                                <p class="text-xs font-bold uppercase tracking-widest">No notifications yet</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="px-6 pt-4 mt-2 border-t border-emerald-50">
+                            <a href="{% url 'notice' %}" class="block w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-center rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-emerald-100">View All Notices</a>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const btn = document.getElementById('notification-btn');
+                        const dropdown = document.getElementById('notification-dropdown');
+                        
+                        if(btn && dropdown) {
+                            btn.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                dropdown.classList.toggle('hidden');
+                            });
+                            
+                            document.addEventListener('click', function() {
+                                dropdown.classList.add('hidden');
+                            });
+                            
+                            dropdown.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                            });
+                        }
+                    });
+                </script>
+
+                <div class="h-10 w-[1px] bg-slate-200"></div>
+
+                <div class="flex items-center space-x-4 group cursor-pointer">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-slate-900 leading-none mb-1">{{ teacher.user.get_full_name|default:teacher.user.username }}</p>
+                        <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none">{{ teacher.designation }}</p>
+                    </div>
+                    <a href="{% url 'profile' %}" class="block">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-600 p-[2px] shadow-lg shadow-emerald-100 hover:scale-105 transition-transform duration-300">
+                            <div class="w-full h-full bg-white rounded-2xl flex items-center justify-center overflow-hidden">
+                                 {% if teacher.user.profile_picture %}
+                                    <img src="{{ teacher.user.profile_picture.url }}" class="w-full h-full object-cover">
+                                 {% else %}
+                                    <i class="fas fa-user-circle text-emerald-600 text-2xl"></i>
+                                 {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <a href="{% url 'logout' %}" class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Logout">
+                        <i class="fas fa-power-off text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content -->
+        <main class="flex-1 p-8">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-8 p-4 rounded-3xl {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-rose-50 text-rose-700 border-rose-100{% endif %} border shadow-sm flex items-center animate-bounce">
+                        <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-3"></i>
+                        <span class="text-sm font-bold uppercase tracking-wide">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer class="p-8 text-center text-[10px] font-bold text-slate-400 border-t border-emerald-50 uppercase tracking-[0.3em]">
+            &copy; 2025 CST Faculty Portal | Department of Computer Science & Technology
+        </footer>
+    </div>
+
+</body>
+</html>

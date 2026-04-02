@@ -1,0 +1,74 @@
+{% extends 'base_admin.html' %}
+{% block title %}Banner Management | CST Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-10 pb-20">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-[10px] font-extrabold text-blue-500 uppercase tracking-[0.25em] mb-1">Portal CMS</p>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Hero <span class="text-blue-600">Banners</span></h2>
+        </div>
+        <a href="{% url 'staff_dashboard' %}" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-blue-600">Back to Dashboard</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Banner Form -->
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm">
+            <h3 class="text-base font-extrabold text-slate-900 mb-8">Add New Banner</h3>
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <div class="space-y-2">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Banner Image</label>
+                    <input type="file" name="image" required class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl text-xs font-bold">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Main Heading</label>
+                    <input type="text" name="title" required placeholder="e.g. Innovation Hub" class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-blue-500 transition-all">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Subtext / Description</label>
+                    <input type="text" name="subtitle" required placeholder="e.g. Building the future..." class="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl text-sm font-bold focus:outline-none focus:border-blue-500 transition-all">
+                </div>
+                <div class="flex items-center space-x-3 pt-2">
+                    <input type="checkbox" name="is_active" id="is_active" checked class="w-5 h-5 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500">
+                    <label for="is_active" class="text-xs font-bold text-slate-600">Visible on Home Page</label>
+                </div>
+                <button type="submit" class="w-full py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">Upload Banner</button>
+            </form>
+        </div>
+
+        <!-- Banner List -->
+        <div class="lg:col-span-2 space-y-6">
+            {% for banner in banners %}
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm flex flex-col md:flex-row">
+                <div class="md:w-64 h-48 md:h-auto overflow-hidden">
+                    <img src="{{ banner.image.url }}" class="w-full h-full object-cover">
+                </div>
+                <div class="p-8 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-widest {% if banner.is_active %}bg-emerald-50 text-emerald-600{% else %}bg-slate-100 text-slate-400{% endif %}">
+                                {% if banner.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                            <form method="POST" action="{% url 'admin_delete_banner' banner.id %}" onsubmit="return confirm('Permanently delete this banner?')">
+                                {% csrf_token %}
+                                <button type="submit" class="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <h4 class="text-lg font-extrabold text-slate-900 leading-tight mb-2">{{ banner.title }}</h4>
+                        <p class="text-sm font-medium text-slate-500 leading-relaxed">{{ banner.subtitle }}</p>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-300 mt-4 uppercase">Added {{ banner.created_at|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] py-20 text-center">
+                <p class="text-sm font-bold text-slate-300 uppercase tracking-widest">No banners uploaded yet</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

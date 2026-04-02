@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - Step 2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS from previous professional template */
+        :root {
+            --accent-blue: #007bff;
+            --dark-text: #212529;
+            --light-bg-blue: #e8f0fe;
+            --body-bg: #f7f9fc;
+            --shadow-light: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: var(--body-bg);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        .register-wrapper {
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 90%;
+            margin: 60px auto;
+            box-shadow: var(--shadow-light);
+            border-top: 4px solid var(--accent-blue);
+        }
+
+        .portal-header {
+            color: var(--dark-text);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .credentials-heading {
+            color: var(--dark-text);
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            text-align: left !important;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            font-weight: 600;
+            padding: 14px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-top: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary-custom:hover {
+            background: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        /* New Resend Button Styling */
+        .btn-link-custom {
+            color: var(--accent-blue);
+            font-weight: 600;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #495057;
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.2);
+            border-width: 1px;
+        }
+
+        .input-group-text-custom {
+            background-color: var(--light-bg-blue);
+            border: 1px solid #ced4da;
+            border-right: none;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .form-control-custom {
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .login-link {
+            margin-top: 25px;
+            font-size: 0.95rem;
+        }
+
+        .login-link a {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        footer h4 {
+            color: #adb5bd;
+            font-weight: 400;
+            margin-top: 30px;
+            font-size: 0.75rem;
+            padding-top: 15px;
+            border-top: 1px solid #f8f9fa;
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center align-items-center flex-column">
+
+    <div class="register-wrapper">
+        <div class="text-center">
+            <h2 class="portal-header">
+                <i class="fas fa-check-circle me-2" style="color: var(--accent-blue);"></i> Verification & Setup
+            </h2>
+        </div>
+
+        <form method="POST" action="#">
+
+            <h5 class="credentials-heading"><i class="fas fa-lock me-2"></i> Step 2: Verify & Create Password</h5>
+
+            <div class="alert alert-info text-center" role="alert">
+                An OTP has been sent to **+8801XXXXXXXXXX**. Check your mobile!
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="otp_code" class="form-label">Verification Code (OTP)</label>
+                <div class="input-group">
+                    <span class="input-group-text input-group-text-custom"><i class="fas fa-mobile-alt"></i></span>
+                    <input type="text" name="otp_code" id="otp_code" class="form-control"
+                        placeholder="Enter the 6-digit code" required>
+                </div>
+                <div class="text-end mt-2">
+                    Didn't receive code? <a href="#" class="btn-link-custom">Resend OTP</a>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="password1" class="form-label">New Password</label>
+                <div class="input-group">
+                    <span class="input-group-text input-group-text-custom"><i class="fas fa-key"></i></span>
+                    <input type="password" name="password1" id="password1" class="form-control form-control-custom"
+                        placeholder="Create a strong password" required>
+                </div>
+            </div>
+
+            <div class="form-group mb-5">
+                <label for="password2" class="form-label">Confirm Password</label>
+                <div class="input-group">
+                    <span class="input-group-text input-group-text-custom"><i class="fas fa-check"></i></span>
+                    <input type="password" name="password2" id="password2" class="form-control form-control-custom"
+                        placeholder="Confirm your new password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 btn-lg">
+                <i class="fas fa-user-check me-2"></i> Complete Registration
+            </button>
+        </form>
+
+        <div class="login-link text-center">
+            Go back to Step 1: <a href="registration.html" class="text-decoration-none">Change Details</a>
+        </div>
+
+        <footer class="text-center">
+            <h4 class="mb-0">&copy; 2025 Department of CST, All rights reserved.</h4>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
