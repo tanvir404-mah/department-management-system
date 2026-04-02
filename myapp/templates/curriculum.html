@@ -60,7 +60,7 @@
             top: 25px;
             width: 8px;
             height: 8px;
-            background: theme('colors.primary-accent');
+            background: #1e40af;
             border-radius: 50%;
             z-index: 10;
         }
@@ -71,7 +71,7 @@
             top: 30px;
             bottom: -5px;
             width: 2px;
-            background: theme('colors.gray.300');
+            background: #e5e7eb;
             z-index: 5;
         }
     </style>
@@ -87,7 +87,6 @@
             <p class="text-xl text-gray-500 max-w-2xl mx-auto">
                 Comprehensive 4-Year (8 Semesters) Structure based on BTEB Probidhan-2022.
             </p>
-            <!-- Subject Type Legend (Moved to JS for Summary Card integration) -->
         </header>
         
         <!-- Credit Summary Card - Injected by JS -->
@@ -172,7 +171,6 @@
             },
             {
                 semester: "6th Semester | Year 3",
-                // FIX: Updated total_credit from 20 to 21 (Sum of subjects: 2+3+4+3+4+3+2 = 21)
                 total_credit: 21, 
                 subjects: [
                     { code: '25861', name: 'Environmental Studies', credit: 2, type: 'NON-TECH' },
@@ -186,7 +184,6 @@
             },
             {
                 semester: "7th Semester | Year 4",
-                // FIX: Updated total_credit from 19 to 20 (Sum of subjects: 2+3+3+4+3+3+2 = 20)
                 total_credit: 20, 
                 subjects: [
                     { code: '25871', name: 'Innovation & Entrepreneurship', credit: 2, type: 'NON-TECH' },
@@ -214,10 +211,10 @@
         // Function to determine badge style based on subject type
         function getBadgeStyle(type) {
             switch (type) {
-                case 'CST-CORE': return 'bg-cst-core/10 text-cst-core border-cst-core';
-                case 'CST-APPL': return 'bg-cst-applied/10 text-cst-applied border-cst-applied';
-                case 'SCI-MATH': return 'bg-sci-math/10 text-sci-math border-sci-math';
-                case 'NON-TECH': return 'bg-non-tech/10 text-non-tech border-non-tech';
+                case 'CST-CORE': return 'bg-blue-100 text-blue-600 border-blue-200';
+                case 'CST-APPL': return 'bg-emerald-100 text-emerald-600 border-emerald-200';
+                case 'SCI-MATH': return 'bg-orange-100 text-orange-600 border-orange-200';
+                case 'NON-TECH': return 'bg-gray-100 text-gray-600 border-gray-200';
                 default: return 'bg-gray-200 text-gray-700 border-gray-400';
             }
         }
@@ -225,10 +222,10 @@
         // Function to determine solid color background based on subject type
         function getCategoryColor(type) {
             switch (type) {
-                case 'CST-CORE': return 'bg-cst-core';
-                case 'CST-APPL': return 'bg-cst-applied';
-                case 'SCI-MATH': return 'bg-sci-math';
-                case 'NON-TECH': return 'bg-non-tech';
+                case 'CST-CORE': return 'bg-blue-500';
+                case 'CST-APPL': return 'bg-emerald-500';
+                case 'SCI-MATH': return 'bg-orange-500';
+                case 'NON-TECH': return 'bg-gray-500';
                 default: return 'bg-gray-400';
             }
         }
@@ -295,7 +292,6 @@
         function createSemesterCard(semesterData, index) {
             const semesterNumber = index + 1;
             const id = `sem-${semesterNumber}`;
-            // Open the first item by default
             const isFirst = index === 0; 
             const activeClass = isFirst ? 'active' : '';
             
@@ -318,22 +314,21 @@
                 `;
             });
 
-            // Card HTML with timeline styling
             return `
                 <div class="timeline-item">
-                    <div class="bg-white rounded-xl shadow-lg transition-shadow duration-300 hover:shadow-xl border-l-4 border-primary-accent overflow-hidden">
+                    <div class="bg-white rounded-xl shadow-lg transition-shadow duration-300 hover:shadow-xl border-l-4 border-blue-800 overflow-hidden">
                         <button id="${id}-btn"
                                 class="accordion-button flex justify-between items-center w-full p-4 sm:p-5 text-left text-xl font-bold transition duration-300 focus:outline-none 
-                                    ${isFirst ? 'bg-primary-accent text-white' : 'bg-gray-100 text-primary-dark hover:bg-gray-200'}"
+                                    ${isFirst ? 'bg-blue-800 text-white' : 'bg-gray-100 text-primary-dark hover:bg-gray-200'}"
                                 aria-expanded="${isFirst}" 
                                 aria-controls="${id}-content">
                             <span>
                                 <span class="text-lg font-extrabold">${semesterData.semester}</span>
-                                <span class="ml-4 text-sm font-medium ${isFirst ? 'bg-white/20' : 'bg-primary-accent/10 text-primary-accent'} rounded-full py-1 px-3">
+                                <span class="ml-4 text-sm font-medium ${isFirst ? 'bg-white/20' : 'bg-blue-800/10 text-blue-800'} rounded-full py-1 px-3">
                                     Total Credits: ${semesterData.total_credit}
                                 </span>
                             </span>
-                            <svg class="accordion-icon w-6 h-6 transform ${isFirst ? 'rotate-180 text-white' : 'text-primary-accent'}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="accordion-icon w-6 h-6 transform ${isFirst ? 'rotate-180 text-white' : 'text-blue-800'}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
@@ -366,55 +361,45 @@
             `;
         }
 
-        // Render all semester cards and the summary
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Render Summary Card
             calculateCreditSummary();
-            
-            // 2. Render Accordion Cards
             curriculumData.forEach((data, index) => {
                 accordion.innerHTML += createSemesterCard(data, index);
             });
 
-            // 3. Setup Accordion Interactivity
             const buttons = document.querySelectorAll('.accordion-button');
-            
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
                     const contentId = button.getAttribute('aria-controls');
                     const content = document.getElementById(contentId);
                     const isExpanded = button.getAttribute('aria-expanded') === 'true';
 
-                    // Close all currently open items
                     document.querySelectorAll('.accordion-button[aria-expanded="true"]').forEach(openButton => {
                         if (openButton !== button) {
                             openButton.setAttribute('aria-expanded', 'false');
                             const openContent = document.getElementById(openButton.getAttribute('aria-controls'));
                             openContent.classList.remove('active');
-                            // Reset background color/text for closed buttons
-                            openButton.classList.remove('bg-primary-accent', 'text-white');
+                            openButton.classList.remove('bg-blue-800', 'text-white');
                             openButton.classList.add('bg-gray-100', 'text-primary-dark', 'hover:bg-gray-200');
                             openButton.querySelector('.accordion-icon').classList.remove('text-white');
-                            openButton.querySelector('.accordion-icon').classList.add('text-primary-accent');
+                            openButton.querySelector('.accordion-icon').classList.add('text-blue-800');
                         }
                     });
 
-                    // Toggle the clicked item
                     const newExpandedState = !isExpanded;
                     button.setAttribute('aria-expanded', newExpandedState);
                     content.classList.toggle('active');
 
-                    // Apply active styling
                     if (newExpandedState) {
                         button.classList.remove('bg-gray-100', 'text-primary-dark', 'hover:bg-gray-200');
-                        button.classList.add('bg-primary-accent', 'text-white');
-                        button.querySelector('.accordion-icon').classList.remove('text-primary-accent');
+                        button.classList.add('bg-blue-800', 'text-white');
+                        button.querySelector('.accordion-icon').classList.remove('text-blue-800');
                         button.querySelector('.accordion-icon').classList.add('text-white');
                     } else {
-                        button.classList.remove('bg-primary-accent', 'text-white');
+                        button.classList.remove('bg-blue-800', 'text-white');
                         button.classList.add('bg-gray-100', 'text-primary-dark', 'hover:bg-gray-200');
                         button.querySelector('.accordion-icon').classList.remove('text-white');
-                        button.querySelector('.accordion-icon').classList.add('text-primary-accent');
+                        button.querySelector('.accordion-icon').classList.add('text-blue-800');
                     }
                 });
             });

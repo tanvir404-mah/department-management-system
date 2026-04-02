@@ -12,6 +12,7 @@ import csv, io
 from django.db.models import Count, Q, F, Sum, Avg
 from django.contrib.sessions.models import Session
 
+from django.conf import settings
 from .models import (
     CustomUser, Student, Teacher, Department, Course, 
     Attendance, Result, Assignment, Notice, Resource, 
@@ -30,7 +31,12 @@ from .forms import (
 from .utils import send_otp_sms, send_broadcast_sms
 import random
 
+
 User = get_user_model()
+
+
+
+
 
 # ================= General Pages =================
 def home(request):
@@ -326,6 +332,8 @@ def notice(request):
     
     return render(request, 'notice.html', {"notices": global_notices})
 
+def notice(request):
+    return render(request, 'notice.html')
 def contact(request):
     return render(request, 'contact.html')
 

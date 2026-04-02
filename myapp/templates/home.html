@@ -15,19 +15,12 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <link rel="stylesheet" href="boostrap/css/bootstrap.css">
-  <link rel="stylesheet" href="boostrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="boostrap/css/bootstrap.rtl.css">
-  <link rel="stylesheet" href="boostrap/css/bootstrap.rtl.min.css">
-
-  <script src="boostrap/js/bootstrap.bundle.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
   <style>
-    /* Custom Font Configuration */
     body {
       font-family: 'Poppins', sans-serif;
     }
@@ -432,28 +425,27 @@
 
   <script>
     $(document).ready(function () {
-      // Slick Slider
       $('.hero-slider').slick({
+        dots: true,
+        infinite: true,
+        speed: 800,
+        fade: true,
+        cssEase: 'linear',
         autoplay: true,
         autoplaySpeed: 5000,
-        dots: true,
-        arrows: false,
-        fade: true,
-        speed: 1000,
-        cssEase: 'linear'
+        arrows: false
+      });
+
+      AOS.init({
+        duration: 800,
+        offset: 100,
+        once: true
       });
 
       // Mobile Menu Toggle
-      $('#mobile-menu-btn').click(function () {
-        $('#mobile-menu').slideToggle();
+      $('#mobile-menu-btn').click(function() {
+        // Implementation for mobile menu if needed
       });
-    });
-
-    // Initialize AOS (Animate On Scroll)
-    AOS.init({
-      duration: 800,
-      once: true,
-      offset: 50
     });
   </script>
 </body>
