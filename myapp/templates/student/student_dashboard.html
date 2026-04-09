@@ -101,7 +101,11 @@
                                     </div>
                                     <span class="text-sm font-semibold text-slate-500 italic">
                                         {% with teacher=course.teachers.first %}
-                                            {{ teacher.user.get_full_name|default:teacher.user.username|default:"CST Faculty" }}
+                                            {% if teacher %}
+                                                {{ teacher.user.get_full_name|default:teacher.user.username }}
+                                            {% else %}
+                                                CST Faculty
+                                            {% endif %}
                                         {% endwith %}
                                     </span>
                                 </div>
@@ -245,7 +249,7 @@
                         <select name="supervisor_id" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-inner">
                             <option value="">Select Supervisor</option>
                             {% for teacher in all_teachers %}
-                            <option value="{{ teacher.id }}">{{ teacher.user.get_full_name|default:teacher.user.username }}</p>
+                            <option value="{{ teacher.id }}">{{ teacher.user.get_full_name|default:teacher.user.username }}</option>
                             {% endfor %}
                         </select>
                         <textarea name="description" placeholder="Short Project Description..." rows="2" 

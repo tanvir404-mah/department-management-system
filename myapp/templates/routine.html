@@ -1,0 +1,194 @@
+{% extends user.role|yesno:"base_dashboard.html,base_teacher.html,base_admin.html"|default:"base_dashboard.html" %}
+
+{% block title %}Class Routine | CST Portal{% endblock %}
+{% block header_title %}Class Schedule{% endblock %}
+
+{% block content %}
+<div class="space-y-8 pb-20">
+    <!-- Hero Header -->
+    <div class="bg-gradient-to-tr from-indigo-600 to-blue-700 rounded-[2.5rem] p-10 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-white/5 opacity-20 pointer-events-none"></div>
+        <div class="relative z-10">
+            <div class="flex items-center space-x-6 mb-4">
+                <div class="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-calendar-alt text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold tracking-tight">Academic <span class="text-indigo-200">Timetable</span></h2>
+                    <p class="text-indigo-100/70 text-sm font-medium">Department of Computer Science & Technology</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl flex items-center space-x-3 border border-white/10">
+                    <i class="fas fa-layer-group text-indigo-200"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider">
+                        {% if student %}Semester: {{ student.semester }}{% elif teacher %}Dept: {{ teacher.department.name }}{% else %}General Schedule{% endif %}
+                    </span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl flex items-center space-x-3 border border-white/10">
+                    <i class="fas fa-clock text-indigo-200"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider">Shift: {% if student %}{{ student.shift }}{% else %}N/A{% endif %}</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl flex items-center space-x-3 border border-white/10">
+                    <i class="fas fa-signal text-indigo-200"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider">Status: <span class="text-emerald-300">Active Session</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Routine Grid -->
+    {% if is_empty %}
+    <div class="bg-white border border-slate-100 rounded-[3.5rem] p-24 text-center">
+        <div class="w-24 h-24 bg-slate-50 text-slate-300 rounded-[2rem] flex items-center justify-center mx-auto mb-8">
+            <i class="fas fa-calendar-times text-5xl"></i>
+        </div>
+        <h3 class="text-2xl font-black text-slate-900 tracking-tight">Schedule Not Found</h3>
+        <p class="text-slate-400 text-sm mt-3 max-w-sm mx-auto font-bold uppercase tracking-widest leading-loose">Your official routine for this semester has not been digitalized yet.</p>
+    </div>
+    {% else %}
+    <!-- Layout Wrapper: Responsive Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-7 gap-6">
+        {% for day, routines in routine_data.items %}
+        <div class="space-y-6" data-day="{{ day }}">
+            <div class="px-6 flex items-center space-x-3">
+                <span class="w-1.5 h-6 bg-indigo-600 rounded-full shadow-lg shadow-indigo-100"></span>
+                <h4 class="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">{{ day }}</h4>
+            </div>
+
+            <div class="space-y-4 px-2 lg:px-0">
+                {% for entry in routines %}
+                <div class="routine-card bg-white border border-slate-100 hover:border-indigo-300 rounded-[2.5rem] p-6 lg:p-7 transition-all duration-300 shadow-sm group hover:shadow-2xl relative overflow-hidden active:scale-95 cursor-pointer"
+                     data-start="{{ entry.start_time|time:'H:i' }}" 
+                     data-end="{{ entry.end_time|time:'H:i' }}">
+                    
+                    <!-- Live Pulse Badge -->
+                    <div class="live-badge hidden absolute top-0 right-0 bg-indigo-600 text-white px-5 py-2 rounded-bl-3xl text-[9px] font-black uppercase tracking-[0.2em] animate-fade-in shadow-xl group-hover:scale-105 transition-transform">
+                        <span class="inline-block w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse mr-2"></span> LIVE NOW
+                    </div>
+
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-[1rem] text-[10px] font-black uppercase tracking-[0.15em] border border-indigo-100/50">
+                            {{ entry.start_time|time:"h:i A" }}
+                        </div>
+                        <div class="text-slate-200 group-hover:text-indigo-500 group-hover:rotate-12 transition-all">
+                            <i class="fas fa-ellipsis-v text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <h5 class="text-sm font-black text-slate-900 leading-tight mb-2 group-hover:text-indigo-700 transition-colors">{{ entry.course.title }}</h5>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">{{ entry.course.code }}</p>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl text-slate-500 border border-slate-100">
+                            <i class="fas fa-chalkboard-teacher text-[10px] text-indigo-400"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-widest">{{ entry.teacher.initials|default:entry.teacher.user.username }}</span>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl text-slate-500 border border-slate-100">
+                            <i class="fas fa-map-marker-alt text-[10px] text-rose-400"></i>
+                            <span class="text-[10px] font-bold tracking-widest">RM: {{ entry.room_number|default:"TBA" }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar (Internal) -->
+                    <div class="progress-container hidden mt-5 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="progress-bar h-full bg-indigo-600 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="border-2 border-dashed border-slate-100 rounded-[2.5rem] py-14 flex flex-col items-center justify-center text-center opacity-40 group hover:opacity-100 transition-opacity">
+                    <i class="fas fa-mug-hot text-xl mb-4 text-slate-300"></i>
+                    <span class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Rest / Break Day</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Footer Stats (Digital PDF Export) -->
+    <div class="bg-slate-900 rounded-[3rem] p-10 flex flex-col md:flex-row items-center justify-between shadow-2xl shadow-indigo-200 mt-12 relative overflow-hidden">
+        <div class="absolute inset-0 bg-indigo-600 opacity-5 blur-[100px] pointer-events-none"></div>
+        <div class="flex items-center space-x-12 mb-6 md:mb-0 relative z-10">
+            <div>
+                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2 text-center md:text-left">Weekly Workload</p>
+                <p class="text-sm font-black text-white text-center md:text-left">Full Academic Session</p>
+            </div>
+            <div class="h-10 w-px bg-slate-800 hidden md:block"></div>
+            <div>
+                <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-2 text-center md:text-left">System Health</p>
+                <div class="flex items-center space-x-3 justify-center md:justify-start">
+                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                    <span class="text-sm font-black text-white">Live Sync Active</span>
+                </div>
+            </div>
+        </div>
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900 active:scale-95 flex items-center space-x-4 relative z-10">
+            <i class="fas fa-file-pdf"></i>
+            <span>Generate Portfolio PDF</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    function updateLiveClasses() {
+        const now = new Date();
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const currentDay = days[now.getDay()];
+        const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+        document.querySelectorAll('.routine-card').forEach(card => {
+            const start = card.dataset.start;
+            const end = card.dataset.end;
+            const cardDay = card.closest('[data-day]').dataset.day;
+
+            if (cardDay === currentDay && currentTime >= start && currentTime < end) {
+                card.classList.add('ongoing-highlight', 'ring-4', 'ring-indigo-600', 'ring-offset-8', 'ring-offset-slate-50', 'z-10');
+                card.querySelector('.live-badge').classList.remove('hidden');
+                card.querySelector('.progress-container').classList.remove('hidden');
+                
+                // Calculate progress
+                const startTime = new Date(`2000-01-01T${start}:00`);
+                const endTime = new Date(`2000-01-01T${end}:00`);
+                const currentT = new Date(`2000-01-01T${currentTime}:00`);
+                const progress = ((currentT - startTime) / (endTime - startTime)) * 100;
+                card.querySelector('.progress-bar').style.width = `${progress}%`;
+            } else {
+                card.classList.remove('ongoing-highlight', 'ring-4', 'ring-indigo-600', 'ring-offset-8', 'ring-offset-slate-50', 'z-10');
+                card.querySelector('.live-badge').classList.add('hidden');
+                card.querySelector('.progress-container').classList.add('hidden');
+            }
+        });
+    }
+
+    // Update every minute
+    setInterval(updateLiveClasses, 60000);
+    window.onload = updateLiveClasses;
+</script>
+
+<style>
+    @media print {
+        .bg-indigo-600 { background-color: #4f46e5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+    .ongoing-highlight {
+        animation: card-pulse 3s infinite ease-in-out;
+    }
+    @keyframes card-pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 40px 100px -20px rgba(79, 70, 229, 0.15); }
+        50% { transform: scale(1.01); box-shadow: 0 50px 120px -25px rgba(79, 70, 229, 0.2); }
+    }
+</style>
+{% endblock %}
+</div>
+
+<style>
+    @keyframes pulse-emerald {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    .pulse-emerald { animation: pulse-emerald 2s infinite ease-in-out; }
+</style>
+{% endblock %}

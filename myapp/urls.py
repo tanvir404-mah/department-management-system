@@ -11,6 +11,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('result/', views.result_view, name='result'),
     path('routine/', views.routine, name='routine'),
+    path('students/', views.student_lookup, name='student_lookup'),
     path('teacher/', views.teacher_view, name='teacher'),
     path('student/', views.student_view, name='student'),
     path('student/search/', views.search_student, name='search_student'),
@@ -52,7 +53,6 @@ urlpatterns = [
 
     # Registration Aliases
     path('Student/register/', views.student_registration_step1, name='student_register'),
-    path('teacher/register/', views.teacher_register, name='teacher_register'),
 
     # Dashboards & Specialized CST Apps
     path('dashboard/student/', views.student_dashboard, name='student_dashboard'),
@@ -71,6 +71,8 @@ urlpatterns = [
     path('hod/departments/', views.hod_dept_mgmt, name='hod_dept_mgmt'),
     path('hod/courses/', views.hod_course_mgmt, name='hod_course_mgmt'),
     path('hod/routine/', views.hod_routine_mgmt, name='hod_routine_mgmt'),
+    path('hod/routine/upload-image/', views.upload_routine_image, name='upload_routine_image'),
+    path('hod/routine/delete/<int:routine_id>/', views.delete_routine, name='delete_routine'),
     path('hod/allotment/', views.hod_course_allotment, name='hod_course_allotment'),
     path('hod/lab/', views.hod_lab_mgmt, name='hod_lab_mgmt'),
     path('hod/broadcast/', views.hod_broadcast_notice, name='hod_broadcast_notice'),

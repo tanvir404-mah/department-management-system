@@ -58,7 +58,7 @@
                 <h1 class="text-2xl font-bold tracking-tight">Identity Center</h1>
                 <p class="text-sm text-slate-500 font-medium">Personal profile management</p>
             </div>
-            <a href="{% if user.role == 'student' %}{% url 'student_dashboard' %}{% elif user.role == 'teacher' or user.role == 'lab_assistant' %}{% url 'teacher_dashboard' %}{% else %}{% url 'hod_dashboard' %}{% endif %}"
+            <a href="{% if user.role == 'student' %}{% url 'student_dashboard' %}{% elif user.role == 'teacher' or user.role == 'lab_assistant' %}{% url 'teacher_dashboard' %}{% elif user.role == 'admin' %}{% url 'staff_dashboard' %}{% else %}{% url 'hod_dashboard' %}{% endif %}"
                 class="text-xs font-semibold bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-full border border-white/10 transition-all">
                 <i class="fas fa-arrow-left mr-2"></i> Dashboard
             </a>

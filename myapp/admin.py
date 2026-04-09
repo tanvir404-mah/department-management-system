@@ -27,11 +27,30 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 
 # Profile Admins
+import csv
+from django.http import HttpResponse
+
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'roll_number', 'semester', 'shift', 'cgpa')
-    search_fields = ('user__username', 'roll_number')
-    list_filter = ('semester', 'shift', 'department')
+    list_display = ('name', 'roll_no', 'reg_no', 'current_semester', 'shift', 'session')
+    search_fields = ('name', 'roll_no', 'reg_no', 'father_mobile', 'mother_mobile', 'user__phone')
+    list_filter = ('current_semester', 'shift', 'session', 'department')
+    actions = ['export_as_csv']
+
+    @admin.action(description="Export selected students to CSV")
+    def export_as_csv(self, request, queryset):
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+        writer = csv.writer(response)
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            writer.writerow([getattr(obj, field) for field in field_names])
+
+        return response
 
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):

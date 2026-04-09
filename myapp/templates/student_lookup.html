@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }} | CST Department</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/media/fpi-logo.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4f46e5', // Indigo 600
+            secondary: '#1e1b4b', // Indigo 950
+            accent: '#818cf8', // Indigo 400
+          },
+          fontFamily: {
+            sans: ['Inter', 'Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .badge-gradient {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    .indigo-glow {
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.15);
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Header (Simplified from home.html) -->
+  <header class="bg-white border-b border-indigo-100 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+        <div class="bg-indigo-600 text-white p-2 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+          <i class="fas fa-user-check text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-slate-800 leading-none">Record Lookup</h1>
+          <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">CST Verification System</p>
+        </div>
+      </a>
+      <a href="{% url 'home' %}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition">
+        <i class="fas fa-arrow-left mr-1"></i> Back to Portal
+      </a>
+    </div>
+  </header>
+
+  <main class="flex-grow container mx-auto px-4 py-12">
+    <!-- Hero / Title Section -->
+    <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-down">
+      <h2 class="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Public Student <span class="text-indigo-600">Verification</span></h2>
+      <p class="text-slate-500 text-lg">Verify the authenticity of CST department students using their roll, semester, and session details.</p>
+    </div>
+
+    <!-- Search Form Section -->
+    <div class="max-w-4xl mx-auto glass-card rounded-3xl shadow-2xl p-8 mb-12 border border-indigo-50 indigo-glow" data-aos="fade-up">
+      <form action="{% url 'student_lookup' %}" method="GET" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 items-end">
+        
+        <!-- Roll Number -->
+        <div class="space-y-2">
+          <label for="roll_number" class="text-sm font-bold text-slate-700 ml-1">Roll Number <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+              <i class="fas fa-id-card"></i>
+            </span>
+            <input 
+              type="text" 
+              name="roll_number" 
+              id="roll_number" 
+              required 
+              value="{{ query_params.roll_number|default:'' }}"
+              placeholder="e.g. 123456"
+              class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+            >
+          </div>
+        </div>
+
+        <!-- Semester -->
+        <div class="space-y-2">
+          <label for="semester" class="text-sm font-bold text-slate-700 ml-1">Semester <span class="text-red-500">*</span></label>
+          <select 
+            name="semester" 
+            id="semester" 
+            required 
+            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer"
+          >
+            <option value="" disabled {% if not query_params.semester %}selected{% endif %}>Select Semester</option>
+            {% for sem in semesters_list %}
+              <option value="{{ sem }}" {% if query_params.semester == sem|stringformat:"s" %}selected{% endif %}>{{ sem }}{% if sem == 1 %}st{% elif sem == 2 %}nd{% elif sem == 3 %}rd{% else %}th{% endif %} Semester</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Session -->
+        <div class="space-y-2">
+          <label for="session" class="text-sm font-bold text-slate-700 ml-1">Session (Optional)</label>
+          <select 
+            name="session" 
+            id="session" 
+            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer"
+          >
+            <option value="">All Sessions</option>
+            {% for s in sessions_list %}
+              <option value="{{ s }}" {% if query_params.session == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
+            <i class="fas fa-search"></i> Verify Now
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Search Results / Verification Badge -->
+    <div class="max-w-3xl mx-auto">
+      {% if search_performed %}
+        {% if student %}
+          <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-emerald-50 relative group" data-aos="zoom-in">
+            <!-- Top Accent Bar -->
+            <div class="h-2 bg-emerald-500"></div>
+            
+            <!-- Result Content -->
+            <div class="p-8 flex flex-col md:flex-row items-center gap-10">
+              <!-- Left: Photo with Frame -->
+              <div class="relative">
+                <div class="w-32 h-32 rounded-2xl overflow-hidden border-4 border-slate-100 shadow-md group-hover:scale-105 transition-transform duration-500">
+                  {% if student.user.profile_picture %}
+                    <img src="{{ student.user.profile_picture.url }}" alt="{{ student.user.get_full_name }}" class="w-full h-full object-cover">
+                  {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ student.user.username }}&background=4f46e5&color=fff&size=128" alt="Placeholder" class="w-full h-full object-cover">
+                  {% endif %}
+                </div>
+                <!-- Verification Star Overlay -->
+                <div class="absolute -bottom-3 -right-3 bg-emerald-500 text-white w-10 h-10 rounded-full flex items-center justify-center border-4 border-white shadow-lg animate-bounce">
+                  <i class="fas fa-check text-xs"></i>
+                </div>
+              </div>
+
+              <!-- Right: Detailed Info -->
+              <div class="flex-1 text-center md:text-left space-y-4">
+                <div>
+                  <h3 class="text-3xl font-black text-slate-800 mb-1">{{ student.user.get_full_name|default:student.user.username }}</h3>
+                  <p class="text-indigo-600 font-bold uppercase tracking-wider text-sm">{{ student.department.name|default:"Computer Science & Technology (CST)" }}</p>
+                </div>
+
+                <!-- Grid Details -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-6">
+                  <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Board Roll</span>
+                    <span class="text-lg font-bold text-slate-700">{{ student.roll_number }}</span>
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Reg. Number</span>
+                    <span class="text-lg font-bold text-slate-700">{{ student.reg_no|default:"N/A" }}</span>
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Student ID</span>
+                    <span class="text-lg font-bold text-indigo-600 font-mono">{{ student.student_id }}</span>
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Academic Session</span>
+                    <span class="text-lg font-bold text-slate-700">{{ student.session|default:"Not Specified" }}</span>
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Semester</span>
+                    <span class="text-lg font-bold text-slate-700">{{ student.semester }}th Semester</span>
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">CGPA</span>
+                    <span class="text-lg font-extrabold text-indigo-700">{{ student.cgpa|floatformat:2 }}</span>
+                  </div>
+                </div>
+
+                <!-- Verification Status Badge -->
+                <div class="pt-4 border-t border-slate-50 flex items-center justify-center md:justify-start gap-3">
+                  <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full badge-gradient text-white font-bold text-sm shadow-lg shadow-emerald-100">
+                    <i class="fas fa-check-circle"></i> Active / Verified Student
+                  </span>
+                  <button onclick="window.print()" class="text-slate-400 hover:text-indigo-600 transition p-2 hover:bg-indigo-50 rounded-lg" title="Print Verification">
+                    <i class="fas fa-print"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pattern Background -->
+            <div class="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+              <i class="fas fa-university text-9xl -rotate-12"></i>
+            </div>
+          </div>
+          
+          <p class="text-center mt-8 text-slate-400 text-xs italic">
+            <i class="fas fa-info-circle mr-1"></i> Data retrieved from official CST Department records as of {{ now|date:"d M, Y" }}.
+          </p>
+        {% else %}
+          <!-- Error State: Not Found -->
+          <div class="bg-rose-50 border-2 border-rose-100 rounded-3xl p-12 text-center" data-aos="shake">
+            <div class="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+              <i class="fas fa-user-slash"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-rose-800 mb-2">Record Not Found</h3>
+            <p class="text-rose-600/80 max-w-sm mx-auto">{{ error_message|default:"We couldn't find any student matching these credentials. Please check for typos and try again." }}</p>
+            <button onclick="document.getElementById('roll_number').focus()" class="mt-6 text-rose-700 font-bold hover:underline">
+              Retry Search
+            </button>
+          </div>
+        {% endif %}
+      {% else %}
+        <!-- Initial State: Call to Action -->
+        <div class="text-center py-12 opacity-40">
+          <i class="fas fa-shield-halved text-7xl text-indigo-200 mb-6 block"></i>
+          <p class="text-slate-500 font-medium">Enter details above to lookup record</p>
+        </div>
+      {% endif %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-indigo-950 text-indigo-200/60 py-8 border-t border-indigo-900 mt-auto">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-sm">Official CST Department Verification Portal</p>
+      <p class="text-[10px] mt-2 uppercase tracking-widest font-bold">Faridpur Polytechnic Institute</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+  </script>
+</body>
+
+</html>

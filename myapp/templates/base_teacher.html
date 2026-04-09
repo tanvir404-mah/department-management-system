@@ -34,22 +34,35 @@
     </script>
 
     <style>
-        .glass-teal {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(16, 185, 129, 0.1);
+        .sidebar-link-teacher {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .sidebar-link-teacher.active {
-            background: #059669;
-            color: white;
+            background: #059669 !important;
+            color: white !important;
             box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.4);
+            transform: translateX(4px);
+        }
+        .sidebar-link-teacher.active i {
+            color: white !important;
+            opacity: 1;
+        }
+        /* Prevent hover overlap on active links */
+        .sidebar-link-teacher.active:hover {
+            background: #059669 !important;
+            cursor: default;
         }
     </style>
 </head>
 <body class="bg-[#f0f9f6] text-slate-800 font-sans">
 
     <!-- Section 1: Sidebar Navigation (Emerald Theme) -->
-    <aside class="fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-emerald-100 z-[100] flex flex-col hidden lg:flex">
+    <aside id="sidebar-teacher" class="fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-emerald-100 z-[100] flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:flex">
+        <!-- Close Button (Mobile Only) -->
+        <button id="close-sidebar" class="lg:hidden absolute top-6 right-6 text-slate-400 hover:text-emerald-600 transition-colors">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        
         <!-- Logo -->
         <div class="p-8">
             <div class="flex items-center space-x-3 mb-2">
@@ -64,25 +77,25 @@
         </div>
 
         <!-- Navigation Links -->
-        <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+        <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto scroll-hide">
             <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">Core Panel</p>
             
-            <a href="{% url 'teacher_dashboard' %}" class="sidebar-link-teacher active flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300">
+            <a href="{% url 'teacher_dashboard' %}" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
                 <i class="fas fa-columns text-lg"></i>
                 <span class="font-bold text-sm">Dashboard</span>
             </a>
             
-            <a href="#" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+            <a href="#courses" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
                 <i class="fas fa-book text-lg"></i>
                 <span class="font-bold text-sm">My Courses</span>
             </a>
 
-            <a href="#" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+            <a href="{% url 'attendance_summary' %}" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
                 <i class="fas fa-user-check text-lg"></i>
                 <span class="font-bold text-sm">Attendance</span>
             </a>
 
-            <a href="#" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+            <a href="#projects" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
                 <i class="fas fa-file-signature text-lg"></i>
                 <span class="font-bold text-sm">Project Reviews</span>
             </a>
@@ -93,25 +106,39 @@
                     <i class="fas fa-bullhorn text-lg"></i>
                     <span class="font-bold text-sm">Notice Board</span>
                 </a>
+                <a href="{% url 'teacher_publish_notice' %}" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+                    <i class="fas fa-plus-circle text-lg"></i>
+                    <span class="font-bold text-sm">Publish Notice</span>
+                </a>
+            </div>
+
+            <div class="pt-6">
+                <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">Quick Portals</p>
+                <a href="{% url 'home' %}" class="sidebar-link-teacher flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600">
+                    <i class="fas fa-globe text-lg"></i>
+                    <span class="font-bold text-sm">Public Portal</span>
+                </a>
             </div>
         </nav>
 
         <!-- Sidebar Footer -->
         <div class="p-6 border-t border-emerald-50 bg-emerald-50/30">
-            <div class="flex items-center space-x-3 text-emerald-700 font-bold text-xs uppercase tracking-wider">
-                <i class="fas fa-shield-alt"></i>
+            <div class="flex items-center space-x-3 text-emerald-700 font-bold text-[10px] uppercase tracking-wider">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                 <span>Faculty Secure Portal</span>
             </div>
         </div>
     </aside>
 
     <!-- Main Content Wrapper -->
-    <div class="lg:ml-72 min-h-screen flex flex-col">
+    <div class="lg:ml-72 min-h-screen flex flex-col relative">
+        <!-- Sidebar Backdrop (Mobile Only) -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-emerald-900/40 backdrop-blur-sm z-[90] hidden transition-opacity duration-300"></div>
 
         <!-- Top Header Overlay -->
         <header class="sticky top-0 h-24 bg-white/80 backdrop-blur-xl border-b border-emerald-100 z-50 px-8 flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <button class="lg:hidden w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <button id="open-sidebar" class="lg:hidden w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-all">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div>
@@ -237,6 +264,44 @@
             &copy; 2025 CST Faculty Portal | Department of Computer Science & Technology
         </footer>
     </div>
+
+    <!-- Sidebar Mobile Toggle & Active Link Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar-teacher');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            const openBtn = document.getElementById('open-sidebar');
+            const closeBtn = document.getElementById('close-sidebar');
+
+            // Active Link Highlighting
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('.sidebar-link-teacher');
+            
+            sidebarLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath && !linkPath.startsWith('#') && currentPath === linkPath) {
+                    link.classList.add('active');
+                    link.classList.remove('text-slate-500');
+                }
+            });
+
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+
+            if(openBtn) openBtn.addEventListener('click', openSidebar);
+            if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if(backdrop) backdrop.addEventListener('click', closeSidebar);
+        });
+    </script>
 
 </body>
 </html>

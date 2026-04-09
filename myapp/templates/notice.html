@@ -75,11 +75,11 @@
                     <button onclick="switchLang('bn')" id="btn-bn"
                         class="px-3 py-1.5 text-[10px] font-black rounded-lg transition-all text-slate-400">বাংলা</button>
                 </div>
-                <div class="relative flex-1 md:w-64">
+                <form method="GET" action="{% url 'notice' %}" class="relative flex-1 md:w-64">
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="noticeSearch" placeholder="Search notices..."
+                    <input type="text" name="q" id="noticeSearch" placeholder="Search notices..." value="{{ query }}"
                         class="w-full pl-11 pr-4 py-2 bg-slate-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 outline-none transition-all">
-                </div>
+                </form>
             </div>
         </div>
     </header>
@@ -97,7 +97,7 @@
                             {% elif n.category == 'REGISTRATION' %}bg-emerald-100 text-accent
                             {% elif n.category == 'MAINTENANCE' %}bg-amber-100 text-amber-600
                             {% else %}bg-slate-100 text-slate-500{% endif %}">
-                            {{ n.get_category_display }}
+                            {% if n.get_category_display %}{{ n.get_category_display }}{% else %}DEPARTMENTAL{% endif %}
                         </span>
                         <span class="text-xs font-bold text-slate-400"><i class="far fa-calendar-alt mr-1"></i> {{ n.created_at|date:"M d, Y" }}</span>
                     </div>

@@ -95,7 +95,7 @@ def student_login(request):
         username_input = request.POST.get("username")
         password = request.POST.get("password")
         
-        student = Student.objects.filter(roll_number=username_input).first()
+        student = Student.objects.filter(roll_no=username_input).first()
         if student:
             user = authenticate(request, username=student.user.username, password=password)
             if user and user.role == 'student':
@@ -125,7 +125,8 @@ def unified_staff_login(request):
                 
                 if role == 'teacher': return redirect('teacher_dashboard')
                 if role == 'lab_assistant': return redirect('lab_assistant_dashboard')
-                if role == 'hod' or role == 'admin': return redirect('hod_dashboard')
+                if role == 'hod': return redirect('hod_dashboard')
+                if role == 'admin': return redirect('staff_dashboard')
             
         messages.error(request, "Invalid departmental credentials. Please ensure you are using your Staff Username.")
     return render(request, 'registration/staff_login.html')
@@ -139,12 +140,6 @@ def teacher_login(request): return redirect('unified_staff_login')
 def hod_login(request): return redirect('unified_staff_login')
 def principal_login(request): return redirect('unified_staff_login')
 def lab_assistant_login(request): return redirect('unified_staff_login')
-
-@login_required
-def staff_dashboard(request):
-    if not request.user.is_superuser:
-        return redirect('home')
-    return render(request, 'staff_dashboard.html')
 
 
 # ================= Lab Assistant Views =================
@@ -293,8 +288,51 @@ def result_view(request):
     }
     return render(request, 'result.html', context)
 
+@login_required
 def routine(request):
-    return render(request, 'routine.html')
+    """
+    Comprehensive dynamic routine view for Students and Teachers.
+    Organizes ClassRoutine objects by day and time for the logged-in user.
+    """
+    user = request.user
+    role = getattr(user, 'role', None)
+    
+    routine_data = {}
+    days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    student = None
+    teacher = None
+    
+    if role == 'student':
+        student = getattr(user, 'student_profile', None)
+        if student:
+            routines = ClassRoutine.objects.filter(
+                semester=student.semester,
+                shift=student.shift
+            ).select_related('course', 'teacher__user').order_by('day_of_week', 'start_time')
+            
+            # Reorganization for UI
+            for day in days:
+                routine_data[day] = routines.filter(day_of_week=day)
+                
+    elif role == 'teacher':
+        teacher = getattr(user, 'teacher_profile', None)
+        if teacher:
+            routines = ClassRoutine.objects.filter(
+                teacher=teacher
+            ).select_related('course').order_by('day_of_week', 'start_time')
+            
+            for day in days:
+                routine_data[day] = routines.filter(day_of_week=day)
+    
+    context = {
+        'routine_data': routine_data,
+        'days': days,
+        'is_empty': not any(routine_data.values()),
+        'student': student if role == 'student' else None,
+        'teacher': teacher if role == 'teacher' else None,
+    }
+    
+    return render(request, 'routine.html', context)
 
 def teacher_view(request):
     teachers = Teacher.objects.all()
@@ -305,35 +343,79 @@ def student_view(request):
     return render(request, 'student.html', {"students": students})
 
 def search_student(request):
-    query = request.GET.get('q', '').strip()
+    """
+    Flexible internal student search for directory.
+    Uses OR logic for identification fields (Roll, ID, Reg).
+    """
+    q = request.GET.get('q', '').strip()
     semester = request.GET.get('semester', '').strip()
     shift = request.GET.get('shift', '').strip()
     roll = request.GET.get('roll', '').strip()
+    session = request.GET.get('session', '').strip()
 
-    students = Student.objects.all()
-    if query:
-        students = students.filter(Q(user__first_name__icontains=query) | Q(user__last_name__icontains=query))
-    if semester:
-        students = students.filter(semester=semester)
-    if shift:
-        students = students.filter(shift=shift)
+    students = Student.objects.all().select_related('user', 'department')
+    
+    # 1. Identity Search (Muti-field Roll/ID/Reg lookup)
     if roll:
-        students = students.filter(roll_number=roll)
+        students = students.filter(
+            Q(roll_no__icontains=roll) | 
+            Q(student_id__icontains=roll) | 
+            Q(reg_no__icontains=roll)
+        )
+    
+    # 2. Name Search
+    if q:
+        students = students.filter(
+            Q(user__first_name__icontains=q) | 
+            Q(user__last_name__icontains=q) |
+            Q(user__username__icontains=q)
+        )
+
+    # 3. Academic Filters (Only apply if explicitly selected)
+    if semester and semester != "":
+        try:
+            students = students.filter(current_semester=int(semester))
+        except (ValueError, TypeError):
+            pass
+            
+    if shift and shift != "":
+        # Flexible shift matching (1st, 2nd, Morning, Day)
+        if "1st" in shift or "Morning" in shift:
+            students = students.filter(Q(shift='1st') | Q(shift__icontains='Morning'))
+        elif "2nd" in shift or "Day" in shift:
+            students = students.filter(Q(shift='2nd') | Q(shift__icontains='Day'))
+        else:
+            students = students.filter(shift__icontains=shift)
+
+    if session:
+        students = students.filter(session__icontains=session)
 
     return render(request, 'student.html', {'students': students, 'searched': True})
 
 def notice(request):
-    """Notice Board: Displays departmental and global system notices."""
+    """Notice Board: Displays both departmental and global system notices.
+    Filtered: Public board only shows Admin and HOD notices.
+    """
     global_notices = GlobalNotice.objects.all().order_by('-created_at')
     # Filter by search if provided
     query = request.GET.get('q')
     if query:
         global_notices = global_notices.filter(Q(title__icontains=query) | Q(content__icontains=query))
     
-    return render(request, 'notice.html', {"notices": global_notices})
+    # Standard departmental notices - ONLY Admin and HOD for public view
+    internal_notices = Notice.objects.filter(created_by__role__in=['admin', 'hod']).order_by('-created_at')
+    if query:
+        internal_notices = internal_notices.filter(Q(title__icontains=query) | Q(content__icontains=query))
 
-def notice(request):
-    return render(request, 'notice.html')
+    # We merge them in the view (this is easier for the template)
+    all_notices = list(global_notices) + list(internal_notices)
+    all_notices.sort(key=lambda x: x.created_at, reverse=True)
+
+    return render(request, 'notice.html', {
+        "notices": all_notices,
+        "query": query or ""
+    })
+
 def contact(request):
     return render(request, 'contact.html')
 
@@ -427,7 +509,7 @@ def student_registration_step3(request):
                         role='student',
                         phone=phone
                     )
-                    Student.objects.create(user=user, roll_number=roll)
+                    Student.objects.create(user=user, roll_no=roll)
                     login(request, user)
                     
                     # Cleanup
@@ -444,14 +526,14 @@ def student_register(request):
     # This view is now redirected to student_registration_step1 in urls.py
     return redirect('student_registration_step1')
 
-def teacher_register(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password1")
-        user = User.objects.create_user(username=username, password=password, role='teacher')
-        Teacher.objects.create(user=user)
-        return redirect('teacher_login')
-    return render(request, 'registration/teacher_register.html')
+# def teacher_register(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password1")
+#         user = User.objects.create_user(username=username, password=password, role='teacher')
+#         Teacher.objects.create(user=user)
+#         return redirect('teacher_login')
+#     return render(request, 'registration/teacher_register.html')
 
 # ================= Dashboards =================
 @login_required
@@ -577,12 +659,12 @@ def teacher_dashboard(request):
     # Total students enrolled in all teacher's courses
     total_students = Student.objects.filter(courses__in=assigned_courses).distinct().count() if teacher else 0
     
-    # Today's Classes (Section 4)
+    # Today's Classes (Section 4) - Showing routines for all allotted courses
     today_name = timezone.now().strftime('%A')
     today_schedule = ClassRoutine.objects.filter(
-        teacher=teacher,
+        Q(teacher=teacher) | Q(course__in=assigned_courses),
         day_of_week=today_name
-    ).order_by('start_time') if teacher else []
+    ).distinct().order_by('start_time') if teacher else []
     today_classes_count = today_schedule.count() if teacher else 0
 
     # Pending Reviews (Section 7)
@@ -611,19 +693,6 @@ def teacher_dashboard(request):
         "today_name": today_name,
         "recent_notices": recent_notices,
         "new_notices_count": new_notices_count,
-    }
-
-    context = {
-        "teacher": teacher,
-        "assigned_courses": assigned_courses,
-        "assigned_courses_count": assigned_courses_count,
-        "total_students": total_students,
-        "today_schedule": today_schedule,
-        "today_classes_count": today_classes_count,
-        "pending_reviews_count": pending_reviews_count,
-        "recent_reviews": recent_reviews,
-        "today_name": today_name,
-        "recent_notices": recent_notices,
     }
     return render(request, 'teacher/teacher_dashboard.html', context)
 
@@ -818,30 +887,46 @@ def hod_dashboard(request):
     hod_profile = getattr(request.user, 'hod_profile', None)
     dept = hod_profile.department if hod_profile else None
 
+    # Master view logic for Admins and superusers if they don't have a specific dept profile
+    is_admin = request.user.is_superuser or request.user.role == 'admin' or request.user.is_staff
+
     if dept:
         students = Student.objects.filter(department=dept)
         teachers = Teacher.objects.filter(department=dept)
         courses = Course.objects.filter(department=dept)
+        dept_name_display = dept.name
+    elif is_admin:
+        students = Student.objects.all()
+        teachers = Teacher.objects.all()
+        courses = Course.objects.all()
+        dept_name_display = "Global (All Depts)"
     else:
+        messages.warning(request, "Your account is not linked to any department yet.")
         students = Student.objects.none()
         teachers = Teacher.objects.none()
         courses = Course.objects.none()
+        dept_name_display = "N/A"
 
     # Faculty workload for the dashboard table
     faculty_workload = teachers.prefetch_related('courses')
 
     # Notices for notification dropdown
-    recent_notices = Notice.objects.order_by('-created_at')[:5]
-    new_notices_count = recent_notices.count()
+    recent_notices = Notice.objects.all().order_by('-created_at')[:5]
+    new_notices_count = Notice.objects.filter(created_at__gte=timezone.now() - timezone.timedelta(days=2)).count()
 
     # Pending resource requisitions (status is lowercase 'pending' in model)
-    pending_req_count = ResourceRequisition.objects.filter(
-        requested_by__student_profile__department=dept,
-        status='pending'
-    ).count() if dept else 0
+    if dept:
+        pending_req_count = ResourceRequisition.objects.filter(
+            requested_by__student_profile__department=dept,
+            status='pending'
+        ).count()
+    elif is_admin:
+        pending_req_count = ResourceRequisition.objects.filter(status='pending').count()
+    else:
+        pending_req_count = 0
 
     context = {
-        "dept_name": dept.name if dept else "N/A",
+        "dept_name": dept_name_display,
         "total_students": students.count(),
         "total_faculty": teachers.count(),
         "total_courses": courses.count(),
@@ -861,8 +946,19 @@ def hod_faculty_mgmt(request):
     """
     if request.user.role != 'hod' and not request.user.is_staff:
         return redirect('home')
-    hod_dept = getattr(request.user.hod_profile, 'department', None)
-    faculty = Teacher.objects.filter(department=hod_dept) if hod_dept else Teacher.objects.none()
+    hod_profile = getattr(request.user, 'hod_profile', None)
+    hod_dept = hod_profile.department if hod_profile else None
+    
+    # Check for admin role as well
+    is_admin = request.user.is_superuser or request.user.role == 'admin' or request.user.is_staff
+    
+    if hod_dept:
+        faculty = Teacher.objects.filter(department=hod_dept)
+    elif is_admin:
+        faculty = Teacher.objects.all()
+    else:
+        faculty = Teacher.objects.none()
+    
     return render(request, 'hod/faculty_mgmt.html', {"faculty": faculty})
 
 @login_required
@@ -921,7 +1017,8 @@ def hod_lab_mgmt(request):
     """
     if request.user.role != 'hod' and not request.user.is_staff:
         return redirect('home')
-    hod_dept = getattr(request.user.hod_profile, 'department', None)
+    hod_profile = getattr(request.user, 'hod_profile', None)
+    hod_dept = hod_profile.department if hod_profile else None
     inventory = LabItem.objects.all()
     requisitions = ResourceRequisition.objects.filter(requested_by__student_profile__department=hod_dept).order_by('-id') if hod_dept else ResourceRequisition.objects.none()
     return render(request, 'hod/lab_mgmt.html', {
@@ -973,35 +1070,292 @@ def hod_course_mgmt(request):
         return redirect('hod_course_mgmt')
     return render(request, 'hod/course_mgmt.html', {"courses": courses, "departments": depts})
 
+import traceback
+MISSING_LIB = None
+
+try:
+    import google.generativeai as genai
+    HAS_GENAI = True
+except ImportError:
+    HAS_GENAI = False
+    MISSING_LIB = "google-generativeai"
+
+try:
+    from PIL import Image
+    HAS_PIL = True
+except ImportError:
+    HAS_PIL = False
+    if not MISSING_LIB: MISSING_LIB = "Pillow"
+
+# Final AI Status check
+AI_READY = HAS_GENAI and HAS_PIL
+
+# ──────── AI Configuration ──────────────────────────────────────────
+GEMINI_API_KEY = "AIzaSyCBYF7km4jixjR4cxam66w3FpbH-JGD52o"
+
+def mock_extract_routine_from_image():
+    """
+    Simulated data based on Faridpur Polytechnic Institute CST 6th Sem, 2nd Shift.
+    Data extracted manually from the user's provided PNG.
+    """
+    return [
+        {
+            "course_code": "28563",
+            "teacher_initials": "TH",
+            "day": "Sunday",
+            "start_time": "14:15",
+            "end_time": "15:00",
+            "room_no": "Com-101",
+            "semester": 6,
+            "shift": "2nd"
+        },
+        {
+            "course_code": "28564",
+            "teacher_initials": "TH",
+            "day": "Sunday",
+            "start_time": "15:00",
+            "end_time": "16:30",
+            "room_no": "NL",
+            "semester": 6,
+            "shift": "2nd"
+        },
+        {
+            "course_code": "28565",
+            "teacher_initials": "AR",
+            "day": "Sunday",
+            "start_time": "16:30",
+            "end_time": "17:15",
+            "room_no": "Com-301",
+            "semester": 6,
+            "shift": "2nd"
+        },
+        {
+            "course_code": "28561",
+            "teacher_initials": "SI",
+            "day": "Sunday",
+            "start_time": "17:15",
+            "end_time": "18:45",
+            "room_no": "SL-3",
+            "semester": 6,
+            "shift": "2nd"
+        },
+        {
+            "course_code": "28564",
+            "teacher_initials": "TH",
+            "day": "Monday",
+            "start_time": "13:30",
+            "end_time": "14:15",
+            "room_no": "Com-301",
+            "semester": 6,
+            "shift": "2nd"
+        }
+    ]
+
+@login_required
+def upload_routine_image(request):
+    """
+    Experimental: Image-to-Routine AI Processing Hub for HOD.
+    """
+    if request.user.role != 'hod' and not request.user.is_superuser and not request.user.is_staff:
+        messages.error(request, "Permission denied for AI routine processing.")
+        return redirect('home')
+
+    if request.method == "POST" and request.FILES.get('routine_image'):
+        try:
+            force_mock = request.POST.get('force_mock') == 'on'
+            
+            if not AI_READY or force_mock:
+                # Use Mock data if library is missing or forced
+                mode_str = "Forced Mock" if force_mock else "Missing Library Mock"
+                messages.warning(request, f"Using {mode_str} data for demonstration.")
+                routine_json = mock_extract_routine_from_image()
+            else:
+                genai.configure(api_key=GEMINI_API_KEY)
+                image_file = request.FILES['routine_image']
+                img = Image.open(image_file)
+                
+                # Production Fallback with LITE models (Higher Quota Availability)
+                models_to_try = [
+                    'gemini-2.0-flash-lite', 
+                    'gemini-flash-lite-latest',
+                    'gemini-pro-latest',
+                    'gemini-flash-latest'
+                ]
+                
+                response = None
+                diag_errors = []
+                
+                for model_name in models_to_try:
+                    try:
+                        # Attempting exact model identifier
+                        model = genai.GenerativeModel(model_name)
+                        prompt = "Extract class timetable from image. Format as a strict JSON array with course_code, teacher_initials, day, start_time, end_time, room_no, semester, shift. Return raw JSON only."
+                        
+                        response = model.generate_content([prompt, img])
+                        if response: break
+                    except Exception as inner_e:
+                        err_msg = str(inner_e)
+                        diag_errors.append(f"{model_name}: {err_msg[:100]}...")
+                        # If Rate Limit, wait a tiny bit and try next model
+                        import time
+                        time.sleep(1)
+                        continue
+                
+                # Check which models are REALLY available for this key
+                try:
+                    available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+                    model_list_str = ", ".join(available_models)
+                except Exception as list_e:
+                    model_list_str = f"Could not list models: {str(list_e)}"
+
+                # Final failure with DISCOVERED models info
+                detailed_err = " | ".join(diag_errors)
+                raise Exception(f"API 404 Conflict. Available Models found: [{model_list_str}]. Trials Errors: {detailed_err}")
+                
+                # Check for empty response (Unreachable if all trial models failed)
+                if not response.text:
+                    raise Exception("AI returned empty content. Try a clearer image.")
+                
+                raw_text = response.text.replace('```json', '').replace('```', '').strip()
+                routine_json = json.loads(raw_text)
+            
+            count = 0
+            for item in routine_json:
+                course = Course.objects.filter(code=item.get('course_code')).first()
+                teacher = Teacher.objects.filter(user__username=item.get('teacher_initials')).first()
+                if course:
+                    ClassRoutine.objects.create(
+                        course=course, teacher=teacher,
+                        day_of_week=item.get('day'),
+                        start_time=item.get('start_time'),
+                        end_time=item.get('end_time'),
+                        room_number=item.get('room_no'),
+                        semester=item.get('semester', 1),
+                        shift=item.get('shift', '1st')
+                    )
+                    count += 1
+            
+            messages.success(request, f"Extracted {count} slots successfully.")
+            return redirect('hod_routine_mgmt')
+            
+        except Exception as e:
+            traceback.print_exc()
+            messages.error(request, f"AI Processing Error: {str(e)}")
+            return redirect('hod_routine_mgmt')
+
+    return render(request, 'hod/upload_routine.html', {
+        'ai_ready': AI_READY, 
+        'missing_lib': MISSING_LIB
+    })
+
 @login_required
 def hod_routine_mgmt(request):
-    if request.user.role != 'hod' and not request.user.is_superuser:
+    if request.user.role != 'hod' and not request.user.is_superuser and not request.user.is_staff:
         return redirect('home')
-    routines = ClassRoutine.objects.all()
-    courses = Course.objects.all()
-    teachers = Teacher.objects.all()
+    
+    # Department Scoping
+    hod_profile = getattr(request.user, 'hod_profile', None)
+    dept = hod_profile.department if hod_profile else None
+    is_admin = request.user.is_superuser or request.user.role == 'admin' or request.user.is_staff
+    
+    if dept:
+        routines = ClassRoutine.objects.filter(course__department=dept).select_related('course', 'teacher__user')
+        courses = Course.objects.filter(department=dept)
+        teachers = Teacher.objects.filter(department=dept)
+    elif is_admin:
+        routines = ClassRoutine.objects.all().select_related('course', 'teacher__user')
+        courses = Course.objects.all()
+        teachers = Teacher.objects.all()
+    else:
+        routines = ClassRoutine.objects.none()
+        courses = Course.objects.none()
+        teachers = Teacher.objects.none()
+    
     if request.method == "POST":
-        course_id = request.POST.get('course')
-        teacher_id = request.POST.get('teacher')
-        day = request.POST.get('day_of_week')
-        start = request.POST.get('start_time')
-        end = request.POST.get('end_time')
-        room = request.POST.get('room_number')
-        sem = request.POST.get('semester')
-        shift = request.POST.get('shift')
-        
-        ClassRoutine.objects.create(
-            course_id=course_id, teacher_id=teacher_id, day_of_week=day,
-            start_time=start, end_time=end, room_number=room,
-            semester=sem, shift=shift
-        )
-        messages.success(request, "Routine slot added.")
+        # Bulk Upload Logic (Custom Format: Day, Time_Slot, Time, Code, Teacher_Short, Location)
+        if request.FILES.get('csv_file'):
+            try:
+                csv_file = request.FILES['csv_file']
+                content = csv_file.read().decode('utf-8', errors='ignore')
+                io_string = io.StringIO(content)
+                reader = csv.reader(io_string)
+                
+                # Check for header
+                header = next(reader)
+                if 'day' not in header[0].lower() and 'time' not in header[0].lower():
+                    io_string.seek(0)
+                
+                count = 0
+                for row in reader:
+                    if len(row) < 6: continue
+                    # Format: Day, Slot, Time, Code, Teacher, Room
+                    day_ref, slot, time_range, c_code, t_ref, room = [x.strip() for x in row[:6]]
+                    
+                    # Manual Time Splitter (e.g. "1:30-2:15" -> ["13:30", "14:15"])
+                    try:
+                        times = time_range.replace(" ", "").split("-")
+                        if len(times) == 2:
+                            # Heuristic: 1:30 in polytechnic often means PM (13:30)
+                            def convert_to_24h(t):
+                                hr, mn = [int(p) for p in t.split(":")]
+                                if hr < 7: hr += 12 # 1:30 -> 13:30, 2:15 -> 14:15
+                                return f"{hr:02d}:{mn:02d}"
+                            start = convert_to_24h(times[0])
+                            end = convert_to_24h(times[1])
+                        else:
+                            start, end = "13:30", "14:15" # Fallback
+                    except:
+                        start, end = "13:30", "14:15"
+
+                    course = Course.objects.filter(code=c_code).first()
+                    teacher = Teacher.objects.filter(initials=t_ref).first() or \
+                             Teacher.objects.filter(user__username=t_ref).first()
+                    
+                    if course:
+                        ClassRoutine.objects.create(
+                            course=course, teacher=teacher, day_of_week=day_ref,
+                            start_time=start, end_time=end, room_number=room,
+                            semester=6, # Default to 6 for the uploaded image
+                            shift='2nd'  # Default to 2nd shift
+                        )
+                        count += 1
+                messages.success(request, f"Bulk Sync: {count} slots added to 6th Sem, 2nd Shift.")
+            except Exception as e:
+                messages.error(request, f"Sync Crash: {str(e)}")
+            return redirect('hod_routine_mgmt')
+
+        # Individual Slot Logic
+        try:
+            course_id = request.POST.get('course')
+            teacher_id = request.POST.get('teacher')
+            ClassRoutine.objects.create(
+                course_id=course_id, 
+                teacher_id=teacher_id if teacher_id else None,
+                day_of_week=request.POST.get('day_of_week'),
+                start_time=request.POST.get('start_time'),
+                end_time=request.POST.get('end_time'),
+                room_number=request.POST.get('room_number'),
+                semester=request.POST.get('semester'),
+                shift=request.POST.get('shift')
+            )
+            messages.success(request, "New class slot scheduled successfully.")
+        except Exception as e:
+            messages.error(request, f"Error: {str(e)}")
         return redirect('hod_routine_mgmt')
+        
     return render(request, 'hod/routine_mgmt.html', {
         "routines": routines, "courses": courses, "teachers": teachers
     })
 
 @login_required
+def delete_routine(request, routine_id):
+    if request.user.role != 'hod' and not request.user.is_superuser and not request.user.is_staff:
+        return redirect('home')
+    routine = get_object_or_404(ClassRoutine, id=routine_id)
+    routine.delete()
+    messages.success(request, "Schedule slot purged from the system.")
+    return redirect('hod_routine_mgmt')
+
 @login_required
 def admin_user_mgmt(request):
     if not request.user.is_superuser and request.user.role != 'admin':
@@ -1030,11 +1384,25 @@ def admin_bulk_import(request):
         
         count = 0
         for row in csv.reader(io_string):
-            username, password, roll, shift, dept_code = row
+            # Format: username, password, name, roll_no, reg_no, session, current_semester, shift, dept_code
+            if len(row) < 9: continue
+            # Handle extra columns by slicing only the first 9, and strip whitespace
+            row_data = [field.strip() for field in row[:9]]
+            username, password, name, roll_no, reg_no, session, current_semester, shift, dept_code = row_data
+            
             dept = Department.objects.filter(code=dept_code).first()
             if dept:
+                try:
+                    current_sem_int = int(current_semester) if current_semester else 1
+                except (ValueError, TypeError):
+                    current_sem_int = 1 # Default to 1st if invalid
+                
                 user = CustomUser.objects.create_user(username=username, password=password, role='student')
-                Student.objects.create(user=user, roll_number=roll, shift=shift, department=dept)
+                Student.objects.create(
+                    user=user, name=name, roll_no=roll_no, reg_no=reg_no, 
+                    session=session, current_semester=current_sem_int, 
+                    shift=shift, department=dept
+                )
                 count += 1
         
         AuditLog.objects.create(user=request.user, action=f"Bulk imported {count} students")
@@ -1049,7 +1417,7 @@ def admin_semester_transition(request):
         return redirect('home')
 
     if request.method == "POST":
-        Student.objects.filter(semester__lt=8).update(semester=F('semester') + 1)
+        Student.objects.filter(current_semester__lt=8).update(current_semester=F('current_semester') + 1)
         AuditLog.objects.create(user=request.user, action="Global Semester Transition")
         messages.success(request, "Global semester promotion complete.")
     return redirect('staff_dashboard')
@@ -1092,17 +1460,20 @@ def hod_parents_alert(request):
     hod_profile = getattr(request.user, 'hod_profile', None)
     dept = hod_profile.department if hod_profile else None
     
-    # Query all unique guardian phones in the department
+    # Query all unique parent phones in the department
     if request.user.is_superuser and not dept:
-        recipients = Student.objects.filter(guardian_phone__isnull=False).values_list('guardian_phone', flat=True).distinct()
+        students = Student.objects.all()
     elif dept:
-        recipients = Student.objects.filter(department=dept, guardian_phone__isnull=False).values_list('guardian_phone', flat=True).distinct()
+        students = Student.objects.filter(department=dept)
     else:
         messages.error(request, "Your account is not linked to any department.")
         return redirect('hod_dashboard')
 
-    # Convert to list and clean (TextBee expects a list of strings)
-    recipient_list = [str(phone).strip() for phone in recipients if phone]
+    # Collect all unique mobile numbers from both parents
+    father_phones = students.filter(father_mobile__isnull=False).values_list('father_mobile', flat=True).distinct()
+    mother_phones = students.filter(mother_mobile__isnull=False).values_list('mother_mobile', flat=True).distinct()
+    
+    recipient_list = list(set([str(p).strip() for p in list(father_phones) + list(mother_phones) if p]))
 
     if request.method == "POST":
         message = request.POST.get("custom_message")
@@ -1184,6 +1555,8 @@ def admin_create_user(request):
                                    designation=request.POST.get('designation', 'Lecturer'))
         elif role == 'lab_assistant' and dept:
             LabAssistant.objects.create(user=user, department=dept)
+        elif role == 'hod' and dept:
+            HOD.objects.create(user=user, department=dept)
 
         AuditLog.objects.create(user=request.user,
                                 action=f"Created user {username} (role={role})",
@@ -1209,11 +1582,24 @@ def admin_edit_user(request, user_id):
         new_pass = request.POST.get('new_password')
         if new_pass:
             target.set_password(new_pass)
-        target.save()
+        # Update/Create Profile based on role and department
+        dept_id = request.POST.get('department')
+        dept = Department.objects.filter(id=dept_id).first() if dept_id else None
+        
+        if dept:
+            if target.role == 'student':
+                Student.objects.update_or_create(user=target, defaults={'department': dept})
+            elif target.role == 'teacher':
+                Teacher.objects.update_or_create(user=target, defaults={'department': dept})
+            elif target.role == 'hod':
+                HOD.objects.update_or_create(user=target, defaults={'department': dept})
+            elif target.role == 'lab_assistant':
+                LabAssistant.objects.update_or_create(user=target, defaults={'department': dept})
+
         AuditLog.objects.create(user=request.user,
-                                action=f"Edited user {target.username}",
+                                action=f"Edited user {target.username} (role={target.role})",
                                 ip_address=request.META.get('REMOTE_ADDR'))
-        messages.success(request, f"User '{target.username}' updated.")
+        messages.success(request, f"User '{target.username}' updated (Profile sync active).")
         return redirect('admin_system_mgmt')
     return render(request, 'admin/edit_user.html', {'target': target, 'departments': departments})
 
@@ -1490,7 +1876,7 @@ def add_result_ajax(request):
 def add_student_ajax(request):
     if request.method == "POST":
         user = User.objects.create_user(username=request.POST.get("username"), role='student')
-        Student.objects.create(user=user, roll_number=request.POST.get("roll_number"))
+        Student.objects.create(user=user, roll_no=request.POST.get("roll_number"))
         return JsonResponse({"message": "Student added"})
     return JsonResponse({"error": "Invalid request"}, status=400)
 
@@ -1522,7 +1908,9 @@ def add_notice_ajax(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 def get_notices_ajax(request):
-    data = [{"title": n.title, "content": n.content, "date": n.created_at} for n in Notice.objects.all()]
+    # Public AJAX - only Admin and HOD notices
+    notices = Notice.objects.filter(created_at__lte=timezone.now(), created_by__role__in=['admin', 'hod']).order_by('-created_at')
+    data = [{"title": n.title, "content": n.content, "date": n.created_at} for n in notices]
     return JsonResponse(data, safe=False)
 
 def publish_post(request):
@@ -1570,11 +1958,15 @@ def verification_view(request):
     return render(request, 'verification.html')
 
 def get_student_notices(request):
-    data = [{"title": n.title, "content": n.content} for n in Notice.objects.all().order_by('-created_at')[:5]]
+    # Student dashboard AJAX - show all relevant notices (Teacher, HOD, Admin)
+    notices = Notice.objects.all().order_by('-created_at')[:5]
+    data = [{"title": n.title, "content": n.content} for n in notices]
     return JsonResponse(data, safe=False)
 
 def get_teacher_notices_ajax(request):
-    data = [{"title": n.title, "content": n.content} for n in Notice.objects.all()]
+    # Teacher AJAX - show official notices from Admin/HOD
+    notices = Notice.objects.filter(created_by__role__in=['admin', 'hod']).order_by('-created_at')
+    data = [{"title": n.title, "content": n.content} for n in notices]
     return JsonResponse(data, safe=False)
 
 def publish_notice(request):
@@ -1623,56 +2015,58 @@ def create_assignment(request):
                 return redirect('teacher_dashboard')
     else:
         form = AssignmentForm()
-@login_required
-def teacher_add_results(request, course_id):
+
+
+def student_lookup(request):
     """
-    Batch grading for a specific course.
+    Public Student Record Lookup for CST Department.
+    Multi-parameter search: Roll, Semester, Session.
     """
-    teacher = getattr(request.user, 'teacher_profile', None)
-    if not teacher:
-        return redirect('home')
+    student = None
+    search_performed = False
+    error_message = None
+
+    roll_number = request.GET.get('roll_number', '').strip()
+    semester = request.GET.get('semester', '').strip()
+    session = request.GET.get('session', '').strip()
+
+    if roll_number and semester:
+        search_performed = True
+        try:
+            # Fixing database field names (roll_no and current_semester)
+            query = Q(roll_no__icontains=roll_number, current_semester=int(semester))
+            if session:
+                query &= Q(session__icontains=session)
+            
+            student = Student.objects.filter(query).first()
+        except (ValueError, TypeError):
+            student = None
+            
+        if not student:
+            error_message = "No matching student found in the CST database."
+
+    # Fetch dynamic options from the actual database to ensure perfect matching
+    semesters_list = Student.objects.values_list('current_semester', flat=True).distinct().order_by('current_semester')
+    sessions_list = Student.objects.values_list('session', flat=True).distinct().exclude(Q(session__isnull=True) | Q(session='')).order_by('-session')
+    shifts_list = Student.objects.values_list('shift', flat=True).distinct().exclude(Q(shift__isnull=True) | Q(shift='')).order_by('shift')
     
-    course = get_object_or_404(Course, id=course_id)
-    students = course.students.all()
-    if not students.exists():
-        students = Student.objects.filter(department=course.department)
+    # Fallback to defaults if DB is empty to show at least something
+    if not list(semesters_list): semesters_list = range(1, 9)
+    if not list(sessions_list): sessions_list = ['2020-21', '2021-22', '2022-23', '2023-24', '2024-25']
 
-    if request.method == "POST":
-        for student in students:
-            marks = request.POST.get(f'marks_{student.id}')
-            if marks:
-                Result.objects.update_or_create(
-                    student=student,
-                    course=course,
-                    defaults={'marks': float(marks)}
-                )
-        messages.success(request, f"Results updated for {course.title}")
-        return redirect('teacher_dashboard')
+    context = {
+        'student': student,
+        'search_performed': search_performed,
+        'error_message': error_message,
+        'semesters_list': semesters_list,
+        'sessions_list': sessions_list,
+        'shifts_list': shifts_list,
+        'title': 'Student Record Lookup',
+        'query_params': {
+            'roll_number': roll_number,
+            'semester': semester,
+            'session': session
+        }
+    }
+    return render(request, 'student_lookup.html', context)
 
-    return render(request, 'teacher/add_results.html', {
-        "course": course,
-        "students": students
-    })
-
-@login_required
-def teacher_review_project(request, project_id):
-    """
-    Review and feedback for a student project.
-    """
-    teacher = getattr(request.user, 'teacher_profile', None)
-    if not teacher:
-        return redirect('home')
-
-    project = get_object_or_404(ProjectThesis, id=project_id)
-    
-    if request.method == "POST":
-        status = request.POST.get('status')
-        feedback = request.POST.get('feedback')
-        if status:
-            project.status = status
-            project.description += f"\n\nReviewer Feedback: {feedback}"
-            project.save()
-            messages.success(request, "Project review submitted.")
-            return redirect('teacher_dashboard')
-
-    return render(request, 'teacher/review_project.html', {"project": project})

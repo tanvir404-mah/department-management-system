@@ -73,6 +73,7 @@ class ClassRoutine(models.Model):
 class Teacher(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="teacher_profile")
     designation = models.CharField(max_length=100)
+    initials = models.CharField(max_length=10, unique=True, null=True, blank=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
     courses = models.ManyToManyField(Course, blank=True, related_name="teachers")
     bio = models.TextField(blank=True, null=True)
@@ -88,35 +89,106 @@ class HOD(models.Model):
     def __str__(self):
         return f"HOD {self.department.name} - {self.user.username}"
 
+class LabAssistant(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="lab_assistant_profile")
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Lab Assistant - {self.user.username}"
+
 class Student(models.Model):
+    # Basic Info
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student_profile")
-    student_id = models.CharField(max_length=20, unique=True, default=generate_student_id, null=True, blank=True)
-    roll_number = models.CharField(max_length=20, blank=True, null=True)
-    registration_number = models.CharField(max_length=20, blank=True, null=True)
-    semester = models.IntegerField(default=1)
-    shift = models.CharField(max_length=10, choices=[('1st', '1st'), ('2nd', '2nd')])
+    name = models.CharField(max_length=200, help_text="Full Name of the Student", blank=True, null=True)
+    roll_no = models.CharField(max_length=20, blank=True, null=True, help_text="Board Roll Number")
+    reg_no = models.CharField(max_length=25, blank=True, null=True, help_text="Board Registration Number")
+    student_id = models.CharField(max_length=20, unique=True, default=generate_student_id)
+    session = models.CharField(max_length=20, blank=True, null=True, help_text="Academic Session (e.g., 2021-22)")
+    email = models.EmailField(blank=True, null=True)
+
+    # Contact & Address
+    # Present Address
+    present_village_house_road = models.CharField("Village/House/Road", max_length=255, blank=True, null=True)
+    present_po = models.CharField("Post Office", max_length=100, blank=True, null=True)
+    present_upazila = models.CharField("Upazila", max_length=100, blank=True, null=True)
+    present_district = models.CharField("District", max_length=100, blank=True, null=True)
+    
+    # Permanent Address
+    permanent_village_house_road = models.CharField("Village/House/Road", max_length=255, blank=True, null=True)
+    permanent_po = models.CharField("Post Office", max_length=100, blank=True, null=True)
+    permanent_upazila = models.CharField("Upazila", max_length=100, blank=True, null=True)
+    permanent_district = models.CharField("District", max_length=100, blank=True, null=True)
+
+    # Family Info
+    father_name = models.CharField(max_length=200, blank=True, null=True)
+    father_mobile = models.CharField(max_length=20, blank=True, null=True)
+    father_nid = models.CharField("Father's NID", max_length=30, blank=True, null=True)
+    father_occupation = models.CharField(max_length=100, blank=True, null=True)
+    
+    mother_name = models.CharField(max_length=200, blank=True, null=True)
+    mother_mobile = models.CharField(max_length=20, blank=True, null=True)
+    mother_nid = models.CharField("Mother's NID", max_length=30, blank=True, null=True)
+    mother_occupation = models.CharField(max_length=100, blank=True, null=True)
+
+    # Guardian Info (Consolidated for Profile Views)
+    guardian_name = models.CharField(max_length=200, blank=True, null=True)
+    guardian_phone = models.CharField(max_length=20, blank=True, null=True)
+
+    # Personal Info
+    BLOOD_GROUP_CHOICES = (
+        ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
+        ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-'),
+    )
+    blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES, blank=True, null=True)
+    birth_reg_no = models.CharField("Birth Reg Number", max_length=30, blank=True, null=True)
+    photo = models.ImageField(upload_to='students/', blank=True, null=True)
+
+    # Academic Info
+    SEMESTER_CHOICES = (
+        (1, '1st'), (2, '2nd'), (3, '3rd'), (4, '4th'),
+        (5, '5th'), (6, '6th'), (7, '7th'), (8, '8th'),
+    )
+    SHIFT_CHOICES = (('1st', '1st'), ('2nd', '2nd'))
+    
+    current_semester = models.IntegerField(choices=SEMESTER_CHOICES, default=1)
+    shift = models.CharField(max_length=10, choices=SHIFT_CHOICES, default='1st')
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
     courses = models.ManyToManyField(Course, blank=True, related_name="students")
-    guardian_name = models.CharField(max_length=100, blank=True, null=True)
-    guardian_phone = models.CharField(max_length=20, blank=True, null=True)
-    
-    # Academic Standing
-    cgpa = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
+
+    # GPA Tracker
+    gpa_1st_semester = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    gpa_2nd_semester = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    gpa_3rd_semester = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    gpa_4th_semester = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    gpa_5th_semester = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    gpa_6th_semester = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    gpa_7th_semester = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+
+    # Administrative Info
+    testimonial_withdrawal_date = models.DateField(blank=True, null=True)
+    admin_note = models.TextField(blank=True, null=True, help_text="Internal comments only")
+
+    # Compatibility Aliases (to prevent breaking views)
+    @property
+    def semester(self): return self.current_semester
+    @property
+    def roll_number(self): return self.roll_no
+
+    @property
+    def cgpa(self):
+        # Calculate CGPA from the 7 individual fields if they are populated
+        gpas = [self.gpa_1st_semester, self.gpa_2nd_semester, self.gpa_3rd_semester, 
+                self.gpa_4th_semester, self.gpa_5th_semester, self.gpa_6th_semester, self.gpa_7th_semester]
+        valid_gpas = [float(g) for g in gpas if g is not None]
+        if not valid_gpas: return 0.00
+        return sum(valid_gpas) / len(valid_gpas)
 
     def calculate_cgpa(self):
-        results = self.results.all()
-        if not results:
-            return 0.00
-        total_points = sum(r.grade_point * r.course.credits for r in results if r.grade_point)
-        total_credits = sum(r.course.credits for r in results if r.grade_point)
-        if total_credits == 0:
-            return 0.00
-        self.cgpa = total_points / total_credits
-        self.save()
         return self.cgpa
 
     def __str__(self):
-        return f"{self.user.username} - {self.roll_number}"
+        return f"{self.name} - {self.roll_no}"
 
 # -----------------------
 # Attendance & Results

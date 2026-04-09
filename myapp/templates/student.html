@@ -232,7 +232,12 @@
 
         <div class="form-group">
           <label for="roll"><i class="fas fa-id-card"></i> Roll Number</label>
-          <input type="text" id="roll" name="roll" placeholder="E.g., 749001" required>
+          <input type="text" id="roll" name="roll" value="{{ request.GET.roll|default:'' }}" placeholder="E.g., 749001">
+        </div>
+
+        <div class="form-group">
+          <label for="q"><i class="fas fa-user-circle"></i> Student Name</label>
+          <input type="text" id="q" name="q" value="{{ request.GET.q|default:'' }}" placeholder="E.g., Rahat">
         </div>
 
         <div class="form-group">
@@ -242,8 +247,8 @@
 
         <div class="form-group">
           <label for="semester"><i class="fas fa-book"></i> Semester</label>
-          <select id="semester" name="semester" required>
-            <option value="" disabled selected>Select Semester</option>
+          <select id="semester" name="semester">
+            <option value="" selected>Any Semester</option>
             <option value="1">1st</option>
             <option value="2">2nd</option>
             <option value="3">3rd</option>
@@ -257,10 +262,10 @@
 
         <div class="form-group">
           <label for="shift"><i class="fas fa-clock"></i> Shift</label>
-          <select id="shift" name="shift" required>
-            <option value="" disabled selected>Select Shift</option>
-            <option value="Morning">1st Shift</option>
-            <option value="Day">2nd Shift</option>
+          <select id="shift" name="shift">
+            <option value="" selected>Any Shift</option>
+            <option value="1st">1st Shift (Morning)</option>
+            <option value="2nd">2nd Shift (Day)</option>
           </select>
         </div>
 
@@ -269,12 +274,84 @@
             <i class="fas fa-search"></i> SEARCH
           </button>
 
-          <a href="javascript:history.back()" class="go-back-button">
-            <i class="fas fa-arrow-left"></i> GO BACK
+          <a href="{% url 'student' %}" class="go-back-button" style="border-color: #64748b; color: #64748b;">
+            <i class="fas fa-users"></i> SHOW ALL
           </a>
         </div>
       </form>
     </div>
+
+    <!-- START OF RESULTS SECTION -->
+    {% if searched %}
+    <div id="results-area" style="padding: 0 40px 40px 40px;">
+        <h3 style="text-align: center; color: var(--primary-blue); margin-bottom: 25px; font-weight: 700; border-bottom: 3px solid var(--primary-blue); padding-bottom: 10px;">Search Results</h3>
+        
+        {% if students %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+            {% for student in students %}
+            <div style="border: 1px solid var(--border-gray); padding: 24px; border-radius: 16px; display: flex; flex-direction: column; gap: 15px; background: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'">
+                
+                <div style="display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+                    <div style="width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background: #f8fafc; flex-shrink: 0; border: 2px solid #e2e8f0;">
+                        {% if student.user.profile_picture %}
+                            <img src="{{ student.user.profile_picture.url }}" style="width:100%; height:100%; object-fit:cover;">
+                        {% else %}
+                            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#cbd5e1; background: #f1f5f9;">
+                                <i class="fas fa-user text-xl"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div style="flex-grow: 1; overflow: hidden;">
+                        <h4 style="font-weight: 700; color: var(--primary-blue); font-size: 1.1rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ student.user.get_full_name|default:student.user.username }}</h4>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="background: #f0fdf4; color: #166534; padding: 2px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">Verified</span>
+                            <span style="color: #64748b; font-size: 0.75rem;">• {{ student.shift|default:"1st" }} Shift</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem;">
+                    <div>
+                        <p style="color: #94a3b8; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em; margin-bottom: 2px;">Board Roll</p>
+                        <p style="font-weight: 600; color: #334155;">{{ student.roll_number }}</p>
+                    </div>
+                    <div>
+                        <p style="color: #94a3b8; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em; margin-bottom: 2px;">Reg. Number</p>
+                        <p style="font-weight: 600; color: #334155;">{{ student.reg_no|default:"N/A" }}</p>
+                    </div>
+                    <div>
+                        <p style="color: #94a3b8; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em; margin-bottom: 2px;">Student ID</p>
+                        <p style="font-weight: 600; color: #0f4c75; font-family: monospace;">{{ student.student_id }}</p>
+                    </div>
+                    <div>
+                        <p style="color: #94a3b8; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em; margin-bottom: 2px;">Session</p>
+                        <p style="font-weight: 600; color: #334155;">{{ student.session|default:"----" }}</p>
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-graduation-cap" style="color: #0f4c75; font-size: 0.8rem;"></i>
+                        <span style="font-weight: 600; font-size: 0.85rem; color: #475569;">{{ student.semester }}{% if student.semester == 1 %}st{% elif student.semester == 2 %}nd{% elif student.semester == 3 %}rd{% else %}th{% endif %} Sem</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="color: #94a3b8; font-size: 0.75rem;">CGPA:</span>
+                        <span style="font-weight: 800; color: #0f4c75; font-size: 0.95rem;">{{ student.cgpa|floatformat:2 }}</span>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 40px; color: #ff5252;">
+            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+            <p style="font-weight: 700;">No students found matching these criteria!</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    <!-- END OF RESULTS SECTION -->
 
   </div>
 

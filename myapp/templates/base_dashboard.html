@@ -52,7 +52,11 @@
 <body class="bg-[#f8fafc] text-slate-800 font-sans selection:bg-blue-100 selection:text-blue-700">
 
     <!-- Section 1: Sidebar Navigation (Left, Fixed) -->
-    <aside class="fixed left-0 top-0 bottom-0 w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200 z-[100] flex flex-col hidden lg:flex">
+    <aside id="sidebar-student" class="fixed left-0 top-0 bottom-0 w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200 z-[100] flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:flex">
+        <!-- Close Button (Mobile Only) -->
+        <button id="close-sidebar" class="lg:hidden absolute top-6 right-6 text-slate-400 hover:text-blue-600 transition-colors">
+            <i class="fas fa-times text-xl"></i>
+        </button>
         <!-- Logo -->
         <div class="p-8">
             <div class="flex items-center space-x-3 mb-2">
@@ -70,22 +74,22 @@
         <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto scroll-hide">
             <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">Main Menu</p>
             
-            <a href="{% url 'student_dashboard' %}" class="sidebar-link active flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group">
-                <i class="fas fa-grid-2 text-lg"></i>
+            <a href="{% url 'student_dashboard' %}" class="nav-link-student flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group">
+                <i class="fas fa-columns text-lg"></i>
                 <span class="font-bold text-sm tracking-tight">Dashboard</span>
             </a>
             
-            <a href="{% url 'student_subjects' %}" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
+            <a href="{% url 'student_subjects' %}" class="nav-link-student flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
                 <i class="fas fa-book-open text-lg"></i>
                 <span class="font-bold text-sm tracking-tight">My Courses</span>
             </a>
 
-            <a href="{% url 'result' %}" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
+            <a href="{% url 'result' %}" class="nav-link-student flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
                 <i class="fas fa-chart-bar text-lg"></i>
                 <span class="font-bold text-sm tracking-tight">Results & Transcripts</span>
             </a>
 
-            <a href="{% url 'notice' %}" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
+            <a href="{% url 'notice' %}" class="nav-link-student flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-blue-600">
                 <i class="fas fa-bullhorn text-lg"></i>
                 <span class="font-bold text-sm tracking-tight">Notice Board</span>
             </a>
@@ -93,9 +97,13 @@
             <div class="pt-6">
                 <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-4">CST Specialized</p>
                 
-                <a href="#" class="sidebar-link flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-emerald-600">
+                <a href="{% url 'lab' %}" class="nav-link-student flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-emerald-600">
                     <i class="fas fa-server text-lg"></i>
                     <span class="font-bold text-sm tracking-tight">Lab Resources</span>
+                </a>
+                <a href="{% url 'routine' %}" class="nav-link-student flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-slate-500 hover:bg-slate-50 hover:text-indigo-600">
+                    <i class="fas fa-calendar-alt text-lg"></i>
+                    <span class="font-bold text-sm tracking-tight">Class Routine</span>
                 </a>
             </div>
         </nav>
@@ -121,7 +129,7 @@
         <header class="sticky top-0 h-24 bg-white/70 backdrop-blur-xl border-b border-slate-200 z-50 px-8 flex items-center justify-between">
             <!-- Left: Breadcrumbs/Title -->
             <div class="flex items-center space-x-4">
-                <button class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                <button id="open-sidebar" class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-all">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="hidden sm:block">
@@ -248,15 +256,44 @@
         <!-- Simple Footer -->
         <footer class="p-8 bg-white border-t border-slate-200 text-center">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                &copy; 2025 CST Department Management System | BUILT BY <span class="text-blue-600">ANTIGRAVITY</span>
+                &copy; 2026 CST Department Management System
             </p>
         </footer>
     </div>
 
-    <!-- Modals / Overlays (Optional) -->
-    <div id="loading-overlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[1000] flex items-center justify-center hidden">
-        <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar-student');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            const openBtn = document.getElementById('open-sidebar');
+            const closeBtn = document.getElementById('close-sidebar');
 
-</body>
-</html>
+            // Active Link Highlighting
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('.nav-link-student');
+            
+            sidebarLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (currentPath === linkPath) {
+                    link.classList.add('active');
+                    link.classList.remove('text-slate-500');
+                }
+            });
+
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+
+            if(openBtn) openBtn.addEventListener('click', openSidebar);
+            if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if(backdrop) backdrop.addEventListener('click', closeSidebar);
+        });
+    </script>

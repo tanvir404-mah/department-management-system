@@ -11,8 +11,10 @@
     <!-- Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js -->
+    <!-- Chart.js & AOS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
         tailwind.config = {
@@ -55,13 +57,24 @@
             border-color: #6366f1;
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
     </style>
 </head>
 <body class="bg-[#fafafa] text-slate-900 font-sans antialiased overflow-x-hidden">
 
     <!-- Section 1: HOD Sidebar (Fixed) -->
-    <aside class="fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-slate-100 z-[100] flex flex-col hidden lg:flex">
+    <aside id="sidebar-hod" class="fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-slate-100 z-[100] flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0">
         <!-- Brand -->
+        <!-- Close Button (Mobile) -->
+        <button id="close-sidebar" class="lg:hidden absolute top-6 right-6 text-slate-400 hover:text-indigo-600 transition-colors">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
         <div class="h-20 flex items-center px-8 border-b border-slate-50">
             <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white mr-3 shadow-lg shadow-indigo-100">
                 <i data-lucide="shield-check" class="w-6 h-6"></i>
@@ -73,62 +86,62 @@
         </div>
 
         <!-- Navigation Links -->
-        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto scroll-hide">
+        <nav id="nav-hod" class="flex-1 px-4 py-4 space-y-1 overflow-y-auto scroll-hide">
             <!-- Governance Section -->
             <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-6">Governance</p>
-            <a href="{% url 'hod_dashboard' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-indigo-600 bg-indigo-50 font-bold transition-all">
+            <a href="{% url 'hod_dashboard' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-sm">Command Center</span>
             </a>
-            <a href="{% url 'hod_student_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'hod_student_mgmt' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="users" class="w-5 h-5"></i>
                 <span class="text-sm">Student Oracle</span>
             </a>
-            <a href="{% url 'hod_parents_alert' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-rose-600 transition-all font-bold">
+            <a href="{% url 'hod_parents_alert' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-rose-600 transition-all font-bold">
                 <i data-lucide="megaphone" class="w-5 h-5"></i>
                 <span class="text-sm">Parents Alert</span>
             </a>
-            <a href="{% url 'hod_faculty_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'hod_faculty_mgmt' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="user-plus" class="w-5 h-5"></i>
                 <span class="text-sm">Faculty Pulse</span>
             </a>
 
             <!-- Academic Section -->
             <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-8">Academics</p>
-            <a href="{% url 'hod_dept_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'hod_dept_mgmt' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="building-2" class="w-5 h-5"></i>
                 <span class="text-sm">Departments</span>
             </a>
-            <a href="{% url 'hod_course_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'hod_course_mgmt' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="book-open" class="w-5 h-5"></i>
                 <span class="text-sm">Course Engine</span>
             </a>
-            <a href="{% url 'hod_course_allotment' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'hod_course_allotment' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="git-merge" class="w-5 h-5"></i>
                 <span class="text-sm">Allotment</span>
             </a>
-            <a href="{% url 'hod_routine_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'hod_routine_mgmt' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="calendar-days" class="w-5 h-5"></i>
                 <span class="text-sm">Class Routine</span>
             </a>
 
             <!-- Resources Section -->
             <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-8">Resources</p>
-            <a href="{% url 'hod_lab_mgmt' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'hod_lab_mgmt' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="cpu" class="w-5 h-5"></i>
                 <span class="text-sm">Lab Control</span>
             </a>
-            <a href="{% url 'lab_assistant_dashboard' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'lab_assistant_dashboard' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="monitor" class="w-5 h-5"></i>
                 <span class="text-sm">Tech Console</span>
             </a>
             <!-- Portal CMS -->
             <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-4 mb-3 mt-8">Portal CMS</p>
-            <a href="{% url 'admin_manage_banners' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'admin_manage_banners' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="image" class="w-5 h-5"></i>
                 <span class="text-sm">Hero Banners</span>
             </a>
-            <a href="{% url 'admin_manage_notices' %}" class="flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
+            <a href="{% url 'admin_manage_notices' %}" class="sidebar-link-hod flex items-center space-x-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all font-bold">
                 <i data-lucide="bell-ring" class="w-5 h-5"></i>
                 <span class="text-sm">Portal Notices</span>
             </a>
@@ -145,11 +158,16 @@
 
     <!-- Main Wrapper -->
     <div class="lg:ml-72 min-h-screen flex flex-col">
+        <!-- Sidebar Backdrop (Mobile Only) -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] hidden transition-opacity duration-300"></div>
 
         <!-- Section 2: Top Header -->
         <header class="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-10 sticky top-0 z-50">
             <!-- Search & Breadcrumbs -->
             <div class="flex items-center space-x-8">
+                <button id="open-sidebar" class="lg:hidden w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-slate-100 hover:text-indigo-600 transition-all">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
                 <div class="relative hidden sm:block">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                         <i data-lucide="search" class="w-4 h-4"></i>
@@ -237,8 +255,12 @@
                         <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest leading-none">Head of Dept</p>
                     </div>
                     <a href="{% url 'profile' %}" class="block">
-                        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 hover:scale-105 transition-all outline-none">
-                            <i data-lucide="user-cog" class="w-5 h-5"></i>
+                        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 hover:scale-105 transition-all outline-none overflow-hidden">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <i data-lucide="user-cog" class="w-5 h-5"></i>
+                            {% endif %}
                         </div>
                     </a>
                 </div>
@@ -277,9 +299,49 @@
         </footer>
     </div>
 
-    <!-- Initialize Lucide Icons -->
+    <!-- Initialize Lucide Icons & Sidebar Logic -->
     <script>
         lucide.createIcons();
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar-hod');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            const openBtn = document.getElementById('open-sidebar');
+            const closeBtn = document.getElementById('close-sidebar');
+
+            // Active Link Highlighting
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('.sidebar-link-hod');
+            
+            sidebarLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (currentPath === linkPath) {
+                    link.classList.add('bg-indigo-50', 'text-indigo-600');
+                    link.classList.remove('text-slate-500');
+                }
+            });
+
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+
+            if(openBtn) openBtn.addEventListener('click', openSidebar);
+            if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if(backdrop) backdrop.addEventListener('click', closeSidebar);
+        });
     </script>
 </body>
 </html>

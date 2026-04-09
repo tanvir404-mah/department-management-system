@@ -103,9 +103,11 @@
     <div class="container mx-auto px-4 flex justify-between items-center">
       <p><i class="fas fa-map-marker-alt mr-2"></i> Baitul Aman, Faridpur, Bangladesh</p>
       <div class="space-x-4">
-        <a href="#" class="hover:text-accent transition"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" class="hover:text-accent transition"><i class="fab fa-twitter"></i></a>
-        <a href="#" class="hover:text-accent transition"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.facebook.com/groups/2624242601196787" class="hover:text-accent transition"><i
+            class="fab fa-facebook-f"></i></a>
+        <a href="https://twitter.com/fpi_edu" class="hover:text-accent transition"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.linkedin.com/company/faridpur-polytechnic-institute-faridpur/"
+          class="hover:text-accent transition"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
   </div>
@@ -138,9 +140,6 @@
               <a href="{% url 'student_register' %}"
                 class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-t-lg">Student
                 Registration</a>
-              <a href="{% url 'teacher_register' %}"
-                class="block px-4 py-3 hover:bg-blue-50 hover:text-primary transition rounded-b-lg">Teacher
-                Registration</a>
             </div>
           </div>
 
@@ -158,7 +157,8 @@
               </a>
               <a href="{% url 'unified_staff_login' %}"
                 class="block px-6 py-4 hover:bg-slate-50 hover:text-blue-600 transition-all group/item">
-                <i class="fas fa-shield-halved mr-3 text-slate-400 group-hover/item:text-blue-500 group-hover/item:scale-110 transition-all"></i>
+                <i
+                  class="fas fa-shield-halved mr-3 text-slate-400 group-hover/item:text-blue-500 group-hover/item:scale-110 transition-all"></i>
                 <span class="font-bold text-sm">Staff Gateway</span>
               </a>
             </div>
@@ -173,16 +173,18 @@
 
     <div class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 relative overflow-hidden">
       <div class="container mx-auto flex items-center">
-        <span class="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full mr-3 z-10 shadow-sm uppercase">Latest</span>
+        <span
+          class="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full mr-3 z-10 shadow-sm uppercase">Latest</span>
         <div class="marquee-container flex-1">
           <div class="marquee-content text-sm font-medium">
             {% if latest_ticker %}
-              📢 {{ latest_ticker.title }}: {{ latest_ticker.content }} 
-              {% if latest_ticker.file_attachment %}
-                <a href="{{ latest_ticker.file_attachment.url }}" class="ml-2 underline font-bold" target="_blank">[Download Attachment]</a>
-              {% endif %}
+            📢 {{ latest_ticker.title }}: {{ latest_ticker.content }}
+            {% if latest_ticker.file_attachment %}
+            <a href="{{ latest_ticker.file_attachment.url }}" class="ml-2 underline font-bold" target="_blank">[Download
+              Attachment]</a>
+            {% endif %}
             {% else %}
-              📢 Welcome to the Computer Department, Faridpur Polytechnic Institute. Stay tuned for official updates.
+            📢 Welcome to the Computer Department, Faridpur Polytechnic Institute. Stay tuned for official updates.
             {% endif %}
           </div>
         </div>
@@ -199,19 +201,27 @@
         <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
           <div class="text-center text-white px-6 md:px-12" data-aos="fade-up">
             <h2 class="text-3xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">{{ banner.title }}</h2>
-            <p class="text-lg md:text-2xl font-medium mb-8 text-slate-100 max-w-4xl mx-auto drop-shadow-lg opacity-90">{{ banner.subtitle }}</p>
+            <p class="text-lg md:text-2xl font-medium mb-8 text-slate-100 max-w-4xl mx-auto drop-shadow-lg opacity-90">
+              {{ banner.subtitle }}</p>
             <div class="flex justify-center gap-4">
-               <a href="{% url 'notice' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg">View Notices</a>
-               <a href="#about" class="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-8 py-3 rounded-xl font-bold transition-all">About CST</a>
+              <a href="{% url 'notice' %}"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg">View
+                Notices</a>
+              <a href="#about"
+                class="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-8 py-3 rounded-xl font-bold transition-all">About
+                CST</a>
             </div>
           </div>
         </div>
       </div>
       {% empty %}
       <div class="relative h-[450px] lg:h-[600px]">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Faridpur_Polytechnic_Institute_Academic_Building.jpg/1280px-Faridpur_Polytechnic_Institute_Academic_Building.jpg" alt="Academic Building" class="w-full h-full object-cover">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Faridpur_Polytechnic_Institute_Academic_Building.jpg/1280px-Faridpur_Polytechnic_Institute_Academic_Building.jpg"
+          alt="Academic Building" class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <h2 class="text-3xl md:text-5xl font-bold text-white text-center px-4" data-aos="fade-up">Building Future Engineers</h2>
+          <h2 class="text-3xl md:text-5xl font-bold text-white text-center px-4" data-aos="fade-up">Building Future
+            Engineers</h2>
         </div>
       </div>
       {% endfor %}
@@ -352,8 +362,7 @@
             <div class="h-24 bg-gradient-to-r from-blue-600 to-blue-400"></div>
             <div class="flex justify-center -mt-12">
               <img class="w-32 h-32 rounded-full border-4 border-white object-cover bg-white"
-                src="/media/teacher-images/vice-principal.jpg"
-                alt="Vice-Principal">
+                src="/media/teacher-images/vice-principal.jpg" alt="Vice-Principal">
             </div>
             <div class="p-6 text-center">
               <h4 class="text-xl font-bold text-gray-800">Nizam Uddin Ahmed</h4>
@@ -443,7 +452,7 @@
       });
 
       // Mobile Menu Toggle
-      $('#mobile-menu-btn').click(function() {
+      $('#mobile-menu-btn').click(function () {
         // Implementation for mobile menu if needed
       });
     });

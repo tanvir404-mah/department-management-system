@@ -17,12 +17,12 @@
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            <button class="bg-white thin-border px-8 py-4 rounded-2xl text-xs font-extrabold uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
+            <a href="{% url 'admin_bulk_import' %}" class="bg-white thin-border px-8 py-4 rounded-2xl text-xs font-extrabold uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
                 Import CSV
-            </button>
-            <button class="bg-indigo-600 text-white px-8 py-4 rounded-2xl text-xs font-extrabold uppercase tracking-widest shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">
+            </a>
+            <a href="{% url 'admin_create_user' %}" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl text-xs font-extrabold uppercase tracking-widest shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">
                 Add New Student
-            </button>
+            </a>
         </div>
     </div>
 
