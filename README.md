@@ -1,6 +1,6 @@
 Department Management System
 
-If you can see the dashboard ,go to assets file.
+If you want to see the dashboard, go to the assets file.
 
  #Features
    1. Admin/HOD (Head of Department)  Module
